@@ -1,42 +1,187 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
+    <SolidColorBrush x:Key="StrokeColor"
+                     Color="Black" />
+    <SolidColorBrush x:Key="BackgroundColor"
+                     Color="White" />
+    <SolidColorBrush x:Key="AccentColor"
+                     Color="#22AAFF" />
+
     <!--#region CheckBox Style-->
-    <Style TargetType="CheckBox">
-        <Setter Property="VerticalContentAlignment"
-                Value="Center" />
-        <Setter Property="Foreground"
-                Value="Black" />
-        <Setter Property="Background"
-                Value="White" />
-        <Setter Property="BorderBrush"
-                Value="Black" />
-        <Setter Property="FontFamily"
-                Value="/HtmlTableGenerator;component/Font/#Inter-Regular" />
-        <Setter Property="BorderThickness"
-                Value="2" />
+    <!-- Focus Visual -->
+    <Style x:Key="CheckBoxFocusVisual">
+        <Setter Property="Control.Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Border>
+                        <Rectangle Margin="15,0,0,0"
+                                   StrokeThickness="1"
+                                   Stroke="#60000000"
+                                   StrokeDashArray="1 2" />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
-        <Style.Triggers>
-            <Trigger Property="IsMouseOver"
-                     Value="True">
-                <Setter Property="BorderBrush"
-                        Value="Red" />
-                <Setter Property="Background"
-                        Value="Red" />
-                <Setter Property="Cursor"
-                        Value="Hand" />
-            </Trigger>
+    <Style x:Key="RadioButtonFocusVisual">
+        <Setter Property="Control.Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Border>
+                        <Rectangle Margin="15,0,0,0"
+                                   StrokeThickness="1"
+                                   Stroke="#60000000"
+                                   StrokeDashArray="1 2" />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
-            <Trigger Property="IsChecked"
-                     Value="True">
-                <Setter Property="BorderBrush"
-                        Value="Black" />
-                <Setter Property="Background"
-                        Value="White" />
-            </Trigger>
-        </Style.Triggers>
+    <!-- SimpleStyles: CheckBox -->
+    <Style x:Key="{x:Type CheckBox}"
+           TargetType="CheckBox">
+        <Setter Property="SnapsToDevicePixels"
+                Value="true" />
+        <Setter Property="OverridesDefaultStyle"
+                Value="true" />
+        <Setter Property="FocusVisualStyle"
+                Value="{StaticResource CheckBoxFocusVisual}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="CheckBox">
+                    <BulletDecorator Background="Transparent">
+                        <BulletDecorator.Bullet>
+                            <Border x:Name="Border"
+                                    Width="16"
+                                    Height="16"
+                                    CornerRadius="0"
+                                    Background="{StaticResource BackgroundColor}"
+                                    BorderThickness="2"
+                                    BorderBrush="{StaticResource StrokeColor}">
+                                <Path Width="7"
+                                      Height="7"
+                                      x:Name="CheckMark"
+                                      SnapsToDevicePixels="False"
+                                      Stroke="{StaticResource StrokeColor}"
+                                      StrokeThickness="2"
+                                      Margin="0,0,0,0"
+                                      Data="M 0 0 L 7 7 M 0 7 L 7 0" />
+                            </Border>
+                        </BulletDecorator.Bullet>
+                        <ContentPresenter Margin="8,0,0,0"
+                                          VerticalAlignment="Center"
+                                          HorizontalAlignment="Left"
+                                          RecognizesAccessKey="True" />
+                    </BulletDecorator>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked"
+                                 Value="False">
+                            <Setter TargetName="CheckMark"
+                                    Property="Visibility"
+                                    Value="Collapsed" />
+                            <Setter TargetName="Border"
+                                    Property="Background"
+                                    Value="{StaticResource BackgroundColor}" />
+                        </Trigger>
+                        <Trigger Property="IsChecked"
+                                 Value="{x:Null}">
+                            <Setter TargetName="CheckMark"
+                                    Property="Data"
+                                    Value="M 0 7 L 7 0" />
+                        </Trigger>
+
+                        <Trigger Property="IsChecked"
+                                 Value="True">
+                        </Trigger>
+
+                        <Trigger Property="IsMouseOver"
+                                 Value="true">
+                            <Setter Property="Cursor"
+                                    Value="Hand" />
+
+                            <Setter TargetName="Border"
+                                    Property="Background"
+                                    Value="{StaticResource AccentColor}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
     <!--#endregion-->
+
+    <Style x:Key="{x:Type RadioButton}"
+           TargetType="{x:Type RadioButton}">
+        <Setter Property="SnapsToDevicePixels"
+                Value="true" />
+        <Setter Property="OverridesDefaultStyle"
+                Value="true" />
+        <Setter Property="FocusVisualStyle"
+                Value="{StaticResource RadioButtonFocusVisual}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type RadioButton}">
+                    <BulletDecorator Background="Transparent">
+                        <BulletDecorator.Bullet>
+                            <Grid Width="16"
+                                  Height="16">
+                                <Ellipse x:Name="Border"
+                                         Fill="{StaticResource BackgroundColor}"
+                                         StrokeThickness="2"
+                                         Stroke="{StaticResource StrokeColor}" />
+                                <Ellipse x:Name="CheckMark"
+                                         Margin="5"
+                                         Fill="{StaticResource StrokeColor}" />
+                            </Grid>
+                        </BulletDecorator.Bullet>
+                        <ContentPresenter Margin="8,0,0,0"
+                                          VerticalAlignment="Center"
+                                          HorizontalAlignment="Left"
+                                          RecognizesAccessKey="True" />
+                    </BulletDecorator>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked"
+                                 Value="false">
+                            <Setter TargetName="CheckMark"
+                                    Property="Visibility"
+                                    Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="IsMouseOver"
+                                 Value="true">
+                            <Setter TargetName="Border"
+                                    Property="Fill"
+                                    Value="{StaticResource AccentColor}" />
+                            <Setter Property="Cursor"
+                                    Value="Hand" />
+                        </Trigger>
+                        <Trigger Property="IsPressed"
+                                 Value="true">
+                            <Setter TargetName="Border"
+                                    Property="Fill"
+                                    Value="Green" />
+                            <Setter TargetName="Border"
+                                    Property="Stroke"
+                                    Value="{StaticResource StrokeColor}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled"
+                                 Value="false">
+                            <Setter TargetName="Border"
+                                    Property="Fill"
+                                    Value="Gray" />
+                            <Setter TargetName="Border"
+                                    Property="Stroke"
+                                    Value="#40000000" />
+                            <Setter Property="Foreground"
+                                    Value="#80000000" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
     <!--#region Button Style-->
     <Style TargetType="Button">
@@ -45,7 +190,7 @@
         <Setter Property="HorizontalContentAlignment"
                 Value="Center" />
         <Setter Property="FontFamily"
-                Value="/HtmlTableGenerator;component/Font/#Inter-Regular" />
+                Value="/TextCleaner;component/Font/#Inter-Regular" />
         <Setter Property="FontSize"
                 Value="14" />
         <Setter Property="Height"

@@ -1,13 +1,16 @@
 ﻿<Application x:Class="TextCleaner.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:TextCleaner"
              StartupUri="View/MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Style.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            <Style TargetType="Control">
+                <Setter Property="FontFamily"
+                        Value="/TextCleaner;component/Font/#Inter-Regular" />
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>
