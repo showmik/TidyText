@@ -9,7 +9,6 @@ namespace TextCleaner.View
     {
         public MainWindow()
         {
-            InitializeComponent();
         }
     }
 }

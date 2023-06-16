@@ -6,6 +6,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Style.xaml" />
+                <ResourceDictionary Source="/TextCleaner;component/Themes/Generic.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <Style TargetType="Control">
                 <Setter Property="FontFamily"

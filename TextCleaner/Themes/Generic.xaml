@@ -17,7 +17,7 @@
                                 MaxWidth="40" />
 
                         <Ellipse x:Name="TG_Ellipse"
-                                 Fill="Black"
+                                 Fill="{StaticResource StrokeColor}"
                                  HorizontalAlignment="Left"
                                  VerticalAlignment="Center"
                                  Margin="0"
@@ -37,8 +37,9 @@
                                 <Storyboard>
                                     <ColorAnimation Storyboard.TargetName="TG_Border"
                                                     Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
-                                                    To="#22aaff"
+                                                    To="#65AFFF"
                                                     Duration="0:0:0.2" />
+
                                     <ThicknessAnimation Storyboard.TargetName="TG_Ellipse"
                                                         Storyboard.TargetProperty="Margin"
                                                         To="20 0 0 0"
@@ -87,10 +88,11 @@
                         </Grid.ColumnDefinitions>
 
                         <Border Grid.Column="0"
-                                Background="Black"
+                                Background="{StaticResource StrokeColor}"
                                 CornerRadius="8, 0, 0, 8">
-                            <Label x:Name="SV_Label" Content="W"
-                                   Foreground="White"
+                            <Label x:Name="SV_Label"
+                                   Content="W"
+                                   Foreground="{StaticResource BackgroundColor}"
                                    HorizontalContentAlignment="Center"
                                    VerticalContentAlignment="Center" />
                         </Border>
@@ -98,7 +100,7 @@
                         <Border Grid.Column="1"
                                 BorderThickness="2"
                                 CornerRadius="0, 8, 8, 0"
-                                BorderBrush="Black">
+                                BorderBrush="{StaticResource StrokeColor}">
 
                             <Label x:Name="SV_Content"
                                    FontSize="12"

@@ -3,10 +3,14 @@
 
     <SolidColorBrush x:Key="StrokeColor"
                      Color="Black" />
+    <SolidColorBrush x:Key="FontColor"
+                     Color="Black" />
     <SolidColorBrush x:Key="BackgroundColor"
                      Color="White" />
     <SolidColorBrush x:Key="AccentColor"
-                     Color="#22AAFF" />
+                     Color="#65AFFF" />
+    <SolidColorBrush x:Key="PressedColor"
+                     Color="#C2DFFF" />
 
     <!--#region CheckBox Style-->
     <!-- Focus Visual -->
@@ -93,10 +97,6 @@
                                     Value="M 0 7 L 7 0" />
                         </Trigger>
 
-                        <Trigger Property="IsChecked"
-                                 Value="True">
-                        </Trigger>
-
                         <Trigger Property="IsMouseOver"
                                  Value="true">
                             <Setter Property="Cursor"
@@ -149,6 +149,7 @@
                                     Property="Visibility"
                                     Value="Collapsed" />
                         </Trigger>
+                        
                         <Trigger Property="IsMouseOver"
                                  Value="true">
                             <Setter TargetName="Border"
@@ -157,15 +158,7 @@
                             <Setter Property="Cursor"
                                     Value="Hand" />
                         </Trigger>
-                        <Trigger Property="IsPressed"
-                                 Value="true">
-                            <Setter TargetName="Border"
-                                    Property="Fill"
-                                    Value="Green" />
-                            <Setter TargetName="Border"
-                                    Property="Stroke"
-                                    Value="{StaticResource StrokeColor}" />
-                        </Trigger>
+                        
                         <Trigger Property="IsEnabled"
                                  Value="false">
                             <Setter TargetName="Border"
@@ -202,7 +195,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
                     <Border x:Name="border"
-                            BorderBrush="Black"
+                            BorderBrush="{StaticResource StrokeColor}"
                             BorderThickness="2"
                             Background="White">
                         <ContentPresenter HorizontalAlignment="Center"
@@ -213,9 +206,9 @@
                                  Value="True">
                             <Setter TargetName="border"
                                     Property="Background"
-                                    Value="#22aaff" />
+                                    Value="{StaticResource AccentColor}" />
                             <Setter Property="Foreground"
-                                    Value="Black" />
+                                    Value="{StaticResource FontColor}" />
                             <Setter Property="Cursor"
                                     Value="Hand" />
                         </Trigger>
