@@ -32,37 +32,25 @@
                                     Value="Hand" />
                         </Trigger>
 
-                        <EventTrigger RoutedEvent="Checked">
-                            <BeginStoryboard>
-                                <Storyboard>
-                                    <ColorAnimation Storyboard.TargetName="TG_Border"
-                                                    Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
-                                                    To="#65AFFF"
-                                                    Duration="0:0:0.2" />
+                        <Trigger Property="IsChecked"
+                                 Value="True">
+                            <Setter TargetName="TG_Border"
+                                    Property="Background"
+                                    Value="{StaticResource AccentColor}" />
+                            <Setter TargetName="TG_Ellipse"
+                                    Property="Margin"
+                                    Value="20 0 0 0" />
+                        </Trigger>
 
-                                    <ThicknessAnimation Storyboard.TargetName="TG_Ellipse"
-                                                        Storyboard.TargetProperty="Margin"
-                                                        To="20 0 0 0"
-                                                        Duration="0:0:0.2" />
-                                </Storyboard>
-                            </BeginStoryboard>
-                        </EventTrigger>
-
-                        <EventTrigger RoutedEvent="Unchecked">
-                            <BeginStoryboard>
-                                <Storyboard>
-                                    <ColorAnimation Storyboard.TargetName="TG_Border"
-                                                    Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
-                                                    To="#FFDDDDDD"
-                                                    Duration="0:0:0.2" />
-
-                                    <ThicknessAnimation Storyboard.TargetName="TG_Ellipse"
-                                                        Storyboard.TargetProperty="Margin"
-                                                        To="0 0 0 0"
-                                                        Duration="0:0:0.2" />
-                                </Storyboard>
-                            </BeginStoryboard>
-                        </EventTrigger>
+                        <Trigger Property="IsChecked"
+                                 Value="False">
+                            <Setter TargetName="TG_Border"
+                                    Property="Background"
+                                    Value="#FFDDDDDD" />
+                            <Setter TargetName="TG_Ellipse"
+                                    Property="Margin"
+                                    Value="0 0 0 0" />
+                        </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>

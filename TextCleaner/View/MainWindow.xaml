@@ -40,7 +40,7 @@
                  Margin="0, 15, 0, 0"
                  Padding="8"
                  FontSize="16"
-                 Text="{Binding MainText}"
+                 Text="{Binding MainText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                  VerticalScrollBarVisibility="Visible"
                  HorizontalScrollBarVisibility="Auto"
                  AcceptsReturn="True"
@@ -67,12 +67,13 @@
                 <custom:StatisticsViewer Margin="0, 0, 8, 0"
                                          ToolTip="Words"
                                          Label="W"
-                                         Content="20" />
+                                         Content="{Binding WordCount}">
+                </custom:StatisticsViewer>
 
                 <custom:StatisticsViewer Margin="8, 0, 8, 0"
                                          ToolTip="Characters"
                                          Label="C"
-                                         Content="200" />
+                                         Content="{Binding CharacterCount}" />
 
                 <custom:StatisticsViewer Margin="8, 0, 8, 0"
                                          ToolTip="Sentences"
@@ -98,7 +99,7 @@
                        Margin="8, 0" />
 
                 <custom:ToggleSwitch Margin="0, 0, 20, 0"
-                                     IsChecked="{Binding WrapLines, UpdateSourceTrigger=PropertyChanged}" />
+                                     IsChecked="{Binding WrapLines, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             </StackPanel>
 
             <StackPanel Grid.Column="2"
@@ -205,7 +206,6 @@
 
                 <CheckBox Content="Fix Space After Punctuation"
                           Margin="0,6" />
-                <TextBox Text="{Binding MainText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             </StackPanel>
         </Grid>
     </Grid>
