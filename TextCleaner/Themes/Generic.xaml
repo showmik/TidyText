@@ -67,4 +67,47 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <Style TargetType="{x:Type local:StatisticsViewer}">
+        <Setter Property="MinWidth"
+                Value="90" />
+        <Setter Property="MaxWidth"
+                Value="90" />
+        <Setter Property="MinHeight"
+                Value="30" />
+        <Setter Property="MaxHeight"
+                Value="30" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type local:StatisticsViewer}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="30" />
+                            <ColumnDefinition Width="60" />
+                        </Grid.ColumnDefinitions>
+
+                        <Border Grid.Column="0"
+                                Background="Black"
+                                CornerRadius="8, 0, 0, 8">
+                            <Label x:Name="SV_Label" Content="W"
+                                   Foreground="White"
+                                   HorizontalContentAlignment="Center"
+                                   VerticalContentAlignment="Center" />
+                        </Border>
+
+                        <Border Grid.Column="1"
+                                BorderThickness="2"
+                                CornerRadius="0, 8, 8, 0"
+                                BorderBrush="Black">
+
+                            <Label x:Name="SV_Content"
+                                   FontSize="12"
+                                   HorizontalContentAlignment="Center"
+                                   VerticalContentAlignment="Center" />
+                        </Border>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 </ResourceDictionary>

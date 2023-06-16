@@ -60,30 +60,10 @@
 
                 <custom:ToggleSwitch Margin="20, 0" />
 
-                <Border Background="Black"
-                        Width="30"
-                        Height="30"
-                        CornerRadius="5, 0, 0, 5"
-                        ToolTip="Words">
-
-                    <Label Content="W"
-                           Foreground="White"
-                           HorizontalContentAlignment="Center"
-                           VerticalContentAlignment="Center" />
-                </Border>
-
-                <Border BorderThickness="2"
-                        Width="50"
-                        Height="30"
-                        CornerRadius="0, 5, 5, 0"
-                        BorderBrush="Black"
-                        HorizontalAlignment="Center">
-
-                    <Label Content="20"
-                           FontSize="12"
-                           HorizontalContentAlignment="Center"
-                           VerticalContentAlignment="Center" />
-                </Border>
+                <custom:StatisticsViewer Margin="20, 0"
+                                         ToolTip="Words"
+                                         Label="W"
+                                         Content="20" />
             </StackPanel>
 
             <StackPanel Grid.Column="3"
