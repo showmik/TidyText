@@ -72,22 +72,10 @@
                         VerticalAlignment="Center">
 
                 <Button Content="Copy"
-                        FontSize="14"
-                        Height="30"
-                        Width="80"
-                        Margin="0, 0, 5, 0"
-                        BorderThickness="2"
-                        BorderBrush="Black"
-                        Background="White" />
+                        Margin="0, 0, 5, 0" />
 
                 <Button Content="Clean"
-                        FontSize="14"
-                        Height="30"
-                        Width="80"
-                        Margin="5, 0, 0, 0"
-                        BorderThickness="2"
-                        BorderBrush="Black"
-                        Background="White" />
+                        Margin="5, 0, 0, 0" />
             </StackPanel>
         </Grid>
 
@@ -112,27 +100,21 @@
                        HorizontalContentAlignment="Left" />
 
                 <CheckBox Content="Trim"
-                          Style="{StaticResource MainCheckBoxStyle}"
                           Margin="0,6" />
 
                 <CheckBox Content="Remove Leading Spaces"
-                          Style="{StaticResource MainCheckBoxStyle}"
                           Margin="0,6" />
 
                 <CheckBox Content="Remove Trailing Spaces"
-                          Margin="0,6"
-                          Style="{StaticResource MainCheckBoxStyle}" />
+                          Margin="0,6" />
 
                 <CheckBox Content="Multiple Spaces to Single"
-                          Style="{StaticResource MainCheckBoxStyle}"
                           Margin="0,6" />
 
                 <CheckBox Content="Multiple Blank Lines to Single"
-                          Style="{StaticResource MainCheckBoxStyle}"
                           Margin="0,6" />
 
                 <CheckBox Content="Remove All Line Breaks"
-                          Style="{StaticResource MainCheckBoxStyle}"
                           Margin="0,6" />
             </StackPanel>
 
@@ -180,7 +162,6 @@
                        HorizontalContentAlignment="Left" />
 
                 <CheckBox Content="Fix Space After Punctuation"
-                          Style="{StaticResource MainCheckBoxStyle}"
                           Margin="0,6" />
             </StackPanel>
         </Grid>
