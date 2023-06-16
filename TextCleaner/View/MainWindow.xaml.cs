@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls.Primitives;
+using TextCleaner.ViewModel;
 using Xceed.Wpf.Toolkit;
 
 namespace TextCleaner.View
@@ -12,6 +13,8 @@ namespace TextCleaner.View
     {
         public MainWindow()
         {
+            InitializeComponent();
+            DataContext = new MainViewModel();
         }
 
 
