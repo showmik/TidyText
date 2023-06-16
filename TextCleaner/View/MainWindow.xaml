@@ -4,11 +4,17 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:custom="clr-namespace:TextCleaner.CustomControl"
         mc:Ignorable="d"
         Title="TidyText"
         Height="640"
         Width="960"
         MinWidth="960">
+
+    <Window.Resources>
+        
+    </Window.Resources>
+
     <Grid Margin="25, 0">
         <Grid.RowDefinitions>
             <RowDefinition Height="50" />
@@ -53,6 +59,9 @@
             <StackPanel Grid.Column="0"
                         Orientation="Horizontal">
 
+                <custom:ToggleSwitch />
+                <custom:ToggleSwitch />
+
                 <Border Background="Black"
                         Width="30"
                         Height="30"
@@ -64,7 +73,7 @@
                            HorizontalContentAlignment="Center"
                            VerticalContentAlignment="Center" />
                 </Border>
-                
+
                 <Border BorderThickness="2"
                         Width="50"
                         Height="30"
@@ -93,7 +102,7 @@
                         BorderBrush="Black"
                         Background="White" />
 
-                <Button Content="Trim"
+                <Button Content="Clean"
                         FontSize="14"
                         Height="30"
                         Width="80"
