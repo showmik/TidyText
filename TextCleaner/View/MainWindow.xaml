@@ -9,7 +9,7 @@
         Title="TidyText"
         Height="640"
         Width="960"
-        MinHeight="460"
+        MinHeight="470"
         MinWidth="960"
         SizeChanged="Window_SizeChanged">
 
@@ -17,12 +17,12 @@
     </Window.Resources>
 
     <Grid Margin="25, 0"
-          x:Name="grid">
+          x:Name="MainGrid">
         <Grid.RowDefinitions >
             <RowDefinition Height="280"
                            MinHeight="100" 
                            MaxHeight="650"/>
-            <RowDefinition Height="5" />
+            <RowDefinition Height="6"/>
             <RowDefinition Height="75" MinHeight="75" />
             <RowDefinition Height="270"/>
         </Grid.RowDefinitions>
@@ -38,7 +38,7 @@
         <GridSplitter Grid.Row="1"
                       HorizontalAlignment="Stretch"
                       ResizeDirection="Rows"
-                      ResizeBehavior="PreviousAndNext" />
+                      ResizeBehavior="PreviousAndNext"/>
 
         <Grid Grid.Row="2"
               VerticalAlignment="Top"
