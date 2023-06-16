@@ -91,7 +91,7 @@
                                 Background="{StaticResource StrokeColor}"
                                 CornerRadius="8, 0, 0, 8">
                             <Label x:Name="SV_Label"
-                                   Content="W"
+                                   FontWeight="Bold"
                                    Foreground="{StaticResource BackgroundColor}"
                                    HorizontalContentAlignment="Center"
                                    VerticalContentAlignment="Center" />

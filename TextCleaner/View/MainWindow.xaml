@@ -9,78 +9,101 @@
         Title="TidyText"
         Height="640"
         Width="960"
-        MinWidth="960">
+        MinHeight="460"
+        MinWidth="960"
+        SizeChanged="Window_SizeChanged">
 
     <Window.Resources>
     </Window.Resources>
 
-    <Grid Margin="25, 0">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="50" />
-            <RowDefinition Height="1*" />
-            <RowDefinition Height="60" />
-            <RowDefinition Height="260" />
+    <Grid Margin="25, 0"
+          x:Name="grid">
+        <Grid.RowDefinitions >
+            <RowDefinition Height="280"
+                           MinHeight="100" 
+                           MaxHeight="650"/>
+            <RowDefinition Height="5" />
+            <RowDefinition Height="75" MinHeight="75" />
+            <RowDefinition Height="270"/>
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
 
-            <Label Grid.Column="0"
-                   Content="TidyText"
-                   FontSize="28"
-                   FontWeight="Bold"
-                   HorizontalAlignment="Left"
-                   VerticalAlignment="Center" />
-
-            <Label Grid.Column="1"
-                   Content="Wrap Lines"
-                   FontSize="14"
-                   HorizontalAlignment="Right"
-                   VerticalAlignment="Center" />
-        </Grid>
-
-        <xctk:RichTextBox Grid.Row="1"
+        <xctk:RichTextBox Grid.Row="0"
                           BorderThickness="2"
                           BorderBrush="Black"
+                          Margin="0, 15, 0, 0"
                           VerticalScrollBarVisibility="Visible">
         </xctk:RichTextBox>
 
-        <Grid Grid.Row="2">
+        <GridSplitter Grid.Row="1"
+                      HorizontalAlignment="Stretch"
+                      ResizeDirection="Rows"
+                      ResizeBehavior="PreviousAndNext" />
+
+        <Grid Grid.Row="2"
+              VerticalAlignment="Top"
+              Margin="0, 15, 0, 0">
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="530" />
                 <ColumnDefinition />
-                <ColumnDefinition />
-                <ColumnDefinition />
+                <ColumnDefinition Width="190" />
             </Grid.ColumnDefinitions>
 
             <StackPanel Grid.Column="0"
                         Orientation="Horizontal">
 
-                <custom:ToggleSwitch Margin="20, 0" />
-
-                <custom:StatisticsViewer Margin="20, 0"
+                <custom:StatisticsViewer Margin="0, 0, 8, 0"
                                          ToolTip="Words"
                                          Label="W"
-                                         Content="20" />
+                                         Content="20"/>
+
+                <custom:StatisticsViewer Margin="8, 0, 8, 0"
+                                         ToolTip="Characters"
+                                         Label="C"
+                                         Content="200" />
+
+                <custom:StatisticsViewer Margin="8, 0, 8, 0"
+                                         ToolTip="Sentences"
+                                         Label="S"
+                                         Content="5" />
+
+                <custom:StatisticsViewer Margin="10, 0, 8, 0"
+                                         ToolTip="Paragraphs"
+                                         Label="P"
+                                         Content="1" />
+
+                <custom:StatisticsViewer Margin="8, 0, 8, 0"
+                                         ToolTip="Lines Breaks"
+                                         Label="L"
+                                         Content="1" />
             </StackPanel>
 
-            <StackPanel Grid.Column="3"
+            <StackPanel Grid.Column="1"
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center">
+                <Label Content="Wrap Lines"
+                       Margin="8, 0" />
+                <custom:ToggleSwitch Margin="0, 0, 20, 0" />
+            </StackPanel>
+
+            <StackPanel Grid.Column="2"
                         Orientation="Horizontal"
                         HorizontalAlignment="Right"
                         VerticalAlignment="Center">
 
                 <Button Content="Copy"
-                        Margin="0, 0, 5, 0" />
+                        Margin="0, 0, 8, 0" />
 
                 <Button Content="Clean"
-                        Margin="5, 0, 0, 0" />
+                        Margin="8, 0, 0, 0" />
             </StackPanel>
         </Grid>
 
+        
+
         <Grid Grid.Row="3"
-              Margin="0, 10">
+              Margin="0, 10" VerticalAlignment="Top">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="270" />
                 <ColumnDefinition Width="200" />
@@ -127,7 +150,7 @@
                        FontSize="16"
                        FontWeight="Bold"
                        HorizontalContentAlignment="Left"
-                       Padding="0, 5"/>
+                       Padding="0, 5" />
 
                 <RadioButton Content="Uppercase"
                              Margin="0,6"
