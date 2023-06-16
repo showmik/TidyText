@@ -1,43 +1,68 @@
-<ResourceDictionary
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="clr-namespace:TextCleaner.CustomControl">
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:TextCleaner.CustomControl">
 
-
-    <Style
-           TargetType="{x:Type local:ToggleSwitch}">
-        <Setter Property="MaxHeight"
-                Value="25" />
-        <Setter Property="MaxWidth"
-                Value="50" />
-        <Setter Property="MinHeight"
-                Value="25" />
-        <Setter Property="MinWidth"
-                Value="50" />
+    <!-- Toggle Switch Style -->
+    <Style TargetType="{x:Type local:ToggleSwitch}">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type local:ToggleSwitch}">
-                    <Border x:Name="bg"
-                            Background="#FFDDDDDD"
-                            CornerRadius="15">
-                        <Ellipse x:Name="ep"
-                                 Fill="Black"
-                                 Width="19"
-                                 HorizontalAlignment="Left"
-                                 Margin="3" />
-                    </Border>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsChecked"
-                                 Value="True">
-                            <Setter TargetName="ep"
-                                    Property="HorizontalAlignment"
-                                    Value="Right" />
-                            <Setter TargetName="bg"
-                                    Property="Background"
-                                    Value="#22aaff" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
+                    <Grid>
+                        <Border x:Name="TG_Border"
+                                Background="#FFDDDDDD"
+                                CornerRadius="7"
+                                MinHeight="15"
+                                MaxHeight="15"
+                                MinWidth="40"
+                                MaxWidth="40" />
 
+                        <Ellipse x:Name="TG_Ellipse"
+                                 Fill="Black"
+                                 HorizontalAlignment="Left"
+                                 VerticalAlignment="Center"
+                                 Margin="0"
+                                 Width="20"
+                                 Height="20" />
+                    </Grid>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver"
+                                 Value="True">
+                            <Setter Property="Cursor"
+                                    Value="Hand" />
+                        </Trigger>
+
+                        <EventTrigger RoutedEvent="Checked">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <ColorAnimation Storyboard.TargetName="TG_Border"
+                                                    Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                                                    To="#22aaff"
+                                                    Duration="0:0:0.2" />
+                                    <ThicknessAnimation Storyboard.TargetName="TG_Ellipse"
+                                                        Storyboard.TargetProperty="Margin"
+                                                        To="20 0 0 0"
+                                                        Duration="0:0:0.2" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+
+                        <EventTrigger RoutedEvent="Unchecked">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <ColorAnimation Storyboard.TargetName="TG_Border"
+                                                    Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                                                    To="#FFDDDDDD"
+                                                    Duration="0:0:0.2" />
+
+                                    <ThicknessAnimation Storyboard.TargetName="TG_Ellipse"
+                                                        Storyboard.TargetProperty="Margin"
+                                                        To="0 0 0 0"
+                                                        Duration="0:0:0.2" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
