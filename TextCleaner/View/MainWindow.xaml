@@ -141,27 +141,27 @@
 
                 <CheckBox Content="Trim"
                           Margin="0,6"
-                          IsChecked="{Binding Trim}" />
+                          IsChecked="{Binding ShouldTrim}" />
 
                 <CheckBox Content="Remove Leading Spaces"
                           Margin="0,6"
-                          IsChecked="{Binding RemoveLeadSpace}" />
+                          IsChecked="{Binding ShouldTrimLeadSpaces}" />
 
                 <CheckBox Content="Remove Trailing Spaces"
                           Margin="0,6"
-                          IsChecked="{Binding RemoveTrailSpace}" />
+                          IsChecked="{Binding ShouldTrimTrailSpaces}" />
 
                 <CheckBox Content="Multiple Spaces to Single"
                           Margin="0,6"
-                          IsChecked="{Binding MultipleSpaceToSingle}" />
+                          IsChecked="{Binding ShouldTrimMultipleSpaces}" />
 
                 <CheckBox Content="Multiple Blank Lines to Single"
                           Margin="0,6"
-                          IsChecked="{Binding MultipleLinesToSingle}" />
+                          IsChecked="{Binding ShouldTrimMultipleLines}" />
 
                 <CheckBox Content="Remove All Line Breaks"
                           Margin="0,6"
-                          IsChecked="{Binding RemoveLineBreaks}" />
+                          IsChecked="{Binding ShouldRemoveAllLines}" />
             </StackPanel>
 
             <StackPanel Grid.Column="1"

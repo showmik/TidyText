@@ -9,12 +9,12 @@ namespace TextCleaner.ViewModel
 {
     internal partial class MainViewModel : ObservableObject
     {
-        [ObservableProperty] private bool _trim;
-        [ObservableProperty] private bool _removeLeadSpace;
-        [ObservableProperty] private bool _removeTrailSpace;
-        [ObservableProperty] private bool _multipleSpaceToSingle;
-        [ObservableProperty] private bool _multipleLinesToSingle;
-        [ObservableProperty] private bool _removeLineBreaks;
+        [ObservableProperty] private bool _shouldTrim;
+        [ObservableProperty] private bool _shouldTrimLeadSpaces;
+        [ObservableProperty] private bool _shouldTrimTrailSpaces;
+        [ObservableProperty] private bool _shouldTrimMultipleSpaces;
+        [ObservableProperty] private bool _shouldTrimMultipleLines;
+        [ObservableProperty] private bool _shouldRemoveAllLines;
         [ObservableProperty] private bool _wrapLines;
 
         private string _mainText;
@@ -60,29 +60,34 @@ namespace TextCleaner.ViewModel
         [RelayCommand]
         public void CleanButton()
         {
-            if(Trim)
+            if(ShouldTrim)
             {
                 MainText = MainText.Trim();
             }
 
-            if(RemoveLeadSpace)
+            if(ShouldTrimLeadSpaces)
             {
                 MainText = MainText.TrimStart();
             }
 
-            if (RemoveTrailSpace)
+            if (ShouldTrimTrailSpaces)
             {
                 MainText = MainText.TrimEnd();
             }
 
-            if (MultipleSpaceToSingle)
+            if (ShouldTrimMultipleSpaces)
             {
                 MainText = CovertMultipleSpaceToSingle(MainText);
             }
 
-            if (MultipleLinesToSingle)
+            if (ShouldTrimMultipleLines)
             {
                 MainText = CovertMultipleLinesToSingle(MainText);
+            }
+
+            if (ShouldRemoveAllLines)
+            {
+                MainText = RemoveAllLineBreaks(MainText);
             }
 
         }
@@ -100,5 +105,7 @@ namespace TextCleaner.ViewModel
         public string CovertMultipleSpaceToSingle(string text) => Regex.Replace(text, @"\s+", " ");
 
         public string CovertMultipleLinesToSingle(string text) => Regex.Replace(text, @"(\n\s*){2,}", "\n\n");
+
+        public string RemoveAllLineBreaks(string text) => Regex.Replace(text, @"\r\n?|\n", "");
     }
 }
