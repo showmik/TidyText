@@ -1,10 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System;
+using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Windows;
-using System.Globalization;
-using Microsoft.Extensions.Hosting;
 
 namespace TextCleaner.ViewModel
 {
@@ -53,7 +52,6 @@ namespace TextCleaner.ViewModel
             }
         }
 
-
         public MainViewModel()
         {
             Application.Current.Exit += OnApplicationClosing;
@@ -61,8 +59,6 @@ namespace TextCleaner.ViewModel
             GetSettings();
             IsDoNotChange = true;
             _mainText = string.Empty;
-
-            
         }
 
         [RelayCommand]
@@ -74,12 +70,12 @@ namespace TextCleaner.ViewModel
         [RelayCommand]
         public void CleanButton()
         {
-            if(ShouldTrim)
+            if (ShouldTrim)
             {
                 MainText = MainText.Trim();
             }
 
-            if(ShouldTrimLeadSpaces)
+            if (ShouldTrimLeadSpaces)
             {
                 MainText = MainText.TrimStart();
             }
@@ -104,7 +100,7 @@ namespace TextCleaner.ViewModel
                 MainText = RemoveAllLineBreaks(MainText);
             }
 
-            if(ShouldFixPunctuaionSpace)
+            if (ShouldFixPunctuaionSpace)
             {
                 MainText = FixSpacesAfterPuntuation(MainText);
             }
@@ -113,7 +109,7 @@ namespace TextCleaner.ViewModel
             {
                 MainText = MainText.ToUpper();
             }
-            else if(IsLowercase)
+            else if (IsLowercase)
             {
                 MainText = MainText.ToLower();
             }
@@ -121,11 +117,10 @@ namespace TextCleaner.ViewModel
             {
                 MainText = ConvertToSentenceCase(MainText);
             }
-            else if(IsCapEachWord)
+            else if (IsCapEachWord)
             {
                 MainText = ConvertToTitleCase(MainText);
             }
-
         }
 
         private int CountWords(string text) => text.Split(new[] { ' ', '\t', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries).Length;
@@ -146,7 +141,7 @@ namespace TextCleaner.ViewModel
 
         public string FixSpacesAfterPuntuation(string text) => Regex.Replace(text, @"(?<=[^\s—–])\s*(\p{P})(?<!-)\s*", "$1 ");
 
-        string ConvertToSentenceCase(string text)
+        private string ConvertToSentenceCase(string text)
         {
             string[] sentences = Regex.Split(text, @"(?<=[\.!\?])\s+");
 

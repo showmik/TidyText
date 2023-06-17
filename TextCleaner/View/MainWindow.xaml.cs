@@ -1,8 +1,5 @@
-﻿using System;
-using System.Windows;
-using System.Windows.Controls.Primitives;
+﻿using System.Windows;
 using TextCleaner.ViewModel;
-using Xceed.Wpf.Toolkit;
 
 namespace TextCleaner.View
 {
@@ -15,9 +12,7 @@ namespace TextCleaner.View
         {
             InitializeComponent();
             DataContext = new MainViewModel();
-            Closing += MainWindow_Closing;
         }
-
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
@@ -29,12 +24,5 @@ namespace TextCleaner.View
                 MainGrid.RowDefinitions[0].MaxHeight = maxRowHeight;
             }
         }
-
-        private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            
-        }
-
-
     }
 }
