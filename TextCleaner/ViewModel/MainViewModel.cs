@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
 
@@ -141,9 +142,23 @@ namespace TextCleaner.ViewModel
 
         private int CountCharacters(string text) => text.Length;
 
-        private int CountSentences(string text) => Regex.Split(text, @"(?<=[.!?])\s+").Length;
+        private int CountSentences(string text)
+        {
+            string[] sentences = Regex.Split(text, @"(?<=[.!?])\s+");
+            int count = 0;
 
-        public int CountParagraphs(string text) => Regex.Split(text, @"\n\s*\n").Length;
+            foreach (string sentence in sentences)
+            {
+                if (!string.IsNullOrWhiteSpace(sentence))
+                {
+                    count++;
+                }
+            }
+            return count;
+        }
+
+
+        public int CountParagraphs(string text) => Regex.Split(text, @"\n\s*\n").Count(paragraph => !string.IsNullOrWhiteSpace(paragraph));
 
         public int CountLineBreaks(string text) => Regex.Matches(text, @"\n").Count;
 
