@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Windows;
-using System.Windows.Documents;
 
 namespace TextCleaner.ViewModel
 {
@@ -68,11 +67,10 @@ namespace TextCleaner.ViewModel
         [RelayCommand]
         public void UndoButton()
         {
-            if(inputStringList.Count > 0)
+            if (inputStringList.Count > 0)
             {
                 MainText = inputStringList.Pop();
             }
-            
         }
 
         [RelayCommand]
@@ -137,8 +135,6 @@ namespace TextCleaner.ViewModel
             {
                 MainText = ConvertToTitleCase(MainText);
             }
-
-            
         }
 
         private int CountWords(string text) => text.Split(new[] { ' ', '\t', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries).Length;

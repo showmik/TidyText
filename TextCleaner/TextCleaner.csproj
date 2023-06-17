@@ -9,6 +9,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Font\Inter-Regular.ttf" />
+    <None Remove="Image\copy.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="tidytext_icon.ico" />
   </ItemGroup>
 
@@ -21,7 +26,15 @@
 
   <ItemGroup>
     <Folder Include="Model\" />
-    <Folder Include="Font\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Font\Inter-Regular.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Image\copy.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
   <ItemGroup>
