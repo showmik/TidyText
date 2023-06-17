@@ -157,7 +157,6 @@ namespace TextCleaner.ViewModel
             return count;
         }
 
-
         public int CountParagraphs(string text) => Regex.Split(text, @"\n\s*\n").Count(paragraph => !string.IsNullOrWhiteSpace(paragraph));
 
         public int CountLineBreaks(string text) => Regex.Matches(text, @"\n").Count;
