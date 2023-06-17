@@ -34,7 +34,7 @@
             <RowDefinition Height="270" />
         </Grid.RowDefinitions>
 
-        <TextBox Grid.Row="0"
+        <TextBox x:Name="MainTextBox" Grid.Row="0"
                  BorderThickness="2"
                  BorderBrush="Black"
                  Margin="0, 15, 0, 0"
@@ -78,17 +78,17 @@
                 <custom:StatisticsViewer Margin="8, 0, 8, 0"
                                          ToolTip="Sentences"
                                          Label="S"
-                                         Content="5" />
+                                         Content="{Binding SentenceCount}" />
 
                 <custom:StatisticsViewer Margin="10, 0, 8, 0"
                                          ToolTip="Paragraphs"
                                          Label="P"
-                                         Content="1" />
+                                         Content="{Binding ParagraphCount}" />
 
                 <custom:StatisticsViewer Margin="8, 0, 8, 0"
                                          ToolTip="Lines Breaks"
                                          Label="L"
-                                         Content="1" />
+                                         Content="{Binding LineBreakCount}" />
             </StackPanel>
 
             <StackPanel Grid.Column="1"

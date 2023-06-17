@@ -2,6 +2,7 @@
 using System;
 using System.Text.RegularExpressions;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace TextCleaner.ViewModel
 {
@@ -19,10 +20,17 @@ namespace TextCleaner.ViewModel
 
         private int _wordCount;
         private int _characterCount;
+        private int _sentenceCount;
+        private int _paragraphCount;
+        private int _lineBreakCount;
 
         public int WordCount { get => _wordCount; set => SetProperty(ref _wordCount, value); }
         public int CharacterCount { get => _characterCount; set => SetProperty(ref _characterCount, value); }
-       
+        public int SentenceCount { get => _sentenceCount; set => SetProperty(ref _sentenceCount, value); }
+        public int ParagraphCount { get => _paragraphCount; set => SetProperty(ref _paragraphCount, value); }
+        public int LineBreakCount { get => _lineBreakCount; set => SetProperty(ref _lineBreakCount, value); }
+        public TextBox TextBoxReference { get; set; }
+
 
         public string MainText
         {
@@ -32,13 +40,15 @@ namespace TextCleaner.ViewModel
                 SetProperty(ref _mainText, value);
                 WordCount = CountWords(_mainText);
                 CharacterCount = CountCharacters(_mainText);
+                SentenceCount = CountSentences(_mainText);
+                ParagraphCount = CountParagraphs(_mainText);
+                LineBreakCount = CountLineBreaks(_mainText);
             }
         }
 
         public MainViewModel()
         {
             WrapLines = true;
-            
         }
 
         private int CountWords(string text)
@@ -51,6 +61,24 @@ namespace TextCleaner.ViewModel
         {
             string cleanedText = Regex.Replace(text, @"\s", "");
             return cleanedText.Length;
+        }
+
+        private int CountSentences(string text)
+        {
+            string[] sentences = Regex.Split(text, @"(?<=[.!?])\s+");
+            return sentences.Length;
+        }
+
+        public int CountParagraphs(string text)
+        {
+            string[] paragraphs = Regex.Split(text, @"\n\s*\n");
+            return paragraphs.Length;
+        }
+
+        public int CountLineBreaks(string text)
+        {
+            int lineBreaks = Regex.Matches(text, @"\n").Count;
+            return lineBreaks;
         }
     }
 }
