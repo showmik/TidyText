@@ -167,9 +167,10 @@ namespace TidyText.ViewModel
             return count;
         }
 
-        public int CountParagraphs(string text) => Regex.Split(text, @"\n\s*\n").Count(paragraph => !string.IsNullOrWhiteSpace(paragraph));
+        public int CountParagraphs(string text) => Regex.Split(text, @"\n+").Count(paragraph => !string.IsNullOrWhiteSpace(paragraph));
 
-        public int CountLineBreaks(string text) => Regex.Matches(text, @"\n").Count;
+
+        public int CountLineBreaks(string text) => text.Split('\n').Length;
 
         public string CovertMultipleSpaceToSingle(string text) => Regex.Replace(text, @"[ ]{2,}", " ");
 
