@@ -14,7 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace TextCleaner.CustomControl
+namespace TidyText.CustomControl
 {
     public class ToggleSwitch : ToggleButton
     {

@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
 
-namespace TextCleaner.ViewModel
+namespace TidyText.ViewModel
 {
     public partial class MainViewModel : ObservableObject
     {

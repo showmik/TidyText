@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Windows.Data;
 
-namespace TextCleaner.Service
+namespace TidyText.Service
 {
     internal class BooleanToWrapConverter : IValueConverter
     {

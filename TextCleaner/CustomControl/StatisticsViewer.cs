@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 
-namespace TextCleaner.CustomControl
+namespace TidyText.CustomControl
 {
     public class StatisticsViewer : Control
     {

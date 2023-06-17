@@ -1,6 +1,6 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:local="clr-namespace:TextCleaner.CustomControl">
+                    xmlns:local="clr-namespace:TidyText.CustomControl">
 
     <!-- Toggle Switch Style -->
     <Style TargetType="{x:Type local:ToggleSwitch}">

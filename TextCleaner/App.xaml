@@ -1,4 +1,4 @@
-﻿<Application x:Class="TextCleaner.App"
+﻿<Application x:Class="TidyText.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              StartupUri="View/MainWindow.xaml">
@@ -6,7 +6,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Style.xaml" />
-                <ResourceDictionary Source="/TextCleaner;component/Themes/Generic.xaml" />
+                <ResourceDictionary Source="/TidyText;component/Themes/Generic.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <Style TargetType="Control">
                 <Setter Property="FontFamily"

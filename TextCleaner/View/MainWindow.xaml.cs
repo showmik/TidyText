@@ -1,7 +1,7 @@
 ﻿using System.Windows;
-using TextCleaner.ViewModel;
+using TidyText.ViewModel;
 
-namespace TextCleaner.View
+namespace TidyText.View
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

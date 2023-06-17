@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33801.468
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TextCleaner", "TextCleaner\TextCleaner.csproj", "{0AA36B43-ECBD-405E-A4E0-F994ED02D183}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TidyText", "TextCleaner\TidyText.csproj", "{0AA36B43-ECBD-405E-A4E0-F994ED02D183}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
