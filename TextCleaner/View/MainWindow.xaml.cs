@@ -15,6 +15,7 @@ namespace TextCleaner.View
         {
             InitializeComponent();
             DataContext = new MainViewModel();
+            Closing += MainWindow_Closing;
         }
 
 
@@ -28,5 +29,12 @@ namespace TextCleaner.View
                 MainGrid.RowDefinitions[0].MaxHeight = maxRowHeight;
             }
         }
+
+        private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            
+        }
+
+
     }
 }

@@ -4,11 +4,11 @@ using System;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Globalization;
-using System.Windows.Controls;
+using Microsoft.Extensions.Hosting;
 
 namespace TextCleaner.ViewModel
 {
-    internal partial class MainViewModel : ObservableObject
+    public partial class MainViewModel : ObservableObject
     {
         [ObservableProperty] private bool _shouldTrim;
         [ObservableProperty] private bool _shouldTrimLeadSpaces;
@@ -53,11 +53,16 @@ namespace TextCleaner.ViewModel
             }
         }
 
+
         public MainViewModel()
         {
-            WrapLines = true;
+            Application.Current.Exit += OnApplicationClosing;
+
+            GetSettings();
             IsDoNotChange = true;
             _mainText = string.Empty;
+
+            
         }
 
         [RelayCommand]
@@ -160,5 +165,35 @@ namespace TextCleaner.ViewModel
         }
 
         public string ConvertToTitleCase(string text) => new CultureInfo("en-US", false).TextInfo.ToTitleCase(text);
+
+        public void GetSettings()
+        {
+            WrapLines = Properties.Settings.Default.IsWrapLine;
+            ShouldTrim = Properties.Settings.Default.ShouldTrim;
+            ShouldTrimLeadSpaces = Properties.Settings.Default.ShouldTrimLeadSpaces;
+            ShouldTrimTrailSpaces = Properties.Settings.Default.ShouldTrimTrailSpaces;
+            ShouldTrimMultipleSpaces = Properties.Settings.Default.ShouldTrimMultipleSpaces;
+            ShouldTrimMultipleLines = Properties.Settings.Default.ShouldTrimMultipleLines;
+            ShouldRemoveAllLines = Properties.Settings.Default.ShouldRemoveAllLines;
+            ShouldFixPunctuaionSpace = Properties.Settings.Default.ShouldFixPunctuaionSpace;
+        }
+
+        public void SaveSettings()
+        {
+            Properties.Settings.Default.IsWrapLine = WrapLines;
+            Properties.Settings.Default.ShouldTrim = ShouldTrim;
+            Properties.Settings.Default.ShouldTrimLeadSpaces = ShouldTrimLeadSpaces;
+            Properties.Settings.Default.ShouldTrimTrailSpaces = ShouldTrimTrailSpaces;
+            Properties.Settings.Default.ShouldTrimMultipleSpaces = ShouldTrimMultipleSpaces;
+            Properties.Settings.Default.ShouldTrimMultipleLines = ShouldTrimMultipleLines;
+            Properties.Settings.Default.ShouldRemoveAllLines = ShouldRemoveAllLines;
+            Properties.Settings.Default.ShouldFixPunctuaionSpace = ShouldFixPunctuaionSpace;
+            Properties.Settings.Default.Save();
+        }
+
+        private void OnApplicationClosing(object sender, ExitEventArgs e)
+        {
+            SaveSettings();
+        }
     }
 }
