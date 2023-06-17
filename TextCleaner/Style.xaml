@@ -11,7 +11,7 @@
     <SolidColorBrush x:Key="AccentColor"
                      Color="#65AFFF" />
     <SolidColorBrush x:Key="PressedColor"
-                     Color="#C2DFFF" />
+                     Color="#99CAFF" />
 
     <!--#region RichTextBox Style -->
     <Style x:Key="{x:Type Hyperlink}"
@@ -348,6 +348,13 @@
                                     Value="{StaticResource FontColor}" />
                             <Setter Property="Cursor"
                                     Value="Hand" />
+                        </Trigger>
+
+                        <Trigger Property="IsPressed"
+                                 Value="True">
+                            <Setter Property="Background"
+                                    TargetName="border"
+                                    Value="{StaticResource PressedColor}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
