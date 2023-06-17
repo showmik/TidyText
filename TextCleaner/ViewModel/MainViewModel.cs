@@ -1,9 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Windows;
+using System.Windows.Documents;
 
 namespace TextCleaner.ViewModel
 {
@@ -31,6 +33,8 @@ namespace TextCleaner.ViewModel
         private int _sentenceCount;
         private int _paragraphCount;
         private int _lineBreakCount;
+
+        private Stack<string> inputStringList = new();
 
         public int WordCount { get => _wordCount; set => SetProperty(ref _wordCount, value); }
         public int CharacterCount { get => _characterCount; set => SetProperty(ref _characterCount, value); }
@@ -62,6 +66,16 @@ namespace TextCleaner.ViewModel
         }
 
         [RelayCommand]
+        public void UndoButton()
+        {
+            if(inputStringList.Count > 0)
+            {
+                MainText = inputStringList.Pop();
+            }
+            
+        }
+
+        [RelayCommand]
         public void CopyButton()
         {
             Clipboard.SetText(MainText);
@@ -70,6 +84,8 @@ namespace TextCleaner.ViewModel
         [RelayCommand]
         public void CleanButton()
         {
+            inputStringList.Push(MainText);
+
             if (ShouldTrim)
             {
                 MainText = MainText.Trim();
@@ -121,6 +137,8 @@ namespace TextCleaner.ViewModel
             {
                 MainText = ConvertToTitleCase(MainText);
             }
+
+            
         }
 
         private int CountWords(string text) => text.Split(new[] { ' ', '\t', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries).Length;

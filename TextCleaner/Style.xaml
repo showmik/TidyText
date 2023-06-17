@@ -323,6 +323,8 @@
                 Value="14" />
         <Setter Property="Height"
                 Value="30" />
+        <Setter Property="MinHeight"
+                Value="30" />
         <Setter Property="Width"
                 Value="80" />
 
@@ -353,4 +355,49 @@
         </Setter>
     </Style>
     <!--#endregion-->
+
+
+    <Style x:Key="CopyButtonStyle"
+           TargetType="{x:Type Button}">
+        <Setter Property="VerticalContentAlignment"
+                Value="Center" />
+        <Setter Property="HorizontalContentAlignment"
+                Value="Center" />
+        <Setter Property="FontFamily"
+                Value="/TextCleaner;component/Font/#Inter-Regular" />
+        <Setter Property="FontSize"
+                Value="14" />
+        <Setter Property="Height"
+                Value="30" />
+        <Setter Property="MinHeight"
+                Value="30" />
+        <Setter Property="Width"
+                Value="80" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border x:Name="border"
+                            Background="#4C65AFFF"
+                            Opacity="50"
+                            BorderBrush="#7F000000"
+                            BorderThickness="2">
+                        <ContentPresenter HorizontalAlignment="Center"
+                                          VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver"
+                                 Value="True">
+                            <Setter Property="Background"
+                                    TargetName="border"
+                                    Value="{StaticResource AccentColor}" />
+                            <Setter Property="Foreground"
+                                    Value="{StaticResource FontColor}" />
+                            <Setter Property="Cursor"
+                                    Value="Hand" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 </ResourceDictionary>
