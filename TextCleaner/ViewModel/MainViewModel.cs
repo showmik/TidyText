@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using System.Text.RegularExpressions;
-using System.Windows;
 using System.Windows.Controls;
 
 namespace TextCleaner.ViewModel
@@ -30,7 +29,6 @@ namespace TextCleaner.ViewModel
         public int ParagraphCount { get => _paragraphCount; set => SetProperty(ref _paragraphCount, value); }
         public int LineBreakCount { get => _lineBreakCount; set => SetProperty(ref _lineBreakCount, value); }
         public TextBox TextBoxReference { get; set; }
-
 
         public string MainText
         {
