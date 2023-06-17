@@ -49,34 +49,14 @@ namespace TextCleaner.ViewModel
             WrapLines = true;
         }
 
-        private int CountWords(string text)
-        {
-            string[] words = text.Split(new[] { ' ', '\t', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
-            return words.Length;
-        }
+        private int CountWords(string text) => text.Split(new[] { ' ', '\t', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries).Length;
 
-        private int CountCharacters(string text)
-        {
-            string cleanedText = Regex.Replace(text, @"\s", "");
-            return cleanedText.Length;
-        }
+        private int CountCharacters(string text) => Regex.Replace(text, @"\s", "").Length;
 
-        private int CountSentences(string text)
-        {
-            string[] sentences = Regex.Split(text, @"(?<=[.!?])\s+");
-            return sentences.Length;
-        }
+        private int CountSentences(string text) => Regex.Split(text, @"(?<=[.!?])\s+").Length;
 
-        public int CountParagraphs(string text)
-        {
-            string[] paragraphs = Regex.Split(text, @"\n\s*\n");
-            return paragraphs.Length;
-        }
+        public int CountParagraphs(string text) => Regex.Split(text, @"\n\s*\n").Length;
 
-        public int CountLineBreaks(string text)
-        {
-            int lineBreaks = Regex.Matches(text, @"\n").Count;
-            return lineBreaks;
-        }
+        public int CountLineBreaks(string text) => Regex.Matches(text, @"\n").Count;
     }
 }
