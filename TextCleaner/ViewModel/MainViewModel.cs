@@ -161,7 +161,7 @@ namespace TidyText.ViewModel
 
         public int CountLineBreaks(string text) => Regex.Matches(text, @"\n").Count;
 
-        public string CovertMultipleSpaceToSingle(string text) => Regex.Replace(text, @"\s+", " ");
+        public string CovertMultipleSpaceToSingle(string text) => Regex.Replace(text, @"[ ]{2,}", " ");
 
         public string CovertMultipleLinesToSingle(string text) => Regex.Replace(text, @"(\n\s*){2,}", "\n\n");
 
