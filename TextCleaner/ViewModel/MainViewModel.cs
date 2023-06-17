@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Text.RegularExpressions;
 using System.Windows;
+using System.Globalization;
 using System.Windows.Controls;
 
 namespace TextCleaner.ViewModel
@@ -15,7 +16,14 @@ namespace TextCleaner.ViewModel
         [ObservableProperty] private bool _shouldTrimMultipleSpaces;
         [ObservableProperty] private bool _shouldTrimMultipleLines;
         [ObservableProperty] private bool _shouldRemoveAllLines;
+        [ObservableProperty] private bool _shouldFixPunctuaionSpace;
         [ObservableProperty] private bool _wrapLines;
+
+        [ObservableProperty] private bool _IsUppercase;
+        [ObservableProperty] private bool _IsLowercase;
+        [ObservableProperty] private bool _IsSentenceCase;
+        [ObservableProperty] private bool _IsCapEachWord;
+        [ObservableProperty] private bool _IsDoNotChange;
 
         private string _mainText;
 
@@ -48,6 +56,7 @@ namespace TextCleaner.ViewModel
         public MainViewModel()
         {
             WrapLines = true;
+            IsDoNotChange = true;
             _mainText = string.Empty;
         }
 
@@ -90,6 +99,28 @@ namespace TextCleaner.ViewModel
                 MainText = RemoveAllLineBreaks(MainText);
             }
 
+            if(ShouldFixPunctuaionSpace)
+            {
+                MainText = FixSpacesAfterPuntuation(MainText);
+            }
+
+            if (IsUppercase)
+            {
+                MainText = MainText.ToUpper();
+            }
+            else if(IsLowercase)
+            {
+                MainText = MainText.ToLower();
+            }
+            else if (IsSentenceCase)
+            {
+                MainText = ConvertToSentenceCase(MainText);
+            }
+            else if(IsCapEachWord)
+            {
+                MainText = ConvertToTitleCase(MainText);
+            }
+
         }
 
         private int CountWords(string text) => text.Split(new[] { ' ', '\t', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries).Length;
@@ -107,5 +138,27 @@ namespace TextCleaner.ViewModel
         public string CovertMultipleLinesToSingle(string text) => Regex.Replace(text, @"(\n\s*){2,}", "\n\n");
 
         public string RemoveAllLineBreaks(string text) => Regex.Replace(text, @"\r\n?|\n", "");
+
+        public string FixSpacesAfterPuntuation(string text) => Regex.Replace(text, @"(?<=[^\s—–])\s*(\p{P})(?<!-)\s*", "$1 ");
+
+        string ConvertToSentenceCase(string text)
+        {
+            string[] sentences = Regex.Split(text, @"(?<=[\.!\?])\s+");
+
+            for (int i = 0; i < sentences.Length; i++)
+            {
+                string sentence = sentences[i];
+
+                if (!string.IsNullOrEmpty(sentence))
+                {
+                    sentence = char.ToUpper(sentence[0]) + sentence.Substring(1).ToLower(CultureInfo.CurrentCulture);
+                }
+
+                sentences[i] = sentence;
+            }
+            return string.Join(" ", sentences);
+        }
+
+        public string ConvertToTitleCase(string text) => new CultureInfo("en-US", false).TextInfo.ToTitleCase(text);
     }
 }

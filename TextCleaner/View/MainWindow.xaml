@@ -114,7 +114,7 @@
 
                 <Button Content="Clean"
                         Margin="8, 0, 0, 0"
-                        Command="{Binding CleanButtonCommand}"/>
+                        Command="{Binding CleanButtonCommand}" />
             </StackPanel>
         </Grid>
 
@@ -177,23 +177,28 @@
 
                 <RadioButton Content="Uppercase"
                              Margin="0,6"
-                             BorderThickness="2" />
+                             BorderThickness="2"
+                             IsChecked="{Binding IsUppercase, Mode=TwoWay}" />
 
                 <RadioButton Content="Lowercase"
                              Margin="0,6"
-                             BorderThickness="2" />
+                             BorderThickness="2"
+                             IsChecked="{Binding IsLowercase, Mode=TwoWay}" />
 
                 <RadioButton Content="Sentence Case"
                              Margin="0,6"
-                             BorderThickness="2" />
+                             BorderThickness="2"
+                             IsChecked="{Binding IsSentenceCase, Mode=TwoWay}" />
 
                 <RadioButton Content="Capitalize Each Word"
                              Margin="0,6"
-                             BorderThickness="2" />
+                             BorderThickness="2"
+                             IsChecked="{Binding IsCapEachWord, Mode=TwoWay}" />
 
                 <RadioButton Content="Do Not Change"
                              Margin="0,6"
-                             BorderThickness="2" />
+                             BorderThickness="2"
+                             IsChecked="{Binding IsDoNotChange, Mode=TwoWay}" />
             </StackPanel>
 
             <StackPanel Grid.Column="2"
@@ -208,7 +213,8 @@
                        Padding="0, 5" />
 
                 <CheckBox Content="Fix Space After Punctuation"
-                          Margin="0,6" />
+                          Margin="0,6"
+                          IsChecked="{Binding ShouldFixPunctuaionSpace}" />
             </StackPanel>
         </Grid>
     </Grid>
