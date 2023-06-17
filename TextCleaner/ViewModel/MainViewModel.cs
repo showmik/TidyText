@@ -1,6 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Text.RegularExpressions;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace TextCleaner.ViewModel
@@ -28,7 +30,6 @@ namespace TextCleaner.ViewModel
         public int SentenceCount { get => _sentenceCount; set => SetProperty(ref _sentenceCount, value); }
         public int ParagraphCount { get => _paragraphCount; set => SetProperty(ref _paragraphCount, value); }
         public int LineBreakCount { get => _lineBreakCount; set => SetProperty(ref _lineBreakCount, value); }
-        public TextBox TextBoxReference { get; set; }
 
         public string MainText
         {
@@ -47,6 +48,43 @@ namespace TextCleaner.ViewModel
         public MainViewModel()
         {
             WrapLines = true;
+            _mainText = string.Empty;
+        }
+
+        [RelayCommand]
+        public void CopyButton()
+        {
+            Clipboard.SetText(MainText);
+        }
+
+        [RelayCommand]
+        public void CleanButton()
+        {
+            if(Trim)
+            {
+                MainText = MainText.Trim();
+            }
+
+            if(RemoveLeadSpace)
+            {
+                MainText = MainText.TrimStart();
+            }
+
+            if (RemoveTrailSpace)
+            {
+                MainText = MainText.TrimEnd();
+            }
+
+            if (MultipleSpaceToSingle)
+            {
+                MainText = CovertMultipleSpaceToSingle(MainText);
+            }
+
+            if (MultipleLinesToSingle)
+            {
+                MainText = CovertMultipleLinesToSingle(MainText);
+            }
+
         }
 
         private int CountWords(string text) => text.Split(new[] { ' ', '\t', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries).Length;
@@ -58,5 +96,9 @@ namespace TextCleaner.ViewModel
         public int CountParagraphs(string text) => Regex.Split(text, @"\n\s*\n").Length;
 
         public int CountLineBreaks(string text) => Regex.Matches(text, @"\n").Count;
+
+        public string CovertMultipleSpaceToSingle(string text) => Regex.Replace(text, @"\s+", " ");
+
+        public string CovertMultipleLinesToSingle(string text) => Regex.Replace(text, @"(\n\s*){2,}", "\n\n");
     }
 }

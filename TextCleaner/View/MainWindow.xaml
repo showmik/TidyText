@@ -34,7 +34,8 @@
             <RowDefinition Height="270" />
         </Grid.RowDefinitions>
 
-        <TextBox x:Name="MainTextBox" Grid.Row="0"
+        <TextBox x:Name="MainTextBox"
+                 Grid.Row="0"
                  BorderThickness="2"
                  BorderBrush="Black"
                  Margin="0, 15, 0, 0"
@@ -108,10 +109,12 @@
                         VerticalAlignment="Center">
 
                 <Button Content="Copy"
-                        Margin="0, 0, 8, 0" />
+                        Margin="0, 0, 8, 0"
+                        Command="{Binding CopyButtonCommand}" />
 
                 <Button Content="Clean"
-                        Margin="8, 0, 0, 0" />
+                        Margin="8, 0, 0, 0"
+                        Command="{Binding CleanButtonCommand}"/>
             </StackPanel>
         </Grid>
 
