@@ -11,6 +11,7 @@ namespace TidyText.ViewModel
 {
     public partial class MainViewModel : ObservableObject
     {
+        // White Spaces
         [ObservableProperty] private bool _shouldTrim;
         [ObservableProperty] private bool _shouldTrimLeadSpaces;
         [ObservableProperty] private bool _shouldTrimTrailSpaces;
@@ -20,21 +21,25 @@ namespace TidyText.ViewModel
         [ObservableProperty] private bool _shouldFixPunctuaionSpace;
         [ObservableProperty] private bool _wrapLines;
 
+        // Letter Case
         [ObservableProperty] private bool _IsUppercase;
         [ObservableProperty] private bool _IsLowercase;
         [ObservableProperty] private bool _IsSentenceCase;
         [ObservableProperty] private bool _IsCapEachWord;
         [ObservableProperty] private bool _IsDoNotChange;
 
+        // Input Text
         private string _mainText;
+        private string _previousText;
+        private Stack<string> inputStringStack = new();
 
+        // Counters
         private int _wordCount;
+
         private int _characterCount;
         private int _sentenceCount;
         private int _paragraphCount;
         private int _lineBreakCount;
-
-        private Stack<string> inputStringList = new();
 
         public int WordCount { get => _wordCount; set => SetProperty(ref _wordCount, value); }
         public int CharacterCount { get => _characterCount; set => SetProperty(ref _characterCount, value); }
@@ -59,18 +64,18 @@ namespace TidyText.ViewModel
         public MainViewModel()
         {
             Application.Current.Exit += OnApplicationClosing;
-
             GetSettings();
             IsDoNotChange = true;
             _mainText = string.Empty;
+            _previousText = string.Empty;
         }
 
         [RelayCommand]
         public void UndoButton()
         {
-            if (inputStringList.Count > 0)
+            if (inputStringStack.Count > 0)
             {
-                MainText = inputStringList.Pop();
+                MainText = inputStringStack.Pop();
             }
         }
 
@@ -83,7 +88,7 @@ namespace TidyText.ViewModel
         [RelayCommand]
         public void CleanButton()
         {
-            inputStringList.Push(MainText);
+            _previousText = MainText;
 
             if (ShouldTrim)
             {
@@ -135,6 +140,11 @@ namespace TidyText.ViewModel
             else if (IsCapEachWord)
             {
                 MainText = ConvertToTitleCase(MainText);
+            }
+
+            if (MainText != _previousText)
+            {
+                inputStringStack.Push(_previousText);
             }
         }
 
