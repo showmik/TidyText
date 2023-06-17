@@ -8,6 +8,8 @@ namespace TextCleaner.View
     /// </summary>
     public partial class MainWindow : Window
     {
+        private bool isCtrlKeyPressed;
+
         public MainWindow()
         {
             InitializeComponent();

@@ -125,7 +125,7 @@ namespace TextCleaner.ViewModel
 
         private int CountWords(string text) => text.Split(new[] { ' ', '\t', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries).Length;
 
-        private int CountCharacters(string text) => Regex.Replace(text, @"\s", "").Length;
+        private int CountCharacters(string text) => text.Length;
 
         private int CountSentences(string text) => Regex.Split(text, @"(?<=[.!?])\s+").Length;
 

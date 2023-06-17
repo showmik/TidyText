@@ -37,6 +37,7 @@
         <TextBox x:Name="MainTextBox"
                  Grid.Row="0"
                  BorderThickness="2"
+                 FontFamily="Font/Inter-Regular.ttf"
                  BorderBrush="Black"
                  Margin="0, 15, 0, 0"
                  Padding="8"
