@@ -5,6 +5,8 @@ VisualStudioVersion = 17.6.33801.468
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TidyText", "TextCleaner\TidyText.csproj", "{0AA36B43-ECBD-405E-A4E0-F994ED02D183}"
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "TidyText.Setup", "TidyText.Setup\TidyText.Setup.vdproj", "{74EAF443-2A6C-4652-B3BB-05E43F2463BD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,8 @@ Global
 		{0AA36B43-ECBD-405E-A4E0-F994ED02D183}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0AA36B43-ECBD-405E-A4E0-F994ED02D183}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0AA36B43-ECBD-405E-A4E0-F994ED02D183}.Release|Any CPU.Build.0 = Release|Any CPU
+		{74EAF443-2A6C-4652-B3BB-05E43F2463BD}.Debug|Any CPU.ActiveCfg = Debug
+		{74EAF443-2A6C-4652-B3BB-05E43F2463BD}.Release|Any CPU.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

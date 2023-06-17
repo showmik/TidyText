@@ -35,12 +35,12 @@ namespace TidyText.ViewModel
 
         // Counters
         private int _wordCount;
-
         private int _characterCount;
         private int _sentenceCount;
         private int _paragraphCount;
         private int _lineBreakCount;
 
+        // Getters and Setters
         public int WordCount { get => _wordCount; set => SetProperty(ref _wordCount, value); }
         public int CharacterCount { get => _characterCount; set => SetProperty(ref _characterCount, value); }
         public int SentenceCount { get => _sentenceCount; set => SetProperty(ref _sentenceCount, value); }
