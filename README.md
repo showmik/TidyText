@@ -1,6 +1,8 @@
 # TidyText - Offline Text Cleaner and Formatter
 
-![TidyText UI](TidyText_UI.png)
+<kbd><img src="TidyText_UI.png" /></kbd>
+  
+
 
 **TidyText** is a user-friendly offline application designed to clean and format your text documents. With TidyText, you can easily enhance the readability and consistency of your text by applying various formatting operations. Whether you're a writer, editor, student, or anyone working with text, TidyText provides essential functionalities to streamline your text cleaning process.
 
