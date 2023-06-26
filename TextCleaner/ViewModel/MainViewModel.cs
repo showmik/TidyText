@@ -13,10 +13,10 @@ namespace TidyText.ViewModel
     {
         // White Spaces
         [ObservableProperty] private bool _shouldTrim;
-        [ObservableProperty] private bool _shouldTrimLeadSpaces;
-        [ObservableProperty] private bool _shouldTrimTrailSpaces;
-        [ObservableProperty] private bool _shouldTrimMultipleSpaces;
-        [ObservableProperty] private bool _shouldTrimMultipleLines;
+        [ObservableProperty] private bool _shouldTrimEnd;
+        [ObservableProperty] private bool _shouldTrimStart;
+        [ObservableProperty] private bool _shouldRemoveMultipleSpaces;
+        [ObservableProperty] private bool _shouldRemoveMultipleLines;
         [ObservableProperty] private bool _shouldRemoveAllLines;
         [ObservableProperty] private bool _shouldFixPunctuaionSpace;
         [ObservableProperty] private bool _wrapLines;
@@ -31,7 +31,7 @@ namespace TidyText.ViewModel
         // Input Text
         private string _mainText;
         private string _previousText;
-        private Stack<string> inputStringStack = new();
+        private Stack<string> _inputStringStack = new();
 
         // Counters
         private int _wordCount;
@@ -71,83 +71,44 @@ namespace TidyText.ViewModel
         }
 
         [RelayCommand]
-        public void UndoButton()
+        public void Undo()
         {
-            if (inputStringStack.Count > 0)
+            if (_inputStringStack.Count > 0)
             {
-                MainText = inputStringStack.Pop();
+                MainText = _inputStringStack.Pop();
             }
         }
 
         [RelayCommand]
-        public void CopyButton()
+        public void Copy()
         {
             Clipboard.SetText(MainText);
         }
 
         [RelayCommand]
-        public void CleanButton()
+        public void Clean()
         {
             _previousText = MainText;
 
-            if (ShouldTrim)
-            {
-                MainText = MainText.Trim();
-            }
+            // Tries to remove white spaces
+            if (ShouldTrim) { MainText = MainText.Trim(); }
+            if (ShouldTrimStart) { MainText = MainText.TrimStart(); }
+            if (ShouldTrimEnd) { MainText = MainText.TrimEnd(); }
+            if (ShouldRemoveMultipleSpaces) { MainText = CovertMultipleSpaceToSingle(MainText); }
+            if (ShouldRemoveMultipleLines) { MainText = CovertMultipleLinesToSingle(MainText); }
+            if (ShouldRemoveAllLines) { MainText = RemoveAllLineBreaks(MainText); }
+            if (ShouldFixPunctuaionSpace) { MainText = FixSpacesAfterPuntuation(MainText); }
 
-            if (ShouldTrimLeadSpaces)
-            {
-                MainText = MainText.TrimStart();
-            }
+            // Tries changing letter case
+            if (IsUppercase) { MainText = MainText.ToUpper(); }
+            else if (IsLowercase) { MainText = MainText.ToLower(); }
+            else if (IsSentenceCase) { MainText = ConvertToSentenceCase(MainText); }
+            else if (IsCapEachWord) { MainText = ConvertToTitleCase(MainText); }
 
-            if (ShouldTrimTrailSpaces)
-            {
-                MainText = MainText.TrimEnd();
-            }
-
-            if (ShouldTrimMultipleSpaces)
-            {
-                MainText = CovertMultipleSpaceToSingle(MainText);
-            }
-
-            if (ShouldTrimMultipleLines)
-            {
-                MainText = CovertMultipleLinesToSingle(MainText);
-            }
-
-            if (ShouldRemoveAllLines)
-            {
-                MainText = RemoveAllLineBreaks(MainText);
-            }
-
-            if (ShouldFixPunctuaionSpace)
-            {
-                MainText = FixSpacesAfterPuntuation(MainText);
-            }
-
-            if (IsUppercase)
-            {
-                MainText = MainText.ToUpper();
-            }
-            else if (IsLowercase)
-            {
-                MainText = MainText.ToLower();
-            }
-            else if (IsSentenceCase)
-            {
-                MainText = ConvertToSentenceCase(MainText);
-            }
-            else if (IsCapEachWord)
-            {
-                MainText = ConvertToTitleCase(MainText);
-            }
-
-            if (MainText != _previousText)
-            {
-                inputStringStack.Push(_previousText);
-            }
+            if (MainText != _previousText) { _inputStringStack.Push(_previousText); }
         }
 
+        // Text statistics related methods
         private int CountWords(string text) => text.Split(new[] { ' ', '\t', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries).Length;
 
         private int CountCharacters(string text) => text.Length;
@@ -159,10 +120,7 @@ namespace TidyText.ViewModel
 
             foreach (string sentence in sentences)
             {
-                if (!string.IsNullOrWhiteSpace(sentence))
-                {
-                    count++;
-                }
+                if (!string.IsNullOrWhiteSpace(sentence)) { count++; }
             }
             return count;
         }
@@ -171,6 +129,7 @@ namespace TidyText.ViewModel
 
         public int CountLineBreaks(string text) => text.Split('\n').Length;
 
+        // White space related methods
         public string CovertMultipleSpaceToSingle(string text) => Regex.Replace(text, @"[ ]{2,}", " ");
 
         public string CovertMultipleLinesToSingle(string text) => Regex.Replace(text, @"(\n\s*){2,}", "\n\n");
@@ -179,6 +138,7 @@ namespace TidyText.ViewModel
 
         public string FixSpacesAfterPuntuation(string text) => Regex.Replace(text, @"(?<=[^\s—–])\s*(\p{P})(?<!-)\s*", "$1 ");
 
+        // Letter case related methods
         private string ConvertToSentenceCase(string text)
         {
             string[] sentences = Regex.Split(text, @"(?<=[\.!\?])\s+");
@@ -199,14 +159,15 @@ namespace TidyText.ViewModel
 
         public string ConvertToTitleCase(string text) => new CultureInfo("en-US", false).TextInfo.ToTitleCase(text);
 
+        // Other methods
         public void GetSettings()
         {
             WrapLines = Properties.Settings.Default.IsWrapLine;
             ShouldTrim = Properties.Settings.Default.ShouldTrim;
-            ShouldTrimLeadSpaces = Properties.Settings.Default.ShouldTrimLeadSpaces;
-            ShouldTrimTrailSpaces = Properties.Settings.Default.ShouldTrimTrailSpaces;
-            ShouldTrimMultipleSpaces = Properties.Settings.Default.ShouldTrimMultipleSpaces;
-            ShouldTrimMultipleLines = Properties.Settings.Default.ShouldTrimMultipleLines;
+            ShouldTrimStart = Properties.Settings.Default.ShouldTrimLeadSpaces;
+            ShouldTrimEnd = Properties.Settings.Default.ShouldTrimTrailSpaces;
+            ShouldRemoveMultipleSpaces = Properties.Settings.Default.ShouldTrimMultipleSpaces;
+            ShouldRemoveMultipleLines = Properties.Settings.Default.ShouldTrimMultipleLines;
             ShouldRemoveAllLines = Properties.Settings.Default.ShouldRemoveAllLines;
             ShouldFixPunctuaionSpace = Properties.Settings.Default.ShouldFixPunctuaionSpace;
         }
@@ -215,18 +176,15 @@ namespace TidyText.ViewModel
         {
             Properties.Settings.Default.IsWrapLine = WrapLines;
             Properties.Settings.Default.ShouldTrim = ShouldTrim;
-            Properties.Settings.Default.ShouldTrimLeadSpaces = ShouldTrimLeadSpaces;
-            Properties.Settings.Default.ShouldTrimTrailSpaces = ShouldTrimTrailSpaces;
-            Properties.Settings.Default.ShouldTrimMultipleSpaces = ShouldTrimMultipleSpaces;
-            Properties.Settings.Default.ShouldTrimMultipleLines = ShouldTrimMultipleLines;
+            Properties.Settings.Default.ShouldTrimLeadSpaces = ShouldTrimStart;
+            Properties.Settings.Default.ShouldTrimTrailSpaces = ShouldTrimEnd;
+            Properties.Settings.Default.ShouldTrimMultipleSpaces = ShouldRemoveMultipleSpaces;
+            Properties.Settings.Default.ShouldTrimMultipleLines = ShouldRemoveMultipleLines;
             Properties.Settings.Default.ShouldRemoveAllLines = ShouldRemoveAllLines;
             Properties.Settings.Default.ShouldFixPunctuaionSpace = ShouldFixPunctuaionSpace;
             Properties.Settings.Default.Save();
         }
 
-        private void OnApplicationClosing(object sender, ExitEventArgs e)
-        {
-            SaveSettings();
-        }
+        private void OnApplicationClosing(object sender, ExitEventArgs e) => SaveSettings();
     }
 }

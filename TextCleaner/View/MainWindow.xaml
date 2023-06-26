@@ -57,7 +57,7 @@
                 BorderBrush="Transparent"
                 BorderThickness="0"
                 VerticalAlignment="Top"
-                Command="{Binding CopyButtonCommand}">
+                Command="{Binding CopyCommand}">
             <Image Source="/Image/copy.png" Margin="3" />
         </Button>
 
@@ -127,11 +127,11 @@
 
                 <Button Content="Undo"
                         Margin="0, 0, 8, 0"
-                        Command="{Binding UndoButtonCommand}" />
+                        Command="{Binding UndoCommand}" />
 
                 <Button Content="Clean"
                         Margin="8, 0, 0, 0"
-                        Command="{Binding CleanButtonCommand}" />
+                        Command="{Binding CleanCommand}" />
             </StackPanel>
         </Grid>
 
