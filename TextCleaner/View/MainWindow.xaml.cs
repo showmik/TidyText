@@ -13,7 +13,6 @@ namespace TidyText.View
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = new MainViewModel();
         }
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)

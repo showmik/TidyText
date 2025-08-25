@@ -158,27 +158,28 @@
 
                 <CheckBox Content="Trim"
                           Margin="0,6"
-                          IsChecked="{Binding ShouldTrim}" />
+                          IsChecked="{Binding ShouldTrim, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                 <CheckBox Content="Remove Leading Spaces"
                           Margin="0,6"
-                          IsChecked="{Binding ShouldTrimLeadSpaces}" />
+                          IsChecked="{Binding ShouldTrimStart, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                 <CheckBox Content="Remove Trailing Spaces"
                           Margin="0,6"
-                          IsChecked="{Binding ShouldTrimTrailSpaces}" />
+                          IsChecked="{Binding ShouldTrimEnd, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                 <CheckBox Content="Multiple Spaces to Single"
                           Margin="0,6"
-                          IsChecked="{Binding ShouldTrimMultipleSpaces}" />
+                          IsChecked="{Binding ShouldRemoveMultipleSpaces, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                 <CheckBox Content="Multiple Blank Lines to Single"
                           Margin="0,6"
-                          IsChecked="{Binding ShouldTrimMultipleLines}" />
+                          IsChecked="{Binding ShouldRemoveMultipleLines, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                 <CheckBox Content="Remove All Line Breaks"
                           Margin="0,6"
-                          IsChecked="{Binding ShouldRemoveAllLines}" />
+                          IsChecked="{Binding ShouldRemoveAllLines, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
             </StackPanel>
 
             <StackPanel Grid.Column="1"
@@ -231,7 +232,7 @@
 
                 <CheckBox Content="Fix Space After Punctuation"
                           Margin="0,6"
-                          IsChecked="{Binding ShouldFixPunctuaionSpace}" />
+                          IsChecked="{Binding ShouldFixPunctuaionSpace, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             </StackPanel>
         </Grid>
     </Grid>
