@@ -14,25 +14,25 @@ namespace TidyText.ViewModel
     {
         // White Spaces
         [ObservableProperty] private bool _shouldTrim;
-        [ObservableProperty] private bool _shouldTrimEnd;
         [ObservableProperty] private bool _shouldTrimStart;
+        [ObservableProperty] private bool _shouldTrimEnd;
         [ObservableProperty] private bool _shouldRemoveMultipleSpaces;
         [ObservableProperty] private bool _shouldRemoveMultipleLines;
         [ObservableProperty] private bool _shouldRemoveAllLines;
-        [ObservableProperty] private bool _shouldFixPunctuaionSpace;
+        [ObservableProperty] private bool _shouldFixPunctuationSpace;
         [ObservableProperty] private bool _wrapLines;
 
         // Letter Case
-        [ObservableProperty] private bool _IsUppercase;
-        [ObservableProperty] private bool _IsLowercase;
-        [ObservableProperty] private bool _IsSentenceCase;
-        [ObservableProperty] private bool _IsCapEachWord;
-        [ObservableProperty] private bool _IsDoNotChange;
+        [ObservableProperty] private bool _isUppercase;
+        [ObservableProperty] private bool _isLowercase;
+        [ObservableProperty] private bool _isSentenceCase;
+        [ObservableProperty] private bool _isCapitalizeEachWord;
+        [ObservableProperty] private bool _isDoNotChange;
 
         // Input Text
         private string _mainText;
         private string _previousText;
-        private Stack<string> _inputStringStack = new();
+        private Stack<string> _inputTextHistory = new();
 
         // Counters
         private int _wordCount;
@@ -54,18 +54,18 @@ namespace TidyText.ViewModel
             set
             {
                 SetProperty(ref _mainText, value);
-                WordCount = CountWords(_mainText);
-                CharacterCount = CountCharacters(_mainText);
-                SentenceCount = CountSentences(_mainText);
-                ParagraphCount = CountParagraphs(_mainText);
-                LineBreakCount = CountLineBreaks(_mainText);
+                WordCount = GetWordCount(_mainText);
+                CharacterCount = GetCharacterCount(_mainText);
+                SentenceCount = GetSentenceCount(_mainText);
+                ParagraphCount = GetParagraphCount(_mainText);
+                LineBreakCount = GetLineBreakCount(_mainText);
             }
         }
 
         public MainViewModel()
         {
             Application.Current.Exit += OnApplicationClosing;
-            GetSettings();
+            LoadSettings();
             IsDoNotChange = true;
             _mainText = string.Empty;
             _previousText = string.Empty;
@@ -74,9 +74,9 @@ namespace TidyText.ViewModel
         [RelayCommand]
         public void Undo()
         {
-            if (_inputStringStack.Count > 0)
+            if (_inputTextHistory.Count > 0)
             {
-                MainText = _inputStringStack.Pop();
+                MainText = _inputTextHistory.Pop();
             }
         }
 
@@ -89,36 +89,54 @@ namespace TidyText.ViewModel
         [RelayCommand]
         public void Clean()
         {
-            _previousText = MainText;
+            _previousText = MainText ?? string.Empty;
 
-            // Tries to remove white spaces
-            if (ShouldTrim) { MainText = MainText.Trim(); }
-            if (ShouldTrimStart) { MainText = MainText.TrimStart(); }
-            if (ShouldTrimEnd) { MainText = MainText.TrimEnd(); }
-            if (ShouldRemoveMultipleSpaces) { MainText = CovertMultipleSpaceToSingle(MainText); }
-            if (ShouldRemoveMultipleLines) { MainText = CovertMultipleLinesToSingle(MainText); }
-            if (ShouldRemoveAllLines) { MainText = RemoveAllLineBreaks(MainText); }
-            if (ShouldFixPunctuaionSpace) { MainText = FixSpacesAfterPuntuation(MainText); }
+            bool trimStart = ShouldTrim || ShouldTrimStart;
+            bool trimEnd = ShouldTrim || ShouldTrimEnd;
 
-            // Tries changing letter case
-            if (IsUppercase) { MainText = MainText.ToUpper(); }
-            else if (IsLowercase) { MainText = MainText.ToLower(); }
-            else if (IsSentenceCase) { MainText = ConvertToSentenceCase(MainText); }
-            else if (IsCapEachWord) { MainText = ConvertToTitleCase(MainText); }
+            string text = NormalizeNewlines(_previousText);
 
-            if (MainText != _previousText) { _inputStringStack.Push(_previousText); }
+            if (trimStart || trimEnd)
+                text = TrimEachLine(text, trimStart, trimEnd);
+
+            if (ShouldRemoveMultipleSpaces)
+                text = CollapseIntraLineWhitespace(text);
+
+            if (ShouldRemoveMultipleLines)
+                text = ConvertMultipleLinesToSingle(text);
+
+            if (ShouldRemoveAllLines)
+            {
+                text = UnwrapAllLines(text);
+                if (ShouldRemoveMultipleSpaces) text = CollapseIntraLineWhitespace(text);
+            }
+
+            if (ShouldFixPunctuationSpace)
+                text = FixSpacesAroundPunctuation(text);
+
+            // CASE at the very end
+            if (IsUppercase) text = text.ToUpper(CultureInfo.CurrentCulture);
+            else if (IsLowercase) text = text.ToLower(CultureInfo.CurrentCulture);
+            else if (IsSentenceCase) text = ConvertToSentenceCase(text);
+            else if (IsCapitalizeEachWord) text = new CultureInfo("en-US", false).TextInfo.ToTitleCase(text);
+
+            if (text != _previousText)
+            {
+                _inputTextHistory.Push(_previousText);
+                MainText = text;
+            }
         }
 
         // Text statistics related methods
-        private int CountWords(string text) => text.Split(new[] { ' ', '\t', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries).Length;
+        private int GetWordCount(string text) => string.IsNullOrWhiteSpace(text) ? 0 : text.Split(new[] { ' ', '\t', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries).Length;
 
-        private int CountCharacters(string text) => text.Length;
+        private int GetCharacterCount(string text) => text?.Length ?? 0;
 
-        private int CountSentences(string text)
+        private int GetSentenceCount(string text)
         {
+            if (string.IsNullOrWhiteSpace(text)) return 0;
             string[] sentences = Regex.Split(text, @"(?<=[.!?])\s+");
             int count = 0;
-
             foreach (string sentence in sentences)
             {
                 if (!string.IsNullOrWhiteSpace(sentence)) { count++; }
@@ -126,36 +144,12 @@ namespace TidyText.ViewModel
             return count;
         }
 
-        public int CountParagraphs(string text) => Regex.Split(text, @"\n+").Count(paragraph => !string.IsNullOrWhiteSpace(paragraph));
+        private int GetParagraphCount(string text) => string.IsNullOrWhiteSpace(text) ? 0 : Regex.Split(text, @"\n+").Count(paragraph => !string.IsNullOrWhiteSpace(paragraph));
 
-        public int CountLineBreaks(string text) => text.Split('\n').Length;
+        private int GetLineBreakCount(string text) => string.IsNullOrEmpty(text) ? 0 : text.Split('\n').Length;
 
         // White space related methods
-        public string CovertMultipleSpaceToSingle(string text)
-        {
-            if (string.IsNullOrEmpty(text)) return text;
-            var sb = new StringBuilder(text.Length);
-            bool previousIsSpace = false;
-            foreach (char c in text)
-            {
-                if (c == ' ')
-                {
-                    if (!previousIsSpace)
-                    {
-                        sb.Append(' ');
-                        previousIsSpace = true;
-                    }
-                }
-                else
-                {
-                    sb.Append(c);
-                    previousIsSpace = false;
-                }
-            }
-            return sb.ToString();
-        }
-
-        public string CovertMultipleLinesToSingle(string text)
+        public string ConvertMultipleLinesToSingle(string text)
         {
             if (string.IsNullOrEmpty(text)) return text;
             var sb = new StringBuilder(text.Length);
@@ -163,15 +157,11 @@ namespace TidyText.ViewModel
             for (int i = 0; i < text.Length; i++)
             {
                 char c = text[i];
-
-                // Skip carriage returns – treat CR/LF uniformly
                 if (c == '\r')
                     continue;
-
                 if (c == '\n')
                 {
                     newlineCount++;
-                    // Keep at most two consecutive newlines to separate paragraphs
                     if (newlineCount < 3)
                         sb.Append('\n');
                 }
@@ -184,47 +174,162 @@ namespace TidyText.ViewModel
             return sb.ToString();
         }
 
-        public string RemoveAllLineBreaks(string text) => Regex.Replace(text, @"\s*(\r\n?|\n)\s*", "");
-
-        public string FixSpacesAfterPuntuation(string text)
+        private static string NormalizeNewlines(string text)
         {
-            // remove spaces before punctuation (.,!?:;) but leave hyphens/dashes and brackets alone
-            string result = Regex.Replace(text, @"\s+([,.!?;:])", "$1");
-            // ensure a space after punctuation unless it's the end of line or another punctuation
-            result = Regex.Replace(result, @"([,.!?;:])(?=\S)", "$1 ");
-            // collapse spaced ellipses back to "..."
-            result = Regex.Replace(result, @"\\.\\s?\\.\\s?\\.", "...");
-            // avoid inserting spaces inside numbers
-            result = Regex.Replace(result, @"(?<=\\d)[,.](?=\\d)", "$0");
-
-            result = Regex.Replace(result, @"\\s*([\\)\\]\\}])", "$1");
-            result = Regex.Replace(result, @"([\\(\\[\\{])\\s*", "$1");
-            return result;
+            if (text is null) return string.Empty;
+            return text.Replace("\r\n", "\n").Replace("\r", "\n");
         }
 
-        // Letter case related methods
-        private string ConvertToSentenceCase(string text)
+        private static string TrimEachLine(string text, bool trimStart, bool trimEnd)
         {
-            string[] sentences = Regex.Split(text, @"(?<=[.!?])(?<!\\b[A-Za-z]\\.)\\s+");
-
-            for (int i = 0; i < sentences.Length; i++)
+            if (string.IsNullOrEmpty(text)) return text;
+            var lines = NormalizeNewlines(text).Split('\n');
+            for (int i = 0; i < lines.Length; i++)
             {
-                string sentence = sentences[i];
+                var line = lines[i];
+                if (trimStart && trimEnd) line = line.Trim();
+                else if (trimStart) line = line.TrimStart();
+                else if (trimEnd) line = line.TrimEnd();
+                lines[i] = line;
+            }
+            return string.Join("\n", lines);
+        }
 
-                if (!string.IsNullOrEmpty(sentence))
+        private static string UnwrapAllLines(string text)
+        {
+            if (string.IsNullOrEmpty(text)) return text;
+            text = NormalizeNewlines(text);
+            var sb = new StringBuilder(text.Length);
+            bool prevSpace = false;
+            foreach (var ch in text)
+            {
+                if (ch == '\n')
                 {
-                    sentence = char.ToUpper(sentence[0]) + sentence.Substring(1).ToLower(CultureInfo.CurrentCulture);
+                    if (!prevSpace) { sb.Append(' '); prevSpace = true; }
+                }
+                else if (char.IsWhiteSpace(ch))
+                {
+                    if (!prevSpace) { sb.Append(' '); prevSpace = true; }
+                }
+                else
+                {
+                    sb.Append(ch);
+                    prevSpace = false;
+                }
+            }
+            return sb.ToString();
+        }
+
+        private static string CollapseIntraLineWhitespace(string text)
+        {
+            if (string.IsNullOrEmpty(text)) return text;
+            text = NormalizeNewlines(text);
+            var sb = new StringBuilder(text.Length);
+            bool inWhitespace = false;
+            foreach (var ch in text)
+            {
+                if (ch == '\n') { sb.Append('\n'); inWhitespace = false; continue; }
+                if (char.IsWhiteSpace(ch))
+                {
+                    if (!inWhitespace) { sb.Append(' '); inWhitespace = true; }
+                }
+                else
+                {
+                    sb.Append(ch);
+                    inWhitespace = false;
+                }
+            }
+            return sb.ToString();
+        }
+
+        private static string FixSpacesAroundPunctuation(string text)
+        {
+            if (string.IsNullOrEmpty(text)) return text;
+            var sb = new StringBuilder(text.Length);
+            text = NormalizeNewlines(text);
+
+            static bool IsTargetPunct(char c) => c == '.' || c == ',' || c == '!' || c == '?' || c == ';' || c == ':';
+            static bool IsClose(char c) => c == '"' || c == '”' || c == '\'' || c == '’' || c == ')' || c == ']' || c == '}';
+            for (int i = 0; i < text.Length; i++)
+            {
+                char c = text[i];
+                if (!IsTargetPunct(c)) { sb.Append(c); continue; }
+
+                // remove spaces before the punctuation
+                while (sb.Length > 0 && sb[^1] == ' ') sb.Length--;
+
+                // keep ellipses intact
+                if (c == '.' && i + 2 < text.Length && text[i + 1] == '.' && text[i + 2] == '.')
+                {
+                    sb.Append("...");
+                    i += 2;
+                    // swallow spaces after ellipsis
+                    int k = i + 1; while (k < text.Length && text[k] == ' ') k++;
+                    // absorb trailing closures (quotes/brackets)
+                    while (k < text.Length && IsClose(text[k])) { sb.Append(text[k]); k++; }
+                    if (k < text.Length && text[k] != '\n') sb.Append(' ');
+                    i = k - 1;
+                    continue;
                 }
 
-                sentences[i] = sentence;
+                // numeric separators like 1,234 or 3.14
+                char prev = '\0'; for (int p = sb.Length - 1; p >= 0; p--) { if (sb[p] != ' ') { prev = sb[p]; break; } }
+                int j = i + 1; while (j < text.Length && text[j] == ' ') j++;
+                char next = j < text.Length ? text[j] : '\0';
+                bool numericSep = char.IsDigit(prev) && (c == '.' || c == ',') && char.IsDigit(next);
+
+                sb.Append(c);
+
+                if (!numericSep)
+                {
+                    // absorb closures after punctuation
+                    while (j < text.Length && IsClose(text[j])) { sb.Append(text[j]); j++; }
+                    if (j < text.Length && text[j] != '\n') sb.Append(' ');
+                }
+                i = j - 1;
             }
-            return string.Join(" ", sentences);
+            return sb.ToString();
         }
 
-        public string ConvertToTitleCase(string text) => new CultureInfo("en-US", false).TextInfo.ToTitleCase(text);
 
-        // Other methods
-        public void GetSettings()
+        private static string ConvertToSentenceCase(string text)
+        {
+            if (string.IsNullOrEmpty(text)) return text;
+            text = NormalizeNewlines(text);
+
+            var sb = new StringBuilder(text.Length);
+            bool atSentenceStart = true;
+
+            for (int i = 0; i < text.Length; i++)
+            {
+                char c = text[i];
+
+                if (atSentenceStart && char.IsLetter(c))
+                {
+                    sb.Append(char.ToUpper(c, CultureInfo.CurrentCulture));
+                    atSentenceStart = false;
+                }
+                else
+                {
+                    sb.Append(char.ToLower(c, CultureInfo.CurrentCulture));
+                }
+
+                if (c == '.' || c == '!' || c == '?')
+                {
+                    int j = i + 1;
+                    while (j < text.Length && (text[j] == ' ')) j++;
+                    if (j < text.Length && text[j] != '\n') atSentenceStart = true;
+                }
+                else if (c == '\n')
+                {
+                    atSentenceStart = true;
+                }
+            }
+            return sb.ToString();
+        }
+
+        // Settings methods
+        public void LoadSettings()
         {
             WrapLines = Properties.Settings.Default.IsWrapLine;
             ShouldTrim = Properties.Settings.Default.ShouldTrim;
@@ -233,7 +338,7 @@ namespace TidyText.ViewModel
             ShouldRemoveMultipleSpaces = Properties.Settings.Default.ShouldTrimMultipleSpaces;
             ShouldRemoveMultipleLines = Properties.Settings.Default.ShouldTrimMultipleLines;
             ShouldRemoveAllLines = Properties.Settings.Default.ShouldRemoveAllLines;
-            ShouldFixPunctuaionSpace = Properties.Settings.Default.ShouldFixPunctuaionSpace;
+            ShouldFixPunctuationSpace = Properties.Settings.Default.ShouldFixPunctuaionSpace;
         }
 
         public void SaveSettings()
@@ -245,7 +350,7 @@ namespace TidyText.ViewModel
             Properties.Settings.Default.ShouldTrimMultipleSpaces = ShouldRemoveMultipleSpaces;
             Properties.Settings.Default.ShouldTrimMultipleLines = ShouldRemoveMultipleLines;
             Properties.Settings.Default.ShouldRemoveAllLines = ShouldRemoveAllLines;
-            Properties.Settings.Default.ShouldFixPunctuaionSpace = ShouldFixPunctuaionSpace;
+            Properties.Settings.Default.ShouldFixPunctuaionSpace = ShouldFixPunctuationSpace;
             Properties.Settings.Default.Save();
         }
 

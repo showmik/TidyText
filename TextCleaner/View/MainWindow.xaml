@@ -211,7 +211,7 @@
                 <RadioButton Content="Capitalize Each Word"
                              Margin="0,6"
                              BorderThickness="2"
-                             IsChecked="{Binding IsCapEachWord, Mode=TwoWay}" />
+                             IsChecked="{Binding IsCapitalizeEachWord, Mode=TwoWay}" />
 
                 <RadioButton Content="Do Not Change"
                              Margin="0,6"
@@ -232,7 +232,7 @@
 
                 <CheckBox Content="Fix Space After Punctuation"
                           Margin="0,6"
-                          IsChecked="{Binding ShouldFixPunctuaionSpace, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                          IsChecked="{Binding ShouldFixPunctuationSpace, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             </StackPanel>
         </Grid>
     </Grid>
