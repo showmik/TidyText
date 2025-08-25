@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
 
@@ -130,18 +131,81 @@ namespace TidyText.ViewModel
         public int CountLineBreaks(string text) => text.Split('\n').Length;
 
         // White space related methods
-        public string CovertMultipleSpaceToSingle(string text) => Regex.Replace(text, @"[ ]{2,}", " ");
+        public string CovertMultipleSpaceToSingle(string text)
+        {
+            if (string.IsNullOrEmpty(text)) return text;
+            var sb = new StringBuilder(text.Length);
+            bool previousIsSpace = false;
+            foreach (char c in text)
+            {
+                if (c == ' ')
+                {
+                    if (!previousIsSpace)
+                    {
+                        sb.Append(' ');
+                        previousIsSpace = true;
+                    }
+                }
+                else
+                {
+                    sb.Append(c);
+                    previousIsSpace = false;
+                }
+            }
+            return sb.ToString();
+        }
 
-        public string CovertMultipleLinesToSingle(string text) => Regex.Replace(text, @"(\n\s*){2,}", "\n\n");
+        public string CovertMultipleLinesToSingle(string text)
+        {
+            if (string.IsNullOrEmpty(text)) return text;
+            var sb = new StringBuilder(text.Length);
+            int newlineCount = 0;
+            for (int i = 0; i < text.Length; i++)
+            {
+                char c = text[i];
 
-        public string RemoveAllLineBreaks(string text) => Regex.Replace(text, @"\r\n?|\n", "");
+                // Skip carriage returns – treat CR/LF uniformly
+                if (c == '\r')
+                    continue;
 
-        public string FixSpacesAfterPuntuation(string text) => Regex.Replace(text, @"(?<=[^\s—–])\s*(\p{P})(?<!-)\s*", "$1 ");
+                if (c == '\n')
+                {
+                    newlineCount++;
+                    // Keep at most two consecutive newlines to separate paragraphs
+                    if (newlineCount < 3)
+                        sb.Append('\n');
+                }
+                else
+                {
+                    sb.Append(c);
+                    newlineCount = 0;
+                }
+            }
+            return sb.ToString();
+        }
+
+        public string RemoveAllLineBreaks(string text) => Regex.Replace(text, @"\s*(\r\n?|\n)\s*", "");
+
+        public string FixSpacesAfterPuntuation(string text)
+        {
+            // remove spaces before punctuation (.,!?:;) but leave hyphens/dashes and brackets alone
+            string result = Regex.Replace(text, @"\s+([,.!?;:])", "$1");
+            // ensure a space after punctuation unless it's the end of line or another punctuation
+            result = Regex.Replace(result, @"([,.!?;:])(?=\S)", "$1 ");
+            // collapse spaced ellipses back to "..."
+            result = Regex.Replace(result, @"\\.\\s?\\.\\s?\\.", "...");
+            // avoid inserting spaces inside numbers
+            result = Regex.Replace(result, @"(?<=\\d)[,.](?=\\d)", "$0");
+
+            result = Regex.Replace(result, @"\\s*([\\)\\]\\}])", "$1");
+            result = Regex.Replace(result, @"([\\(\\[\\{])\\s*", "$1");
+            return result;
+        }
 
         // Letter case related methods
         private string ConvertToSentenceCase(string text)
         {
-            string[] sentences = Regex.Split(text, @"(?<=[\.!\?])\s+");
+            string[] sentences = Regex.Split(text, @"(?<=[.!?])(?<!\\b[A-Za-z]\\.)\\s+");
 
             for (int i = 0; i < sentences.Length; i++)
             {
