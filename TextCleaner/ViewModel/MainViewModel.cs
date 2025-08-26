@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
+using TidyText.Model;
 
 namespace TidyText.ViewModel
 {
@@ -39,14 +40,14 @@ namespace TidyText.ViewModel
         private int _characterCount;
         private int _sentenceCount;
         private int _paragraphCount;
-        private int _lineBreakCount;
+        private int _lineCount;
 
         // Getters and Setters
         public int WordCount { get => _wordCount; set => SetProperty(ref _wordCount, value); }
         public int CharacterCount { get => _characterCount; set => SetProperty(ref _characterCount, value); }
         public int SentenceCount { get => _sentenceCount; set => SetProperty(ref _sentenceCount, value); }
         public int ParagraphCount { get => _paragraphCount; set => SetProperty(ref _paragraphCount, value); }
-        public int LineBreakCount { get => _lineBreakCount; set => SetProperty(ref _lineBreakCount, value); }
+        public int LineCount { get => _lineCount; set => SetProperty(ref _lineCount, value); }
 
         public string MainText
         {
@@ -58,7 +59,7 @@ namespace TidyText.ViewModel
                 CharacterCount = GetCharacterCount(_mainText);
                 SentenceCount = GetSentenceCount(_mainText);
                 ParagraphCount = GetParagraphCount(_mainText);
-                LineBreakCount = GetLineBreakCount(_mainText);
+                LineCount = GetLineBreakCount(_mainText);
             }
         }
 
@@ -112,7 +113,7 @@ namespace TidyText.ViewModel
             }
 
             if (ShouldFixPunctuationSpace)
-                text = FixSpacesAroundPunctuation(text);
+                text = TextSpacing.FixPunctuationSpacing(text, spaceAfterColon: false);
 
             // CASE at the very end
             if (IsUppercase) text = text.ToUpper(CultureInfo.CurrentCulture);

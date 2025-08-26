@@ -106,7 +106,7 @@
                 <custom:StatisticsViewer Margin="8, 0, 8, 0"
                                          ToolTip="Lines Breaks"
                                          Label="L"
-                                         Content="{Binding LineBreakCount}" />
+                                         Content="{Binding LineCount}" />
             </StackPanel>
 
             <StackPanel Grid.Column="1"
