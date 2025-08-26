@@ -8,7 +8,7 @@ namespace TidyText.View
     /// </summary>
     public partial class MainWindow : Window
     {
-        private bool isCtrlKeyPressed;
+        //private bool isCtrlKeyPressed;
 
         public MainWindow()
         {
