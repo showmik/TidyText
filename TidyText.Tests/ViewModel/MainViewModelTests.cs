@@ -1,10 +1,11 @@
 ﻿using NUnit.Framework;
 using System.Globalization;
+using System.Linq;
 using System.Threading;
 using System.Windows; // WPF Application
 using TidyText.ViewModel;
 
-namespace TidyText.Tests
+namespace TidyText.Tests.ViewModel
 {
     [TestFixture]
     [Apartment(ApartmentState.STA)] // WPF & Clipboard safety
@@ -32,6 +33,67 @@ namespace TidyText.Tests
             IsCapitalizeEachWord = false,
             WrapLines = false
         };
+
+        [Test]
+        public void Counters_EmptyString()
+        {
+            var vm = NewVm();
+            vm.MainText = "";
+            Assert.That(vm.WordCount, Is.EqualTo(0));
+            Assert.That(vm.SentenceCount, Is.EqualTo(0));
+            Assert.That(vm.ParagraphCount, Is.EqualTo(0));
+            Assert.That(vm.LineCount, Is.EqualTo(0));
+            Assert.That(vm.CharacterCount, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void Counters_WhitespaceOnly()
+        {
+            var vm = NewVm();
+            vm.MainText = "   \n\t  ";
+            Assert.That(vm.WordCount, Is.EqualTo(0));
+            Assert.That(vm.SentenceCount, Is.EqualTo(0));
+            Assert.That(vm.ParagraphCount, Is.EqualTo(0));
+            Assert.That(vm.LineCount, Is.EqualTo(2)); // 1 line break = 2 lines
+            Assert.That(vm.CharacterCount, Is.EqualTo(7));
+        }
+
+        [Test]
+        public void Counters_SingleLine_NoLineBreaks()
+        {
+            var vm = NewVm();
+            vm.MainText = "This is a test";
+            Assert.That(vm.WordCount, Is.EqualTo(4));
+            Assert.That(vm.SentenceCount, Is.EqualTo(1));
+            Assert.That(vm.ParagraphCount, Is.EqualTo(1));
+            Assert.That(vm.LineCount, Is.EqualTo(1));
+            Assert.That(vm.CharacterCount, Is.EqualTo(14));
+        }
+
+        [Test]
+        public void Counters_SingleWord_NoPunctuation()
+        {
+            var vm = NewVm();
+            vm.MainText = "Word";
+            Assert.That(vm.WordCount, Is.EqualTo(1));
+            Assert.That(vm.SentenceCount, Is.EqualTo(1));
+            Assert.That(vm.ParagraphCount, Is.EqualTo(1));
+            Assert.That(vm.LineCount, Is.EqualTo(1));
+            Assert.That(vm.CharacterCount, Is.EqualTo(4));
+        }
+
+        [Test]
+        public void Counters_LargeInput()
+        {
+            var vm = NewVm();
+            var text = string.Join("\n", Enumerable.Repeat("word1 word2. word3!", 1000));
+            vm.MainText = text;
+            Assert.That(vm.WordCount, Is.EqualTo(3000));
+            Assert.That(vm.SentenceCount, Is.GreaterThan(0));
+            Assert.That(vm.ParagraphCount, Is.EqualTo(1000));
+            Assert.That(vm.LineCount, Is.EqualTo(1000));
+            Assert.That(vm.CharacterCount, Is.EqualTo(text.Length));
+        }
 
         [Test]
         public void Constructor_Defaults_Are_Safe()

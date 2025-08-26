@@ -57,6 +57,9 @@ namespace TidyText.Model
                 { sb.Append(s, i, end - i); i = end; continue; }
 
                 // 4) Protect emails/domains/versions/decimals/times/ratios/ellipsis -----------
+                if (TryConsumeIPv6(s, i, out end))
+                { sb.Append(s, i, end - i); i = end; continue; }
+
                 if (TryConsumeEmail(s, i, out end))
                 { sb.Append(s, i, end - i); i = end; continue; }
 
@@ -85,45 +88,96 @@ namespace TidyText.Model
                 if (TryConsumeDottedAbbrev(s, i, out end))
                 { sb.Append(s, i, end - i); i = end; continue; }
 
+                // Apostrophes used inside words (It’s, I’ll): keep tight and remove any stray space before them.
+                if (s[i] == '\'' || s[i] == '’')
+                {
+                    char prev = sb.Length > 0 ? sb[^1] : '\0';
+                    char next = (i + 1 < n) ? s[i + 1] : '\0';
+                    if (IsWordChar(prev) && IsWordChar(next))
+                    {
+                        // e.g., "I ’ ll" → "I’ll"
+                        while (sb.Length > 0 && sb[^1] == ' ') sb.Length--;
+                        sb.Append(s[i]);
+                        i++;
+                        continue;
+                    }
+                }
+
                 // 6) Punctuation spacing -------------------------------------------------------
                 char c = s[i];
                 bool isColon = c == ':';
+                if (IsClosing(s[i]))
+                {
+                    sb.Append(s[i]);
+
+                    int j = i + 1;
+                    if (j < n)
+                    {
+                        char nx = s[j];
+                        if (!char.IsWhiteSpace(nx) && IsWordChar(nx))
+                            sb.Append(' ');
+                    }
+
+                    i = i + 1;
+                    continue;
+                }
                 if (IsSentencePunct(c) || (treatColonAsSentencePunct && isColon))
                 {
                     // remove spaces before
                     while (sb.Length > 0 && sb[^1] == ' ') sb.Length--;
 
-                    // Guard: do NOT space a colon that looks like time/ratio/URL fragment
+                    // colon guards: don't treat ':' as sentence punct in URLs or times/ratios
                     if (isColon)
                     {
-                        // If looks like :// (URL) → copy raw and continue
                         if (i + 2 < n && s[i + 1] == '/' && s[i + 2] == '/')
                         { sb.Append(':'); i++; continue; }
 
-                        // If digit:digit ahead OR prev is digit → likely time/ratio; copy raw and continue
                         if ((i > 0 && char.IsDigit(sb[^1])) ||
                             (i + 1 < n && char.IsDigit(s[i + 1])))
-                        {
-                            sb.Append(':'); i++; continue;
-                        }
+                        { sb.Append(':'); i++; continue; }
                     }
 
                     sb.Append(c);
 
-                    // absorb immediately-following closing quotes/brackets
+                    // absorb immediately-following true closers (brackets, curly/guillemet closers)
                     int j = i + 1;
-                    while (j < n && IsClosing(s[j])) { sb.Append(s[j]); j++; }
+                    while (j < n && (IsClosing(s[j]) || IsLikelyClosingStraightQuote(s, j)))
+                    {
+                        sb.Append(s[j]);
+                        j++;
+                    }
 
-                    // ensure one space after if next isn’t whitespace or punctuation
+                    // decide whether to add a space
+                    bool addSpace = false;
                     if (j < n)
                     {
                         char nx = s[j];
-                        if (nx != ' ' && nx != '\n' && nx != '\t' && !IsSentencePunct(nx))
-                            sb.Append(' ');
-                    }
 
+                        // Opening quote + word: tighten only after . ! ?  (never after , ; or colon-mode)
+                        if (IsOpeningQuote(nx) && j + 1 < n && IsWordChar(s[j + 1]))
+                        {
+                            bool allowTight = (c == '.' || c == '!' || c == '?');
+                            if ((isColon && treatColonAsSentencePunct) || c == ',' || c == ';' || !allowTight)
+                            {
+                                addSpace = true; // space before opening quote
+                            }
+                            else
+                            {
+                                sb.Append(nx);   // tight form: ."Yes"
+                                j++;
+                                addSpace = false;
+                            }
+                        }
+                        else if (!char.IsWhiteSpace(nx) && !IsSentencePunct(nx))
+                        {
+                            // next is a “wordish” thing — insert exactly one space
+                            addSpace = true;
+                        }
+                    }
+                    if (addSpace) sb.Append(' ');
                     i = j;
                     continue;
+
                 }
 
                 // default copy
@@ -136,6 +190,18 @@ namespace TidyText.Model
         }
 
         // ---------------------------- helpers ----------------------------
+
+        // Treat " and ' as closing quotes when followed by whitespace, sentence punctuation, another closer, or end-of-text.
+        private static bool IsLikelyClosingStraightQuote(string s, int j)
+        {
+            if (j >= s.Length) return false;
+            char q = s[j];
+            if (q != '"' && q != '\'') return false;
+            int k = j + 1;
+            if (k >= s.Length) return true; // end-of-text → closing
+            char nx = s[k];
+            return char.IsWhiteSpace(nx) || IsSentencePunct(nx) || IsClosing(nx);
+        }
 
         private static bool StartsWithScheme(string s, int i, out int end)
         {
@@ -175,7 +241,7 @@ namespace TidyText.Model
             end = 0;
             if (i + 3 <= s.Length && char.IsLetter(s[i]) && s[i + 1] == ':' && (s[i + 2] == '\\' || s[i + 2] == '/'))
             {
-                end = ScanUrlLikeEnd(s, i + 3);
+                end = ScanPathLikeEnd(s, i + 3);   // <— was ScanUrlLikeEnd
                 return true;
             }
             return false;
@@ -186,10 +252,26 @@ namespace TidyText.Model
             end = 0;
             if (s[i] == '/' && !(i + 1 < s.Length && (s[i + 1] == '/' || s[i + 1] == ' ' || s[i + 1] == '\n')))
             {
-                end = ScanUrlLikeEnd(s, i + 1);
+                end = ScanPathLikeEnd(s, i + 1);   // <— was ScanUrlLikeEnd
                 return true;
             }
             return false;
+        }
+
+        private static int ScanPathLikeEnd(string s, int start)
+        {
+            int j = start, n = s.Length;
+            while (j < n)
+            {
+                char ch = s[j];
+                if (char.IsWhiteSpace(ch)) break;
+                if (ch == ',' || ch == ';' || ch == '!' || ch == '?' || ch == ':' ||
+                    ch == ')' || ch == ']' || ch == '}' ||
+                    ch == '"' || ch == '\'' || ch == '»' || ch == '”' || ch == '’' || ch == '…')
+                    break;
+                j++;
+            }
+            return j;
         }
 
         private static bool TryConsumeEmail(string s, int i, out int end)
@@ -228,7 +310,17 @@ namespace TidyText.Model
         private static bool TryConsumeDomain(string s, int i, out int end)
         {
             end = 0;
-            int n = s.Length, j = i;
+            int n = s.Length;
+
+            // Require a sensible left boundary (start/whitespace/opener/punct).
+            if (i > 0)
+            {
+                char prev = s[i - 1];
+                if (char.IsLetterOrDigit(prev) || prev == '_' || prev == '-')
+                    return false;
+            }
+
+            int j = i;
             if (!IsDomainLabelStart(s[j])) return false;
 
             int dots = 0, labelLen = 0, lastLabelLen = 0;
@@ -236,7 +328,7 @@ namespace TidyText.Model
             {
                 if (s[j] == '.')
                 {
-                    if (labelLen == 0) return false;
+                    if (labelLen == 0) return false; // empty label like "example..com"
                     dots++; lastLabelLen = labelLen; labelLen = 0; j++;
                 }
                 else { labelLen++; j++; }
@@ -244,12 +336,41 @@ namespace TidyText.Model
             if (dots == 0 || labelLen == 0) return false;
             lastLabelLen = labelLen;
 
-            // TLD letters only, len>=2
-            bool tldLettersOnly = true;
-            for (int k = j - lastLabelLen; k < j; k++) if (!char.IsLetter(s[k])) { tldLettersOnly = false; break; }
-            if (!tldLettersOnly || lastLabelLen < 2) return false;
+            // TLD policy:
+            //  - Accept if TLD is all lowercase letters (len>=2)  → typical "example.com"
+            //  - OR accept if TLD is all UPPERCASE AND the WHOLE domain token is ALL UPPERCASE
+            //    (labels may include digits and '-'; any lowercase anywhere rejects)
+            bool tldAllLower = true, tldAllUpper = true;
+            for (int k = j - lastLabelLen; k < j; k++)
+            {
+                char ch = s[k];
+                if (!char.IsLetter(ch)) { tldAllLower = tldAllUpper = false; break; }
+                if (!char.IsLower(ch)) tldAllLower = false;
+                if (!char.IsUpper(ch)) tldAllUpper = false;
+            }
+            if (lastLabelLen < 2) return false;
 
-            end = j; return true;
+            bool domainAllUpper = true;
+            for (int k = i; k < j; k++)
+            {
+                char ch = s[k];
+                if (char.IsLetter(ch) && !char.IsUpper(ch)) { domainAllUpper = false; break; }
+                // digits, '.', '-' are fine
+            }
+
+            if (!(tldAllLower || (tldAllUpper && domainAllUpper)))
+                return false;
+
+            // Right boundary must be sensible (end/whitespace/closer/punct).
+            if (j < n)
+            {
+                char next = s[j];
+                if (char.IsLetterOrDigit(next) || next == '_' || next == '-')
+                    return false;
+            }
+
+            end = j;
+            return true;
         }
 
         private static bool TryConsumeVersion(string s, int i, out int end)
@@ -335,8 +456,156 @@ namespace TidyText.Model
             return false;
         }
 
-        private static bool IsSentencePunct(char c) => c == '.' || c == ',' || c == '!' || c == '?' || c == ';';
-        private static bool IsClosing(char c) => c == ')' || c == ']' || c == '}' || c == '”' || c == '’' || c == '"' || c == '\'' || c == '»';
+        // Accepts IPv6 (including leading '::' compression) and IPv6 with embedded IPv4
+        // (::ffff:192.0.2.128 and ::192.0.2.128). We DO NOT consume trailing sentence punctuation.
+        private static bool TryConsumeIPv6(string s, int i, out int end)
+        {
+            end = 0;
+            int n = s.Length, j = i;
+            bool seenDouble = false;   // saw '::'
+            int groups = 0;            // number of h16 groups read
+            bool ipv4Tail = false;     // read an embedded IPv4 dotted-quad
+
+            bool ReadH16(ref int k)
+            {
+                int start = k, cnt = 0;
+                while (k < n && cnt < 4 && IsHex(s[k])) { k++; cnt++; }
+                return cnt > 0; // 1..4 hex
+            }
+
+            bool TryReadIPv4(ref int k)
+            {
+                int start = k;
+                for (int oct = 0; oct < 4; oct++)
+                {
+                    int digits = 0;
+                    while (k < n && digits < 3 && char.IsDigit(s[k])) { k++; digits++; }
+                    if (digits == 0) { k = start; return false; }
+                    if (oct < 3)
+                    {
+                        if (k >= n || s[k] != '.') { k = start; return false; }
+                        k++; // consume '.'
+                    }
+                }
+                return true;
+            }
+
+            // ---- start: either '::' or an initial h16
+            if (j + 1 < n && s[j] == ':' && s[j + 1] == ':')
+            {
+                seenDouble = true;
+                j += 2;
+
+                // Allow an immediate IPv4 tail after '::'  → ::192.0.2.128
+                int k0 = j;
+                if (TryReadIPv4(ref k0))
+                {
+                    ipv4Tail = true;
+                    j = k0;
+                }
+                else
+                {
+                    // Or allow an immediate h16 group  → ::ffff
+                    int k1 = j;
+                    if (ReadH16(ref k1))
+                    {
+                        groups++;
+                        j = k1;
+                    }
+                }
+            }
+            else
+            {
+                if (!ReadH16(ref j)) return false;
+                groups++;
+            }
+
+            while (true)
+            {
+                if (j >= n)
+                {
+                    end = j;
+                    return groups >= 2 || seenDouble || ipv4Tail;
+                }
+
+                char ch = s[j];
+
+                // prose terminators (do not consume)
+                if (char.IsWhiteSpace(ch) || ch == '.' || ch == ',' || ch == '!' || ch == '?' ||
+                    ch == ';' || ch == ')' || ch == ']' || ch == '}' || ch == '"' || ch == '\'' ||
+                    ch == '»' || ch == '”' || ch == '’')
+                {
+                    end = j;
+                    return groups >= 2 || seenDouble || ipv4Tail;
+                }
+
+                if (ch == ':')
+                {
+                    // double-colon compression inside address
+                    if (j + 1 < n && s[j + 1] == ':')
+                    {
+                        if (seenDouble)
+                        {
+                            // can't have '::' twice; stop before this pair
+                            end = j;
+                            return groups >= 2 || ipv4Tail;
+                        }
+                        seenDouble = true;
+                        j += 2;
+
+                        // After '::', allow immediate IPv4 or h16
+                        int k2 = j;
+                        if (TryReadIPv4(ref k2))
+                        {
+                            ipv4Tail = true;
+                            j = k2;
+                            continue;
+                        }
+                        int k3 = j;
+                        if (ReadH16(ref k3))
+                        {
+                            groups++;
+                            j = k3;
+                            continue;
+                        }
+                        // allow nothing immediately; next loop will handle terminator or further parts
+                        continue;
+                    }
+
+                    // single colon: expect h16 or an embedded IPv4 tail
+                    j++; // consume ':'
+
+                    int k = j;
+                    if (TryReadIPv4(ref k))
+                    {
+                        ipv4Tail = true;
+                        j = k;
+                        continue;
+                    }
+
+                    if (ReadH16(ref j))
+                    {
+                        groups++;
+                        continue;
+                    }
+
+                    return false; // colon not followed by valid chunk
+                }
+
+                // unexpected char inside IPv6
+                return false;
+            }
+        }
+
+        private static bool IsHex(char c) =>
+            (c >= '0' && c <= '9') ||
+            (c >= 'a' && c <= 'f') ||
+            (c >= 'A' && c <= 'F');
+
+
+        private static bool IsSentencePunct(char c) => c == '.' || c == ',' || c == '!' || c == '?' || c == ';' || c == '。' || c == '！' || c == '？';
+        private static bool IsClosing(char c) => c == ')' || c == ']' || c == '}' || c == '»' || c == '”' || c == '’';
+        private static bool IsOpeningQuote(char c) => c == '"' || c == '\'' || c == '“' || c == '‘' || c == '«';
         private static bool IsWordChar(char c) => char.IsLetterOrDigit(c) || c == '_';
         private static bool IsAsciiLetter(char c) => (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
         private static bool IsEmailLocalChar(char c) => char.IsLetterOrDigit(c) || c == '.' || c == '_' || c == '%' || c == '+' || c == '-';
@@ -356,26 +625,47 @@ namespace TidyText.Model
         private static string CollapseRunsOfSpaces(string s)
         {
             var sb = new StringBuilder(s.Length);
-            bool prevSpace = false;
-            for (int i = 0; i < s.Length; i++)
+            int i = 0, n = s.Length;
+
+            while (i < n)
             {
                 char c = s[i];
+
                 if (c == ' ')
                 {
-                    if (!prevSpace) { sb.Append(c); prevSpace = true; }
+                    // Consume a run of spaces
+                    int j = i;
+                    while (j < n && s[j] == ' ') j++;
+
+                    // Look at the next non-space char
+                    char next = j < n ? s[j] : '\0';
+
+                    // If the run is immediately before a newline or end-of-text, DROP the spaces entirely.
+                    if (next == '\n' || next == '\0')
+                    {
+                        // no append
+                    }
+                    else
+                    {
+                        // Otherwise keep exactly one space
+                        sb.Append(' ');
+                    }
+
+                    i = j;
+                    continue;
                 }
-                else
-                {
-                    sb.Append(c);
-                    prevSpace = false;
-                }
+
+                sb.Append(c);
+                i++;
             }
+
             return sb.ToString();
         }
 
         // Trim trailing punctuation that typically does NOT belong to URLs/paths in prose.
         private static bool IsUrlTerminalPunct(char c) =>
             c == '.' || c == ',' || c == '!' || c == '?' || c == ';' || c == ':' ||
+            c == '。' || c == '！' || c == '？' ||
             c == ')' || c == ']' || c == '}' || c == '»' || c == '”' || c == '’' ||
             c == '"' || c == '\'' || c == '…';
 
@@ -393,44 +683,58 @@ namespace TidyText.Model
         }
 
         // Scan to next whitespace, then drop any trailing terminal punctuation that isn't part of the URL/path.
+        // Replace your existing ScanUrlLikeEnd with this version
         private static int ScanUrlLikeEnd(string s, int start)
         {
             int n = s.Length;
             int j = start;
 
-            // 1) Walk until whitespace, with an early-stop heuristic:
-            //    If we see DIGIT '.' LETTER (e.g., "...=3.Please"), treat the '.' as sentence punctuation.
+            bool inBracketHost = false; // handle http://[2001:db8::1]:443/...
             while (j < n && !char.IsWhiteSpace(s[j]))
             {
-                if (s[j] == '.' &&
-                    j > start && char.IsDigit(s[j - 1]) &&
-                    j + 1 < n && char.IsLetter(s[j + 1]))
+                char ch = s[j];
+
+                // bracketed IPv6 host: consume until matching ']' (no early-stops inside)
+                if (!inBracketHost && ch == '[')
+                { inBracketHost = true; j++; continue; }
+                if (inBracketHost)
                 {
-                    // stop BEFORE the '.', so the '.' is handled by punctuation spacing later
-                    break;
+                    if (ch == ']') inBracketHost = false;
+                    j++; continue;
                 }
+
+                // prose delimiters right after a URL
+                if (ch == ',' && j + 1 < n && (char.IsLetter(s[j + 1]) || IsOpeningQuote(s[j + 1]))) break;
+                if (ch == ';' && j + 1 < n && (char.IsLetter(s[j + 1]) || IsOpeningQuote(s[j + 1]))) break;
+
+                // sentence boundary patterns: DIGIT '.' LETTER  or  CLOSER '.' LETTER
+                if (ch == '.' && j + 1 < n && char.IsLetter(s[j + 1]))
+                {
+                    bool prevIsDigit = j > start && char.IsDigit(s[j - 1]);
+                    bool prevIsCloser = j > start && (s[j - 1] == ')' || s[j - 1] == ']' || s[j - 1] == '}' ||
+                                                      s[j - 1] == '"' || s[j - 1] == '\'' || s[j - 1] == '»' ||
+                                                      s[j - 1] == '”' || s[j - 1] == '’');
+                    if (prevIsDigit || prevIsCloser) break; // stop BEFORE the '.'
+                }
+
                 j++;
             }
 
-            // 2) Trim common trailing punctuation that tends to cling to URLs in prose
+            // Trim trailing punctuation that clings to URLs, but keep balancing closers
             int k = j;
             while (k > start && IsUrlTerminalPunct(s[k - 1]))
             {
                 char tail = s[k - 1];
-
-                // Keep a balancing closer if there was an opener inside the token (e.g., "(https://ex.com)")
                 if ((tail == ')' && HasUnmatchedOpening(s.AsSpan(start, k - start - 1), '(', ')')) ||
                     (tail == ']' && HasUnmatchedOpening(s.AsSpan(start, k - start - 1), '[', ']')) ||
                     (tail == '}' && HasUnmatchedOpening(s.AsSpan(start, k - start - 1), '{', '}')))
                 {
-                    break;
+                    break; // keep balancing closer
                 }
-
                 k--;
             }
 
             return k;
         }
-
     }
 }
