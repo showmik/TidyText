@@ -235,8 +235,61 @@ namespace TidyText.Tests.ViewModel
             Assert.That(vm.MainText, Is.EqualTo("hello world!"));
         }
 
+        [TestCase("Met Dr. Smith at 5 p.m. today. great chat.", "Met Dr. Smith at 5 p.m. today. Great chat.")]
+        [TestCase("Meet me at 10 A.M. tomorrow. thanks.", "Meet me at 10 A.M. tomorrow. Thanks.")]
+        [TestCase("We live in the U.S. today. all good.", "We live in the U.S. today. All good.")]
+        [TestCase("We are in the U.S.A. now. ok.", "We are in the U.S.A. now. Ok.")]
+        [TestCase("It works, e.g. like this. cool.", "It works, e.g. like this. Cool.")]
+        [TestCase("Value is 3.14 meters. next.", "Value is 3.14 meters. Next.")]
+        [TestCase("Wait... is this real? yes.", "Wait... Is this real? Yes.")]
+        [TestCase("\"hello\", he said. 'okay' she replied. fine.", "\"Hello\", he said. 'Okay' she replied. Fine.")]
+        [TestCase("(greetings) are fun. indeed.", "(Greetings) are fun. Indeed.")]
+        [TestCase("first line\nsecond line. third line", "First line\nSecond line. Third line")]
+        [TestCase("para one. end.\n\nsecond para starts lower. fine.", "Para one. End.\n\nSecond para starts lower. Fine.")]
+        [TestCase("i think it's fine. it's okay.", "I think it's fine. It's okay.")]
+        [TestCase("state-of-the-art devices are here. welcome.", "State-of-the-art devices are here. Welcome.")]
+        // Sentence case should not alter spacing when only IsSentenceCase is true:
+        [TestCase(" hello ,world !  ok ", " Hello ,world !  Ok ")]
+        public void Clean_SentenceCase_Robust_Scenarios(string input, string expected)
+        {
+            var vm = NewVm();
+            vm.MainText = input;
+            vm.IsSentenceCase = true; // only casing, no spacing/trim changes
+            vm.Clean();
+            Assert.That(vm.MainText, Is.EqualTo(expected));
+        }
+
+        [TestCase("we love iPhone 15. nice.", "We love iPhone 15. Nice.")]
+        [TestCase("watch YouTube today. ok.", "Watch YouTube today. Ok.")]
+        [TestCase("we use OpenAI models. cool.", "We use OpenAI models. Cool.")]
+        [TestCase("order at McDonald’s now. thanks.", "Order at McDonald’s now. Thanks.")]
+        [TestCase("we test iOS and macOS now. ok.", "We test iOS and macOS now. Ok.")]
+        [TestCase("NASA announced new SLS rocket. big news.", "NASA announced new SLS rocket. Big news.")]
+        [TestCase("Meet me at 10 a.m. tomorrow. thanks.", "Meet me at 10 a.m. tomorrow. Thanks.")]
+        [TestCase("Value is 3.14 meters. next.", "Value is 3.14 meters. Next.")]
+        [TestCase("\"hello\", he said. 'okay' she replied. fine.", "\"Hello\", he said. 'Okay' she replied. Fine.")]
+        [TestCase("(greetings) are fun. indeed.", "(Greetings) are fun. Indeed.")]
+        public void Clean_SentenceCase_Preserves_CamelAndAbbrev(string input, string expected)
+        {
+            var vm = NewVm();
+            vm.MainText = input;
+            vm.IsSentenceCase = true;   // no spacing/trim toggles
+            vm.Clean();
+            Assert.That(vm.MainText, Is.EqualTo(expected));
+        }
+
         [Test]
-        public void Clean_SentenceCase_Applied_Last()
+        public void Clean_SentenceCase_Normalizes_Alternating_Case()
+        {
+            var vm = NewVm();
+            vm.MainText = "after that, tEsT again. ok.";
+            vm.IsSentenceCase = true;
+            vm.Clean();
+            Assert.That(vm.MainText, Is.EqualTo("After that, test again. Ok."));
+        }
+
+        [Test]
+        public void Clean_SentenceCase_Applied_Last_CamelSafe()
         {
             var vm = NewVm();
             vm.MainText = "tHis IS. a tEsT.\nnew line";
