@@ -103,6 +103,41 @@ namespace TidyText.Model
                     }
                 }
 
+                // Tighten only real contractions/possessives or name elisions around apostrophes (' or ’).
+                // Examples tightened: "It ’ s"→"It’s", "I ’ ll"→"I’ll", "James ’ s"→"James’s", "O’ Connor"→"O’Connor"
+                // Examples NOT tightened: "rock ' n ' roll" (quoted/standalone 'n')
+                if (s[i] == '\'' || s[i] == '’')
+                {
+                    // previous non-whitespace already emitted
+                    int back = sb.Length - 1;
+                    while (back >= 0 && char.IsWhiteSpace(sb[back])) back--;
+                    char prevNonWs = back >= 0 ? sb[back] : '\0';
+
+                    // next non-whitespace in source
+                    int j = i + 1;
+                    while (j < n && char.IsWhiteSpace(s[j])) j++;
+                    char nextNonWs = j < n ? s[j] : '\0';
+
+                    if (IsWordChar(prevNonWs) && IsWordChar(nextNonWs))
+                    {
+                        bool isContractionTail = IsEnglishContractionTail(s, j);
+                        bool isNameElision = char.IsLetter(prevNonWs) && char.IsLetter(nextNonWs) && char.IsUpper(nextNonWs);
+
+                        if (isContractionTail || isNameElision)
+                        {
+                            // drop any spaces we may have appended before the apostrophe
+                            sb.Length = back + 1;
+
+                            // append the apostrophe and skip spaces after it
+                            sb.Append(s[i]);
+                            i = j; // continue from the next non-whitespace char
+                            continue;
+                        }
+                    }
+                    // otherwise fall through (it can act like a closing quote)
+                }
+
+
                 // 6) Punctuation spacing -------------------------------------------------------
                 char c = s[i];
                 bool isColon = c == ':';
@@ -190,6 +225,25 @@ namespace TidyText.Model
         }
 
         // ---------------------------- helpers ----------------------------
+        private static bool IsEnglishContractionTail(string s, int j)
+        {
+            if (j >= s.Length || !char.IsLetter(s[j])) return false;
+            char a = char.ToLowerInvariant(s[j]);
+
+            // one-letter tails
+            if (a == 's' || a == 't' || a == 'd' || a == 'm') return true;
+
+            // two-letter tails: ll, re, ve
+            if (j + 1 < s.Length && char.IsLetter(s[j + 1]))
+            {
+                char b = char.ToLowerInvariant(s[j + 1]);
+                if ((a == 'l' && b == 'l') || (a == 'r' && b == 'e') || (a == 'v' && b == 'e'))
+                    return true;
+            }
+
+            return false;
+        }
+
 
         // Treat " and ' as closing quotes when followed by whitespace, sentence punctuation, another closer, or end-of-text.
         private static bool IsLikelyClosingStraightQuote(string s, int j)

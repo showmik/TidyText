@@ -173,6 +173,26 @@ namespace TidyText.Tests.Model
             Is.EqualTo("\"very good test text,\" I’ll include"));
         }
 
+        [TestCase("It’ s", "It’s")]
+        [TestCase("It ’s", "It’s")]
+        [TestCase("I ’ ll", "I’ll")]
+        [TestCase("James ’ s book", "James’s book")]
+        [TestCase("O’ Connor", "O’Connor")]
+        [TestCase("rock ' n ' roll", "rock ' n ' roll")] // not a contraction → leave as-is
+        public void Contractions_And_Possessives_Tighten(string input, string expected)
+        {
+            Assert.That(Fix(input), Is.EqualTo(expected));
+        }
+
+        // NBSP around apostrophes also tightens
+        [Test]
+        public void Contraction_With_Nbsp_Tightens()
+        {
+            var nbsp = '\u00A0';
+            var got = Fix("It’" + nbsp + "s");
+            Assert.That(got, Is.EqualTo("It’s"));
+        }
+
         // ===================== COLON POLICY (narrative vs technical) =====================
 
         [Test]
