@@ -243,56 +243,6 @@ namespace TidyText.ViewModel
             return sb.ToString();
         }
 
-        private static string FixSpacesAroundPunctuation(string text)
-        {
-            if (string.IsNullOrEmpty(text)) return text;
-            var sb = new StringBuilder(text.Length);
-            text = NormalizeNewlines(text);
-
-            static bool IsTargetPunct(char c) => c == '.' || c == ',' || c == '!' || c == '?' || c == ';' || c == ':';
-            static bool IsClose(char c) => c == '"' || c == '”' || c == '\'' || c == '’' || c == ')' || c == ']' || c == '}';
-            for (int i = 0; i < text.Length; i++)
-            {
-                char c = text[i];
-                if (!IsTargetPunct(c)) { sb.Append(c); continue; }
-
-                // remove spaces before the punctuation
-                while (sb.Length > 0 && sb[^1] == ' ') sb.Length--;
-
-                // keep ellipses intact
-                if (c == '.' && i + 2 < text.Length && text[i + 1] == '.' && text[i + 2] == '.')
-                {
-                    sb.Append("...");
-                    i += 2;
-                    // swallow spaces after ellipsis
-                    int k = i + 1; while (k < text.Length && text[k] == ' ') k++;
-                    // absorb trailing closures (quotes/brackets)
-                    while (k < text.Length && IsClose(text[k])) { sb.Append(text[k]); k++; }
-                    if (k < text.Length && text[k] != '\n') sb.Append(' ');
-                    i = k - 1;
-                    continue;
-                }
-
-                // numeric separators like 1,234 or 3.14
-                char prev = '\0'; for (int p = sb.Length - 1; p >= 0; p--) { if (sb[p] != ' ') { prev = sb[p]; break; } }
-                int j = i + 1; while (j < text.Length && text[j] == ' ') j++;
-                char next = j < text.Length ? text[j] : '\0';
-                bool numericSep = char.IsDigit(prev) && (c == '.' || c == ',') && char.IsDigit(next);
-
-                sb.Append(c);
-
-                if (!numericSep)
-                {
-                    // absorb closures after punctuation
-                    while (j < text.Length && IsClose(text[j])) { sb.Append(text[j]); j++; }
-                    if (j < text.Length && text[j] != '\n') sb.Append(' ');
-                }
-                i = j - 1;
-            }
-            return sb.ToString();
-        }
-
-
         private static string ConvertToSentenceCase(string text)
         {
             if (string.IsNullOrEmpty(text)) return text;
