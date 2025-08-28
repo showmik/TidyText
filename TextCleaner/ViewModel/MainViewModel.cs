@@ -28,45 +28,35 @@ namespace TidyText.ViewModel
         [ObservableProperty] private bool _isUppercase;
         [ObservableProperty] private bool _isLowercase;
         [ObservableProperty] private bool _isSentenceCase;
-        [ObservableProperty] private bool _isCapitalizeEachWord;
+        [ObservableProperty] private bool _isTitleCase;
         [ObservableProperty] private bool _isDoNotChange;
 
         // Input Text
+        [ObservableProperty]
         private string _mainText;
+
         private string _previousText;
         private Stack<string> _inputTextHistory = new();
 
         // Counters
-        private int _wordCount;
-        private int _characterCount;
-        private int _sentenceCount;
-        private int _paragraphCount;
-        private int _lineCount;
+        [ObservableProperty] private int _wordCount;
+        [ObservableProperty] private int _characterCount;
+        [ObservableProperty] private int _sentenceCount;
+        [ObservableProperty] private int _paragraphCount;
+        [ObservableProperty] private int _lineCount;
 
-        // Getters and Setters
-        public int WordCount { get => _wordCount; set => SetProperty(ref _wordCount, value); }
-        public int CharacterCount { get => _characterCount; set => SetProperty(ref _characterCount, value); }
-        public int SentenceCount { get => _sentenceCount; set => SetProperty(ref _sentenceCount, value); }
-        public int ParagraphCount { get => _paragraphCount; set => SetProperty(ref _paragraphCount, value); }
-        public int LineCount { get => _lineCount; set => SetProperty(ref _lineCount, value); }
-
-        public string MainText
+        partial void OnMainTextChanged(string value)
         {
-            get => _mainText;
-            set
-            {
-                SetProperty(ref _mainText, value);
-                WordCount = GetWordCount(_mainText);
-                CharacterCount = GetCharacterCount(_mainText);
-                SentenceCount = GetSentenceCount(_mainText);
-                ParagraphCount = GetParagraphCount(_mainText);
-                LineCount = GetLineBreakCount(_mainText);
-            }
+            WordCount = GetWordCount(value);
+            CharacterCount = GetCharacterCount(value);
+            SentenceCount = GetSentenceCount(value);
+            ParagraphCount = GetParagraphCount(value);
+            LineCount = GetLineBreakCount(value);
         }
 
         public MainViewModel()
         {
-            Application.Current.Exit += OnApplicationClosing;
+            if (Application.Current != null) { Application.Current.Exit += OnApplicationClosing; }
             LoadSettings();
             IsDoNotChange = true;
             _mainText = string.Empty;
@@ -85,7 +75,14 @@ namespace TidyText.ViewModel
         [RelayCommand]
         public void Copy()
         {
-            Clipboard.SetText(MainText);
+            try
+            {
+                Clipboard.SetText(MainText ?? string.Empty);
+            }
+            catch (Exception)
+            {
+                throw new Exception("Failed to copy text to clipboard.");
+            }
         }
 
         [RelayCommand]
@@ -119,8 +116,8 @@ namespace TidyText.ViewModel
             // CASE at the very end
             if (IsUppercase) text = text.ToUpper(CultureInfo.CurrentCulture);
             else if (IsLowercase) text = text.ToLower(CultureInfo.CurrentCulture);
-            else if (IsSentenceCase) text = ConvertToSentenceCase(text);
-            else if (IsCapitalizeEachWord) text = TitleCaseConverter.Default.Convert(text, CultureInfo.CurrentCulture);
+            else if (IsSentenceCase) text = SentenceCaseConverter.Default.Convert(text, CultureInfo.CurrentCulture);
+            else if (IsTitleCase) text = TitleCaseConverter.Default.Convert(text, CultureInfo.CurrentCulture);
 
             if (text != _previousText)
             {
@@ -242,11 +239,6 @@ namespace TidyText.ViewModel
                 }
             }
             return sb.ToString();
-        }
-
-        private static string ConvertToSentenceCase(string text)
-        {
-            return SentenceCaseConverter.Default.Convert(text, CultureInfo.CurrentCulture);
         }
 
         // Settings methods

@@ -169,11 +169,11 @@
                           Margin="0,6"
                           IsChecked="{Binding ShouldTrimEnd, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                <CheckBox Content="Multiple Spaces to Single"
+                <CheckBox Content="Remove Multiple Spaces"
                           Margin="0,6"
                           IsChecked="{Binding ShouldRemoveMultipleSpaces, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                <CheckBox Content="Multiple Blank Lines to Single"
+                <CheckBox Content="Remove Multiple Blank Lines"
                           Margin="0,6"
                           IsChecked="{Binding ShouldRemoveMultipleLines, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
@@ -209,10 +209,10 @@
                              BorderThickness="2"
                              IsChecked="{Binding IsSentenceCase, Mode=TwoWay}" />
 
-                <RadioButton Content="Capitalize Each Word"
+                <RadioButton Content="Title Case"
                              Margin="0,6"
                              BorderThickness="2"
-                             IsChecked="{Binding IsCapitalizeEachWord, Mode=TwoWay}" />
+                             IsChecked="{Binding IsTitleCase, Mode=TwoWay}" />
 
                 <RadioButton Content="Do Not Change"
                              Margin="0,6"
@@ -231,7 +231,7 @@
                        HorizontalContentAlignment="Left"
                        Padding="0, 5" />
 
-                <CheckBox Content="Fix Space After Punctuation"
+                <CheckBox Content="Fix Space Around Punctuation"
                           Margin="0,6"
                           IsChecked="{Binding ShouldFixPunctuationSpace, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             </StackPanel>
