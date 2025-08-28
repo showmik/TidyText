@@ -12,5 +12,6 @@ namespace TidyText.Model.Casing
         ISet<string> ProperCaseTokens { get; }         // names/brands to TitleCase mid-sentence
         ISet<string> BrandTokens { get; }              // tokens that mark model families (Gemini, iPhone, …)
         ISet<string> BrandSuffixes { get; }            // Pro/Max/Ultra/Plus/Mini → TitleCase w/ brand or digits
+        IDictionary<string, string> ProperCaseMap { get; }
     }
 }

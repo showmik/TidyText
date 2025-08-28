@@ -48,9 +48,30 @@ namespace TidyText.Model.Casing
             // 2–3 letters
             "AI","ML","API","SDK","CLI","UI","UX","ID","IP","DNS","TCP","UDP","SSL","TLS","SSH",
             "CPU","GPU","RAM","ROM","SSD","HDD","USB","WPF","GPT","USA","UK","EU","UN","UAE","SLS",
+            "AP",
             // trusted 4+ letters
             "NASA","HTTP","HTTPS","HTML","JSON","XML","SQL","UUID","GUID","JPEG","PNG","WASM","WLAN","SSID"
         };
+
+        public IDictionary<string, string> ProperCaseMap { get; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            // brands / products (key: any case; value: canonical case)
+            ["iphone"] = "iPhone",
+            ["ipad"] = "iPad",
+            ["macos"] = "macOS",
+            ["ebay"] = "eBay",
+            ["mcdonald’s"] = "McDonald’s",
+            ["pixel"] = "Pixel",
+            ["galaxy"] = "Galaxy",
+            ["thinkpad"] = "ThinkPad",
+            ["macbook"] = "MacBook",
+
+            // names you already wanted to keep proper-cased
+            ["claude"] = "Claude",
+            ["sonnet"] = "Sonnet",
+            ["gemini"] = "Gemini",
+        };
+
 
         public ISet<string> ProperCaseTokens { get; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {

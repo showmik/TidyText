@@ -309,7 +309,7 @@ namespace TidyText.Tests.ViewModel
                 vm.MainText = "hello from the world of text";
                 vm.IsCapitalizeEachWord = true;
                 vm.Clean();
-                Assert.That(vm.MainText, Is.EqualTo("Hello From The World Of Text"));
+                Assert.That(vm.MainText, Is.EqualTo("Hello From the World of Text"));
             }
             finally { Thread.CurrentThread.CurrentCulture = prev; }
         }

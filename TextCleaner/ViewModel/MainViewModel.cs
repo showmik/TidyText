@@ -120,7 +120,7 @@ namespace TidyText.ViewModel
             if (IsUppercase) text = text.ToUpper(CultureInfo.CurrentCulture);
             else if (IsLowercase) text = text.ToLower(CultureInfo.CurrentCulture);
             else if (IsSentenceCase) text = ConvertToSentenceCase(text);
-            else if (IsCapitalizeEachWord) text = new CultureInfo("en-US", false).TextInfo.ToTitleCase(text);
+            else if (IsCapitalizeEachWord) text = TitleCaseConverter.Default.Convert(text, CultureInfo.CurrentCulture);
 
             if (text != _previousText)
             {
