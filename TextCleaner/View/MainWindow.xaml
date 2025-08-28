@@ -19,8 +19,9 @@
     </Window.DataContext>
 
     <Window.Resources>
-        <service:BooleanToWrapConverter x:Key="BooleanToWrapConverter" />
-        
+        <service:BooleanToWrapConverter x:Key="BooleanToWrapConverter" x:Shared="False" />
+        <FontFamily x:Key="InterFont">pack://application:,,,/Font/Inter-Regular.ttf#Inter</FontFamily>
+        <Thickness x:Key="DefaultControlMargin">0,0,16,0</Thickness>
     </Window.Resources>
 
     <Grid Margin="25, 0"
@@ -38,7 +39,7 @@
         <TextBox x:Name="MainTextBox"
                  Grid.Row="0"
                  BorderThickness="2"
-                 FontFamily="Font/Inter-Regular.ttf"
+                 FontFamily="{StaticResource InterFont}"
                  BorderBrush="Black"
                  Margin="0, 15, 0, 0"
                  Padding="8"
@@ -82,28 +83,28 @@
             <StackPanel Grid.Column="0"
                         Orientation="Horizontal">
 
-                <custom:StatisticsViewer Margin="0, 0, 8, 0"
+                <custom:StatisticsViewer Margin="{StaticResource DefaultControlMargin}"
                                          ToolTip="Words"
                                          Label="W"
                                          Content="{Binding WordCount}">
                 </custom:StatisticsViewer>
 
-                <custom:StatisticsViewer Margin="8, 0, 8, 0"
+                <custom:StatisticsViewer Margin="{StaticResource DefaultControlMargin}"
                                          ToolTip="Characters"
                                          Label="C"
                                          Content="{Binding CharacterCount}" />
 
-                <custom:StatisticsViewer Margin="8, 0, 8, 0"
+                <custom:StatisticsViewer Margin="{StaticResource DefaultControlMargin}"
                                          ToolTip="Sentences"
                                          Label="S"
                                          Content="{Binding SentenceCount}" />
 
-                <custom:StatisticsViewer Margin="10, 0, 8, 0"
+                <custom:StatisticsViewer Margin="{StaticResource DefaultControlMargin}"
                                          ToolTip="Paragraphs"
                                          Label="P"
                                          Content="{Binding ParagraphCount}" />
 
-                <custom:StatisticsViewer Margin="8, 0, 8, 0"
+                <custom:StatisticsViewer Margin="{StaticResource DefaultControlMargin}"
                                          ToolTip="Lines"
                                          Label="L"
                                          Content="{Binding LineCount}" />
@@ -150,7 +151,7 @@
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top">
 
-                <Label Content="White Spaces"
+                <Label Content="Whitespace"
                        FontSize="16"
                        FontWeight="Bold"
                        HorizontalContentAlignment="Left"
@@ -224,7 +225,7 @@
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top">
 
-                <Label Content="Writting"
+                <Label Content="Writing"
                        FontSize="16"
                        FontWeight="Bold"
                        HorizontalContentAlignment="Left"

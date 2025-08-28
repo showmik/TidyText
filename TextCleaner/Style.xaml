@@ -182,8 +182,6 @@
                 Value="Center" />
         <Setter Property="HorizontalContentAlignment"
                 Value="Center" />
-        <Setter Property="FontFamily"
-                Value="/TextCleaner;component/Font/#Inter-Regular" />
         <Setter Property="FontSize"
                 Value="14" />
         <Setter Property="Height"
@@ -234,8 +232,6 @@
                 Value="Center" />
         <Setter Property="HorizontalContentAlignment"
                 Value="Center" />
-        <Setter Property="FontFamily"
-                Value="/TextCleaner;component/Font/#Inter-Regular" />
         <Setter Property="FontSize"
                 Value="14" />
         <Setter Property="Height"
@@ -249,7 +245,7 @@
                 <ControlTemplate TargetType="{x:Type Button}">
                     <Border x:Name="border"
                             Background="#4C65AFFF"
-                            Opacity="50"
+                            Opacity="0.5"
                             BorderBrush="#7F000000"
                             BorderThickness="2">
                         <ContentPresenter HorizontalAlignment="Center"
