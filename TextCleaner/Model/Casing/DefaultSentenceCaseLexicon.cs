@@ -16,7 +16,8 @@ namespace TidyText.Model.Casing
             "mr","mrs","ms","dr","prof","sr","jr","st",
             "vs","v","etc","e.g","eg","i.e","ie",
             "a.m","am","p.m","pm",
-            "u.s","u.s.a","us","usa","u.k","uk","u.n","un"
+            "u.s","u.s.a","us","usa","u.k","uk","u.n","un",
+            "ai", "a.i."
         };
 
         public ISet<string> UpperShortStopwords { get; } = new HashSet<string>(StringComparer.Ordinal)

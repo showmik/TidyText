@@ -15,213 +15,295 @@ namespace TidyText.Model
         {
             if (string.IsNullOrEmpty(input)) return input;
             string s = input.Replace("\r\n", "\n").Replace("\r", "\n");
-
             var sb = new StringBuilder(s.Length + s.Length / 10);
-            int i = 0, n = s.Length;
-
-            while (i < n)
-            {
-                // 1) Protect code spans ---------------------------------------------------------
-                if (s[i] == '`')
-                {
-                    // triple ```
-                    if (i + 2 < n && s[i + 1] == '`' && s[i + 2] == '`')
-                    {
-                        int j = i + 3;
-                        while (j + 2 < n && !(s[j] == '`' && s[j + 1] == '`' && s[j + 2] == '`')) j++;
-                        j = Math.Min(j + 3, n);
-                        sb.Append(s, i, j - i); i = j; continue;
-                    }
-                    // inline `code`
-                    else
-                    {
-                        int j = i + 1;
-                        while (j < n && s[j] != '`' && s[j] != '\n') j++;
-                        if (j < n && s[j] == '`') j++;
-                        sb.Append(s, i, j - i); i = j; continue;
-                    }
-                }
-
-                // 2) Protect URLs / www. -------------------------------------------------------
-                if (StartsWithScheme(s, i, out int end))
-                { sb.Append(s, i, end - i); i = end; continue; }
-
-                if (StartsWithWww(s, i, out end))
-                { sb.Append(s, i, end - i); i = end; continue; }
-
-                // 3) Protect paths -------------------------------------------------------------
-                if (TryConsumeWinPath(s, i, out end))
-                { sb.Append(s, i, end - i); i = end; continue; }
-
-                if (TryConsumeNixPath(s, i, out end))
-                { sb.Append(s, i, end - i); i = end; continue; }
-
-                // 4) Protect emails/domains/versions/decimals/times/ratios/ellipsis -----------
-                if (TryConsumeIPv6(s, i, out end))
-                { sb.Append(s, i, end - i); i = end; continue; }
-
-                if (TryConsumeEmail(s, i, out end))
-                { sb.Append(s, i, end - i); i = end; continue; }
-
-                if (TryConsumeDomain(s, i, out end))
-                { sb.Append(s, i, end - i); i = end; continue; }
-
-                if (TryConsumeVersion(s, i, out end))
-                { sb.Append(s, i, end - i); i = end; continue; }
-
-                if (TryConsumeDecimal(s, i, out end))
-                { sb.Append(s, i, end - i); i = end; continue; }
-
-                if (TryConsumeTimeOrRatio(s, i, out end))
-                { sb.Append(s, i, end - i); i = end; continue; }
-
-                if (TryConsumeEllipsis(s, i, out end))
-                {
-                    sb.Append(s, i, end - i);
-                    // add a space after ellipsis if next non-space is word char
-                    int k = end; while (k < n && s[k] == ' ') k++;
-                    if (k < n && IsWordChar(s[k])) sb.Append(' ');
-                    i = end; continue;
-                }
-
-                // 5) Protect dotted abbreviations like U.S.A., e.g., i.e. ---------------------
-                if (TryConsumeDottedAbbrev(s, i, out end))
-                { sb.Append(s, i, end - i); i = end; continue; }
-
-                // Apostrophes used inside words (It’s, I’ll): keep tight and remove any stray space before them.
-                if (s[i] == '\'' || s[i] == '’')
-                {
-                    char prev = sb.Length > 0 ? sb[^1] : '\0';
-                    char next = (i + 1 < n) ? s[i + 1] : '\0';
-                    if (IsWordChar(prev) && IsWordChar(next))
-                    {
-                        // e.g., "I ’ ll" → "I’ll"
-                        while (sb.Length > 0 && sb[^1] == ' ') sb.Length--;
-                        sb.Append(s[i]);
-                        i++;
-                        continue;
-                    }
-                }
-
-                // Tighten only real contractions/possessives or name elisions around apostrophes (' or ’).
-                // Examples tightened: "It ’ s"→"It’s", "I ’ ll"→"I’ll", "James ’ s"→"James’s", "O’ Connor"→"O’Connor"
-                // Examples NOT tightened: "rock ' n ' roll" (quoted/standalone 'n')
-                if (s[i] == '\'' || s[i] == '’')
-                {
-                    // previous non-whitespace already emitted
-                    int back = sb.Length - 1;
-                    while (back >= 0 && char.IsWhiteSpace(sb[back])) back--;
-                    char prevNonWs = back >= 0 ? sb[back] : '\0';
-
-                    // next non-whitespace in source
-                    int j = i + 1;
-                    while (j < n && char.IsWhiteSpace(s[j])) j++;
-                    char nextNonWs = j < n ? s[j] : '\0';
-
-                    if (IsWordChar(prevNonWs) && IsWordChar(nextNonWs))
-                    {
-                        bool isContractionTail = IsEnglishContractionTail(s, j);
-                        bool isNameElision = char.IsLetter(prevNonWs) && char.IsLetter(nextNonWs) && char.IsUpper(nextNonWs);
-
-                        if (isContractionTail || isNameElision)
-                        {
-                            // drop any spaces we may have appended before the apostrophe
-                            sb.Length = back + 1;
-
-                            // append the apostrophe and skip spaces after it
-                            sb.Append(s[i]);
-                            i = j; // continue from the next non-whitespace char
-                            continue;
-                        }
-                    }
-                    // otherwise fall through (it can act like a closing quote)
-                }
-
-
-                // 6) Punctuation spacing -------------------------------------------------------
-                char c = s[i];
-                bool isColon = c == ':';
-                if (IsClosing(s[i]))
-                {
-                    sb.Append(s[i]);
-
-                    int j = i + 1;
-                    if (j < n)
-                    {
-                        char nx = s[j];
-                        if (!char.IsWhiteSpace(nx) && IsWordChar(nx))
-                            sb.Append(' ');
-                    }
-
-                    i = i + 1;
-                    continue;
-                }
-                if (IsSentencePunct(c) || (treatColonAsSentencePunct && isColon))
-                {
-                    // remove spaces before
-                    while (sb.Length > 0 && sb[^1] == ' ') sb.Length--;
-
-                    // colon guards: don't treat ':' as sentence punct in URLs or times/ratios
-                    if (isColon)
-                    {
-                        if (i + 2 < n && s[i + 1] == '/' && s[i + 2] == '/')
-                        { sb.Append(':'); i++; continue; }
-
-                        if ((i > 0 && char.IsDigit(sb[^1])) ||
-                            (i + 1 < n && char.IsDigit(s[i + 1])))
-                        { sb.Append(':'); i++; continue; }
-                    }
-
-                    sb.Append(c);
-
-                    // absorb immediately-following true closers (brackets, curly/guillemet closers)
-                    int j = i + 1;
-                    while (j < n && (IsClosing(s[j]) || IsLikelyClosingStraightQuote(s, j)))
-                    {
-                        sb.Append(s[j]);
-                        j++;
-                    }
-
-                    // decide whether to add a space
-                    bool addSpace = false;
-                    if (j < n)
-                    {
-                        char nx = s[j];
-
-                        // Opening quote + word: tighten only after . ! ?  (never after , ; or colon-mode)
-                        if (IsOpeningQuote(nx) && j + 1 < n && IsWordChar(s[j + 1]))
-                        {
-                            bool allowTight = (c == '.' || c == '!' || c == '?');
-                            if ((isColon && treatColonAsSentencePunct) || c == ',' || c == ';' || !allowTight)
-                            {
-                                addSpace = true; // space before opening quote
-                            }
-                            else
-                            {
-                                sb.Append(nx);   // tight form: ."Yes"
-                                j++;
-                                addSpace = false;
-                            }
-                        }
-                        else if (!char.IsWhiteSpace(nx) && !IsSentencePunct(nx))
-                        {
-                            // next is a “wordish” thing — insert exactly one space
-                            addSpace = true;
-                        }
-                    }
-                    if (addSpace) sb.Append(' ');
-                    i = j;
-                    continue;
-
-                }
-
-                // default copy
-                sb.Append(c);
-                i++;
-            }
-
+            ProcessPunctuationSpacing(s, sb, treatColonAsSentencePunct, spaceAfterColon);
             // Collapse 2+ spaces between non-newline tokens (preserve newlines)
             return CollapseRunsOfSpaces(sb.ToString());
+        }
+
+        /// <summary>
+        /// Processes the input string and appends the result to the StringBuilder, fixing punctuation spacing.
+        /// </summary>
+        /// <param name="s">The normalized input string.</param>
+        /// <param name="sb">The StringBuilder to append the processed result to.</param>
+        /// <param name="treatColonAsSentencePunct">If true, ':' behaves like sentence punctuation (space after) except for times/ratios/URLs.</param>
+        /// <param name="spaceAfterColon">If true, always add a space after a colon (not currently used).</param>
+        private static void ProcessPunctuationSpacing(string s, StringBuilder sb, bool treatColonAsSentencePunct, bool spaceAfterColon)
+        {
+            int i = 0, n = s.Length;
+            while (i < n)
+            {
+                if (TryAppendCodeSpan(s, sb, ref i)) continue;
+                if (TryAppendUrlOrWww(s, sb, ref i)) continue;
+                if (TryAppendPath(s, sb, ref i)) continue;
+                if (TryAppendSpecialTokens(s, sb, ref i)) continue;
+                if (TryAppendDottedAbbrev(s, sb, ref i)) continue;
+                if (TryTightenApostropheWord(s, sb, ref i)) continue;
+                if (TryTightenApostropheContraction(s, sb, ref i)) continue;
+                if (TryAppendPunctuationSpacing(s, sb, ref i, treatColonAsSentencePunct, spaceAfterColon)) continue;
+                // default copy
+                sb.Append(s[i]);
+                i++;
+            }
+        }
+
+        /// <summary>
+        /// Tries to append a code span (inline or block) to the StringBuilder if present at the current index.
+        /// </summary>
+        /// <param name="s">The input string.</param>
+        /// <param name="sb">The StringBuilder to append to.</param>
+        /// <param name="i">The current index (will be updated if a code span is found).</param>
+        /// <returns>True if a code span was found and appended; otherwise, false.</returns>
+        private static bool TryAppendCodeSpan(string s, StringBuilder sb, ref int i)
+        {
+            int n = s.Length;
+            if (s[i] == '`')
+            {
+                // triple ```
+                if (i + 2 < n && s[i + 1] == '`' && s[i + 2] == '`')
+                {
+                    int j = i + 3;
+                    while (j + 2 < n && !(s[j] == '`' && s[j + 1] == '`' && s[j + 2] == '`')) j++;
+                    j = Math.Min(j + 3, n);
+                    sb.Append(s, i, j - i); i = j; return true;
+                }
+                // inline `code`
+                else
+                {
+                    int j = i + 1;
+                    while (j < n && s[j] != '`' && s[j] != '\n') j++;
+                    if (j < n && s[j] == '`') j++;
+                    sb.Append(s, i, j - i); i = j; return true;
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Tries to append a URL or www-prefixed domain to the StringBuilder if present at the current index.
+        /// </summary>
+        /// <param name="s">The input string.</param>
+        /// <param name="sb">The StringBuilder to append to.</param>
+        /// <param name="i">The current index (will be updated if a URL is found).</param>
+        /// <returns>True if a URL or www-domain was found and appended; otherwise, false.</returns>
+        private static bool TryAppendUrlOrWww(string s, StringBuilder sb, ref int i)
+        {
+            if (StartsWithScheme(s, i, out int end))
+            { sb.Append(s, i, end - i); i = end; return true; }
+            if (StartsWithWww(s, i, out end))
+            { sb.Append(s, i, end - i); i = end; return true; }
+            return false;
+        }
+
+        /// <summary>
+        /// Tries to append a Windows or Unix path to the StringBuilder if present at the current index.
+        /// </summary>
+        /// <param name="s">The input string.</param>
+        /// <param name="sb">The StringBuilder to append to.</param>
+        /// <param name="i">The current index (will be updated if a path is found).</param>
+        /// <returns>True if a path was found and appended; otherwise, false.</returns>
+        private static bool TryAppendPath(string s, StringBuilder sb, ref int i)
+        {
+            if (TryConsumeWinPath(s, i, out int end))
+            { sb.Append(s, i, end - i); i = end; return true; }
+            if (TryConsumeNixPath(s, i, out end))
+            { sb.Append(s, i, end - i); i = end; return true; }
+            return false;
+        }
+
+        /// <summary>
+        /// Tries to append special tokens (IPv6, email, domain, version, decimal, time/ratio, ellipsis) to the StringBuilder if present at the current index.
+        /// </summary>
+        /// <param name="s">The input string.</param>
+        /// <param name="sb">The StringBuilder to append to.</param>
+        /// <param name="i">The current index (will be updated if a special token is found).</param>
+        /// <returns>True if a special token was found and appended; otherwise, false.</returns>
+        private static bool TryAppendSpecialTokens(string s, StringBuilder sb, ref int i)
+        {
+            int n = s.Length;
+            if (TryConsumeIPv6(s, i, out int end))
+            { sb.Append(s, i, end - i); i = end; return true; }
+            if (TryConsumeEmail(s, i, out end))
+            { sb.Append(s, i, end - i); i = end; return true; }
+            if (TryConsumeDomain(s, i, out end))
+            { sb.Append(s, i, end - i); i = end; return true; }
+            if (TryConsumeVersion(s, i, out end))
+            { sb.Append(s, i, end - i); i = end; return true; }
+            if (TryConsumeDecimal(s, i, out end))
+            { sb.Append(s, i, end - i); i = end; return true; }
+            if (TryConsumeTimeOrRatio(s, i, out end))
+            { sb.Append(s, i, end - i); i = end; return true; }
+            if (TryConsumeEllipsis(s, i, out end))
+            {
+                sb.Append(s, i, end - i);
+                // add a space after ellipsis if next non-space is word char
+                int k = end; while (k < n && s[k] == ' ') k++;
+                if (k < n && IsWordChar(s[k])) sb.Append(' ');
+                i = end; return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Tries to append a dotted abbreviation (e.g., U.S.A., e.g., i.e.) to the StringBuilder if present at the current index.
+        /// </summary>
+        /// <param name="s">The input string.</param>
+        /// <param name="sb">The StringBuilder to append to.</param>
+        /// <param name="i">The current index (will be updated if a dotted abbreviation is found).</param>
+        /// <returns>True if a dotted abbreviation was found and appended; otherwise, false.</returns>
+        private static bool TryAppendDottedAbbrev(string s, StringBuilder sb, ref int i)
+        {
+            if (TryConsumeDottedAbbrev(s, i, out int end))
+            { sb.Append(s, i, end - i); i = end; return true; }
+            return false;
+        }
+
+        /// <summary>
+        /// Tries to tighten apostrophe usage inside words (e.g., It’s, I’ll) by removing stray spaces before them.
+        /// </summary>
+        /// <param name="s">The input string.</param>
+        /// <param name="sb">The StringBuilder to append to.</param>
+        /// <param name="i">The current index (will be updated if a word apostrophe is found).</param>
+        /// <returns>True if a word apostrophe was found and tightened; otherwise, false.</returns>
+        private static bool TryTightenApostropheWord(string s, StringBuilder sb, ref int i)
+        {
+            int n = s.Length;
+            if (s[i] == '\'' || s[i] == '’')
+            {
+                char prev = sb.Length > 0 ? sb[^1] : '\0';
+                char next = (i + 1 < n) ? s[i + 1] : '\0';
+                if (IsWordChar(prev) && IsWordChar(next))
+                {
+                    // e.g., "I ’ ll" → "I’ll"
+                    while (sb.Length > 0 && sb[^1] == ' ') sb.Length--;
+                    sb.Append(s[i]);
+                    i++;
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Tries to tighten apostrophe usage in contractions, possessives, or name elisions (e.g., It's, I'll, O’Connor).
+        /// </summary>
+        /// <param name="s">The input string.</param>
+        /// <param name="sb">The StringBuilder to append to.</param>
+        /// <param name="i">The current index (will be updated if a contraction or elision is found).</param>
+        /// <returns>True if a contraction or elision was found and tightened; otherwise, false.</returns>
+        private static bool TryTightenApostropheContraction(string s, StringBuilder sb, ref int i)
+        {
+            int n = s.Length;
+            if (s[i] == '\'' || s[i] == '’')
+            {
+                // previous non-whitespace already emitted
+                int back = sb.Length - 1;
+                while (back >= 0 && char.IsWhiteSpace(sb[back])) back--;
+                char prevNonWs = back >= 0 ? sb[back] : '\0';
+
+                // next non-whitespace in source
+                int j = i + 1;
+                while (j < n && char.IsWhiteSpace(s[j])) j++;
+                char nextNonWs = j < n ? s[j] : '\0';
+
+                if (IsWordChar(prevNonWs) && IsWordChar(nextNonWs))
+                {
+                    bool isContractionTail = IsEnglishContractionTail(s, j);
+                    bool isNameElision = char.IsLetter(prevNonWs) && char.IsLetter(nextNonWs) && char.IsUpper(nextNonWs);
+
+                    if (isContractionTail || isNameElision)
+                    {
+                        // drop any spaces we may have appended before the apostrophe
+                        sb.Length = back + 1;
+                        // append the apostrophe and skip spaces after it
+                        sb.Append(s[i]);
+                        i = j; // continue from the next non-whitespace char
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Tries to append punctuation and handle spacing after punctuation, including special handling for colons and quotes.
+        /// </summary>
+        /// <param name="s">The input string.</param>
+        /// <param name="sb">The StringBuilder to append to.</param>
+        /// <param name="i">The current index (will be updated if punctuation is found).</param>
+        /// <param name="treatColonAsSentencePunct">If true, ':' behaves like sentence punctuation (space after) except for times/ratios/URLs.</param>
+        /// <param name="spaceAfterColon">If true, always add a space after a colon (not currently used).</param>
+        /// <returns>True if punctuation was found and handled; otherwise, false.</returns>
+        private static bool TryAppendPunctuationSpacing(string s, StringBuilder sb, ref int i, bool treatColonAsSentencePunct, bool spaceAfterColon)
+        {
+            int n = s.Length;
+            char c = s[i];
+            bool isColon = c == ':';
+            if (IsClosing(s[i]))
+            {
+                sb.Append(s[i]);
+                int j = i + 1;
+                if (j < n)
+                {
+                    char nx = s[j];
+                    if (!char.IsWhiteSpace(nx) && IsWordChar(nx))
+                        sb.Append(' ');
+                }
+                i = i + 1;
+                return true;
+            }
+            if (IsSentencePunct(c) || (treatColonAsSentencePunct && isColon))
+            {
+                // remove spaces before
+                while (sb.Length > 0 && sb[^1] == ' ') sb.Length--;
+                // colon guards: don't treat ':' as sentence punct in URLs or times/ratios
+                if (isColon)
+                {
+                    if (i + 2 < n && s[i + 1] == '/' && s[i + 2] == '/')
+                    { sb.Append(':'); i++; return true; }
+                    if ((i > 0 && char.IsDigit(sb[^1])) ||
+                        (i + 1 < n && char.IsDigit(s[i + 1])))
+                    { sb.Append(':'); i++; return true; }
+                }
+                sb.Append(c);
+                // absorb immediately-following true closers (brackets, curly/guillemet closers)
+                int j = i + 1;
+                while (j < n && (IsClosing(s[j]) || IsLikelyClosingStraightQuote(s, j)))
+                {
+                    sb.Append(s[j]);
+                    j++;
+                }
+                // decide whether to add a space
+                bool addSpace = false;
+                if (j < n)
+                {
+                    char nx = s[j];
+                    // Opening quote + word: tighten only after . ! ?  (never after , ; or colon-mode)
+                    if (IsOpeningQuote(nx) && j + 1 < n && IsWordChar(s[j + 1]))
+                    {
+                        bool allowTight = (c == '.' || c == '!' || c == '?');
+                        if ((isColon && treatColonAsSentencePunct) || c == ',' || c == ';' || !allowTight)
+                        {
+                            addSpace = true; // space before opening quote
+                        }
+                        else
+                        {
+                            sb.Append(nx);   // tight form: ."Yes"
+                            j++;
+                            addSpace = false;
+                        }
+                    }
+                    else if (!char.IsWhiteSpace(nx) && !IsSentencePunct(nx))
+                    {
+                        // next is a “wordish” thing — insert exactly one space
+                        addSpace = true;
+                    }
+                }
+                if (addSpace) sb.Append(' ');
+                i = j;
+                return true;
+            }
+            return false;
         }
 
         // ---------------------------- helpers ----------------------------
