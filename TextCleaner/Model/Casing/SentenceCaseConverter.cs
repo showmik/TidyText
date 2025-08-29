@@ -1,8 +1,9 @@
 ﻿// TidyText/Model/Casing/SentenceCaseConverter.cs
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
-using System.Collections.Generic;
+using System.Windows.Controls;
 
 namespace TidyText.Model.Casing
 {
@@ -34,10 +35,15 @@ namespace TidyText.Model.Casing
             text = NormalizeNewlines(text);
             var sb = new StringBuilder(text.Length);
             bool atSentenceStart = true;
+            int wrapperDepth = 0;
+            bool pendingSecondWrapperCap = false;
+            bool inDoubleQuote = false, inSingleQuote = false;
 
-            string? prevOutToken = null;
+            //string? prevOutToken = null;
             bool prevHadDigit = false;
             bool prevWasBrand = false;
+            bool prevWasHonorific = false; // e.g., "Dr." → next token is a surname to keep TitleCase
+            int prevHonorificDepth = -1;  // only apply within the same wrapper/quote depth
 
             int i = 0, n = text.Length;
             while (i < n)
@@ -51,49 +57,148 @@ namespace TidyText.Model.Casing
                     string token = text.Substring(start, i - start);
 
                     bool hasDigit = HasDigit(token);
-                    string outTok;
+                    // Initialize so the compiler knows it's always assigned; later logic overwrites it.
+                    string outTok = token;
 
-                    // Single-letter pronoun
-                    if (token.Length == 1 && (token[0] == 'i' || token[0] == 'I'))
+                    // 0) Canonical brand/name casing first (works at sentence start and mid-sentence)
+                    //    e.g., "iphone" -> "iPhone", "macos" -> "macOS", "ebay" -> "eBay", "mcdonald’s" -> "McDonald’s"
+                    if (_lex.ProperCaseMap.TryGetValue(token, out var mapped))
                     {
-                        outTok = "I";
-                    }
-                    else if (atSentenceStart)
-                    {
-                        if (IsAllCapsAcronym(token) || hasDigit)
-                            outTok = token;
-                        else if (_lex.ProperCaseTokens.Contains(token))
-                            outTok = CapTokenWithApostrophes(token, culture);
-                        else
-                            outTok = UpperFirstLowerRest(token, culture);
+                        outTok = mapped;
                     }
                     else
                     {
-                        if (_lex.ProperCaseTokens.Contains(token))
+                        // Single-letter pronoun
+                        if (token.Length == 1 && (token[0] == 'i' || token[0] == 'I'))
                         {
-                            outTok = CapTokenWithApostrophes(token, culture);
+                            outTok = "I";
                         }
-                        else if (_lex.BrandSuffixes.Contains(token) && (prevWasBrand || prevHadDigit))
+                        else if (atSentenceStart)
                         {
-                            outTok = CapTokenWithApostrophes(token, culture); // Pro/Max/…
-                        }
-                        else if ((_opt.PreserveAcronymsMidSentence && IsAllCapsAcronym(token)) ||
-                                 LooksLikeSimpleTitleCase(token) ||
-                                 IsCamelOrMixedCase(token) ||
-                                 hasDigit)
-                        {
-                            outTok = token;
+                            // Honorific + dot at sentence start: "Mr." / "Dr." → keep TitleCase,
+                            // and mark the following token (surname) to TitleCase as well.
+                            if (i < n && text[i] == '.' &&
+                            (_lex.HonorificBases?.Contains(token.ToLowerInvariant()) == true ||
+                             _lex.NonTerminalAbbreviations.Contains(token.ToLowerInvariant())))
+                            {
+                                outTok = UpperFirstLowerRest(token, culture);
+                                prevWasHonorific = _lex.HonorificBases?.Contains(token.ToLowerInvariant()) == true;
+                                prevHonorificDepth = wrapperDepth; // NEW: tie carry-over to current wrapper/quote depth
+                            }
+                            else if (IsAllCapsAcronym(token) || hasDigit)
+                            {
+                                outTok = token;
+                            }
+                            else if (token.IndexOfAny(new[] { '\'', '’' }) >= 0)
+                            {
+                                // Contractions/possessives: "it's", "we're", "o'clock" => only cap first letter.
+                                // Surnames/honorific style: "o'neill" => "O'Neill".
+                                outTok = LooksLikeContractionOrPossessive(token)
+                                    ? UpperFirstLowerRest(token, culture)
+                                    : CapTokenWithApostrophes(token, culture);
+                            }
+                            else
+                            {
+                                outTok = UpperFirstLowerRest(token, culture);
+                            }
                         }
                         else
                         {
-                            outTok = token.ToLower(culture);
+                            // ------- mid-sentence special cases -------
+
+                            bool handled = false;
+
+                            // If we just saw an honorific like "Dr.", title-case the following surname,
+                            // BUT only if we're still at the same wrapper/quote depth.
+                            // (Prevents: ... like "Mr." Are ... → should be ... like "Mr." are ...)
+                            if (prevWasHonorific)
+                            {
+                                if (wrapperDepth == prevHonorificDepth)
+                                {
+                                    outTok = UpperFirstLowerRest(token, culture);
+                                    handled = true;
+                                }
+                                // Whether applied or not, clear the carry-over now.
+                                prevWasHonorific = false;
+                            }
+
+                            // If not handled yet, check for an honorific that ends with '.' mid-sentence.
+                            if (!handled && i < n && text[i] == '.' &&
+                                (_lex.HonorificBases?.Contains(token.ToLowerInvariant()) == true ||
+                                 _lex.NonTerminalAbbreviations.Contains(token.ToLowerInvariant())))
+                            {
+                                outTok = UpperFirstLowerRest(token, culture);
+                                prevWasHonorific = _lex.HonorificBases?.Contains(token.ToLowerInvariant()) == true;
+                                prevHonorificDepth = wrapperDepth;
+                                handled = true;
+                            }
+
+                            // Preserve case for dotted initialism segments like "U.S.A." (single letter + '.')
+                            // Keep as-is so "U.S.A." stays upper and "e.g." stays lower.
+                            // Dotted initialism/abbrev segment (single letter + '.'):
+                            // Lowercase only for known *lowercase* non-terminal abbrevs (e.g., "e.g.", "i.e.");
+                            // Prefer UPPER if the dot-stripped form is a known acronym (AM, PM, US, USA, …).
+                            if (!handled && token.Length == 1 && i < n && text[i] == '.')
+                            {
+                                // Build the full dotted run around this letter (scan left & right over letters/dots)
+                                int left = start - 1;
+                                while (left >= 0 && (char.IsLetter(text[left]) || text[left] == '.')) left--;
+                                int right = i; // i currently points at the '.'
+                                while (right < n && (char.IsLetter(text[right]) || text[right] == '.')) right++;
+
+                                string dotted = text.Substring(left + 1, right - (left + 1));
+
+                                // Normalizations
+                                string noDotsLower = TrimDotsToLower(dotted);      // "e.g." -> "eg"
+                                string dottedLower = TrimTrailingDotToLower(dotted); // "E.G." -> "e.g"
+                                string noDotsUpper = TrimDotsToUpper(dotted);      // "U.S.A." -> "USA" ; "A.M." -> "AM"
+
+                                bool preferUpper = _lex.UpperAcronyms.Contains(noDotsUpper);
+                                bool preferLower =
+                                    _lex.NonTerminalAbbreviations.Contains(noDotsLower) ||
+                                    _lex.NonTerminalAbbreviations.Contains(dottedLower);
+
+                                if (preferUpper)
+                                    outTok = token.ToUpper(culture);   // e.g., A.M., U.S., U.S.A.
+                                else if (preferLower)
+                                    outTok = token.ToLower(culture);   // e.g., e.g., i.e., etc.
+                                else
+                                    outTok = token;                    // unknown → preserve as typed
+
+                                handled = true;
+                            }
+
+                            if (!handled)
+                            {
+                                // ------- normal mid-sentence flow -------
+                                if (_lex.ProperCaseTokens.Contains(token))
+                                {
+                                    outTok = CapTokenWithApostrophes(token, culture);
+                                }
+                                else if (_lex.BrandSuffixes.Contains(token) && (prevWasBrand || prevHadDigit))
+                                {
+                                    outTok = CapTokenWithApostrophes(token, culture); // Pro/Max/…
+                                }
+                                else if ((_opt.PreserveAcronymsMidSentence && IsAllCapsAcronym(token)) ||
+                                         IsCamelOrMixedCase(token) ||
+                                         hasDigit)
+                                {
+                                    outTok = token;
+                                }
+                                else
+                                {
+                                    outTok = token.ToLower(culture);
+                                }
+                            }
                         }
                     }
 
                     sb.Append(outTok);
+                    // If the first post-terminator word wasn't inside a wrapper, don't plan a second one.
+                    if (pendingSecondWrapperCap && wrapperDepth == 0) pendingSecondWrapperCap = false;
                     atSentenceStart = false;
 
-                    prevOutToken = outTok;
+                    //prevOutToken = outTok;
                     prevHadDigit = hasDigit;
                     prevWasBrand = _lex.BrandTokens.Contains(outTok);
                     continue; // i already advanced
@@ -101,6 +206,50 @@ namespace TidyText.Model.Casing
 
                 // punctuation / whitespace
                 sb.Append(c);
+                // Track wrappers: (), [], {}, and quotes
+                if (c == '(' || c == '[' || c == '{')
+                {
+                    wrapperDepth++;
+                }
+                else if (c == ')' || c == ']' || c == '}')
+                {
+                    if (wrapperDepth > 0) wrapperDepth--;
+                    // If we just closed the first wrapper after a terminator,
+                    // allow capitalizing the first word of the next wrapper group.
+                    if (wrapperDepth == 0 && pendingSecondWrapperCap)
+                    {
+                        atSentenceStart = true;
+                        pendingSecondWrapperCap = false;
+                    }
+                }
+                else if (c == '"')
+                {
+                    inDoubleQuote = !inDoubleQuote;
+                    if (inDoubleQuote) wrapperDepth++;
+                    else if (wrapperDepth > 0)
+                    {
+                        wrapperDepth--;
+                        if (wrapperDepth == 0 && pendingSecondWrapperCap)
+                        {
+                            atSentenceStart = true;
+                            pendingSecondWrapperCap = false;
+                        }
+                    }
+                }
+                else if (c == '\'')
+                {
+                    inSingleQuote = !inSingleQuote;
+                    if (inSingleQuote) wrapperDepth++;
+                    else if (wrapperDepth > 0)
+                    {
+                        wrapperDepth--;
+                        if (wrapperDepth == 0 && pendingSecondWrapperCap)
+                        {
+                            atSentenceStart = true;
+                            pendingSecondWrapperCap = false;
+                        }
+                    }
+                }
 
                 if (IsSentenceTerminator(c))
                 {
@@ -126,7 +275,7 @@ namespace TidyText.Model.Casing
                             // next real word starts a sentence
                             int j = i + 1;
                             while (j < n && (char.IsWhiteSpace(text[j]) || IsWrapper(text[j]))) j++;
-                            if (j < n) atSentenceStart = true;
+                            if (j < n) { atSentenceStart = true; pendingSecondWrapperCap = true; }
                         }
                     }
                 }
@@ -246,7 +395,6 @@ namespace TidyText.Model.Casing
             return false;
         }
 
-
         // "Dr", "Smith" style
         private static bool LooksLikeSimpleTitleCase(string token)
         {
@@ -317,6 +465,36 @@ namespace TidyText.Model.Casing
                 }
             }
             return sawLowerPrefix && sawUpperRunAfter;
+        }
+
+        private static bool LooksLikeContractionOrPossessive(string token)
+        {
+            if (string.IsNullOrEmpty(token)) return false;
+            int apos = token.IndexOfAny(new[] { '\'', '’' });
+            if (apos <= 0 || apos >= token.Length - 1) return false;
+
+            string s = token.Substring(apos + 1).ToLowerInvariant();
+            // common contraction/possessive tails
+            if (s == "s" || s == "t" || s == "d" || s == "m" || s == "n" ||
+                s == "ll" || s == "re" || s == "ve" || s == "em")
+                return true;
+
+            // o'clock
+            if (apos == 1 && (token[0] == 'o' || token[0] == 'O') && s == "clock")
+                return true;
+
+            return false;
+        }
+
+        private static string TrimDotsToUpper(string dotted)
+        {
+            var sb = new StringBuilder(dotted.Length);
+            for (int i = 0; i < dotted.Length; i++)
+            {
+                char ch = dotted[i];
+                if (ch != '.') sb.Append(char.ToUpperInvariant(ch));
+            }
+            return sb.ToString();
         }
     }
 }

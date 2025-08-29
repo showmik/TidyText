@@ -8,6 +8,7 @@ namespace TidyText.Model.Casing
     {
         ISet<string> NonTerminalAbbreviations { get; } // e.g., "a.m", "u.s.a"
         ISet<string> UpperShortStopwords { get; }      // "TO/IN/OF/..." → never treat as acronyms
+        ISet<string> HonorificBases { get; }
         ISet<string> UpperAcronyms { get; }            // explicit ALL-CAPS acronyms to keep (NASA, GPT, …)
         ISet<string> ProperCaseTokens { get; }         // names/brands to TitleCase mid-sentence
         ISet<string> BrandTokens { get; }              // tokens that mark model families (Gemini, iPhone, …)

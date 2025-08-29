@@ -44,14 +44,16 @@ namespace TidyText.Model.Casing
         };
 
         public ISet<string> UpperAcronyms { get; } = new HashSet<string>(StringComparer.Ordinal)
-        {
+{
             // 2–3 letters
             "AI","ML","API","SDK","CLI","UI","UX","ID","IP","DNS","TCP","UDP","SSL","TLS","SSH",
-            "CPU","GPU","RAM","ROM","SSD","HDD","USB","WPF","GPT","USA","UK","EU","UN","UAE","SLS",
-            "AP",
+            "CPU","GPU","RAM","ROM","SSD","HDD","USB","WPF","GPT","US","USA","UK","EU","UN","UAE","SLS",
+            "AM","PM",
+            "AP","MLA","BB","AMA","NY","APA",
             // trusted 4+ letters
             "NASA","HTTP","HTTPS","HTML","JSON","XML","SQL","UUID","GUID","JPEG","PNG","WASM","WLAN","SSID"
         };
+
 
         public IDictionary<string, string> ProperCaseMap { get; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
@@ -61,15 +63,95 @@ namespace TidyText.Model.Casing
             ["macos"] = "macOS",
             ["ebay"] = "eBay",
             ["mcdonald’s"] = "McDonald’s",
+            ["macdonald"] = "MacDonald",
+            ["macdonald's"] = "MacDonald's",
+            ["macdonald’s"] = "MacDonald’s",
             ["pixel"] = "Pixel",
             ["galaxy"] = "Galaxy",
             ["thinkpad"] = "ThinkPad",
             ["macbook"] = "MacBook",
-
-            // names you already wanted to keep proper-cased
+            ["windows"] = "Windows",
+            ["android"] = "Android",
+            ["ios"] = "iOS",
+            ["google"] = "Google",
+            ["facebook"] = "Facebook",
+            ["twitter"] = "Twitter",
+            ["linkedin"] = "LinkedIn",
+            ["youtube"] = "YouTube",
+            ["whatsapp"] = "WhatsApp",
+            ["messenger"] = "Messenger",
+            ["instagram"] = "Instagram",
+            ["tiktok"] = "TikTok",
+            ["snapchat"] = "Snapchat",
+            ["spotify"] = "Spotify",
+            ["netflix"] = "Netflix",
+            ["amazon"] = "Amazon",
+            ["alexa"] = "Alexa",
+            ["siri"] = "Siri",
+            ["cortana"] = "Cortana",
+            ["bing"] = "Bing",
+            ["github"] = "GitHub",
+            ["gitlab"] = "GitLab",
+            ["stackoverflow"] = "Stack Overflow",
+            ["reddit"] = "Reddit",
+            ["zoom"] = "Zoom",
+            ["slack"] = "Slack",
+            ["teams"] = "Teams",
+            ["skype"] = "Skype",
+            ["dropbox"] = "Dropbox",
+            ["onedrive"] = "OneDrive",
+            ["icloud"] = "iCloud",
+            ["adobe"] = "Adobe",
+            ["photoshop"] = "Photoshop",
+            ["illustrator"] = "Illustrator",
+            ["premiere"] = "Premiere",
+            ["aftereffects"] = "After Effects",
+            ["figma"] = "Figma",
+            ["notion"] = "Notion",
+            ["trello"] = "Trello",
+            ["asana"] = "Asana",
+            ["jira"] = "Jira",
+            ["confluence"] = "Confluence",
+            ["zoom"] = "Zoom",
+            ["uber"] = "Uber",
+            ["lyft"] = "Lyft",
+            ["tesla"] = "Tesla",
+            ["bmw"] = "BMW",
+            ["mercedes"] = "Mercedes",
+            ["audi"] = "Audi",
+            ["volkswagen"] = "Volkswagen",
+            ["toyota"] = "Toyota",
+            ["honda"] = "Honda",
+            ["ford"] = "Ford",
+            ["chevrolet"] = "Chevrolet",
+            ["nissan"] = "Nissan",
+            ["hyundai"] = "Hyundai",
+            ["kia"] = "Kia",
+            ["sony"] = "Sony",
+            ["samsung"] = "Samsung",
+            ["lg"] = "LG",
+            ["panasonic"] = "Panasonic",
+            ["philips"] = "Philips",
+            ["dell"] = "Dell",
+            ["hp"] = "HP",
+            ["lenovo"] = "Lenovo",
+            ["acer"] = "Acer",
+            ["asus"] = "ASUS",
+            ["msi"] = "MSI",
+            ["alienware"] = "Alienware",
+            ["surface"] = "Surface",
+            ["playstation"] = "PlayStation",
+            ["xbox"] = "Xbox",
+            ["nintendo"] = "Nintendo",
+            ["switch"] = "Switch",
+            ["wii"] = "Wii",
+            ["ds"] = "DS",
             ["claude"] = "Claude",
             ["sonnet"] = "Sonnet",
             ["gemini"] = "Gemini",
+            ["mac"] = "Mac",
+            ["cmd"] = "Cmd",
+            ["ctrl"] = "Ctrl",
         };
 
 
@@ -87,6 +169,11 @@ namespace TidyText.Model.Casing
         public ISet<string> BrandSuffixes { get; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
             "Pro","Max","Ultra","Plus","Mini"
+        };
+
+        public ISet<string> HonorificBases { get; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "mr","mrs","ms","dr","prof","sr","jr","st"
         };
     }
 }

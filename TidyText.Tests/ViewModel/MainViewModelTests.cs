@@ -30,7 +30,7 @@ namespace TidyText.Tests.ViewModel
             IsUppercase = false,
             IsLowercase = false,
             IsSentenceCase = false,
-            IsCapitalizeEachWord = false,
+            IsTitleCase = false,
             WrapLines = false
         };
 
@@ -248,8 +248,11 @@ namespace TidyText.Tests.ViewModel
         [TestCase("para one. end.\n\nsecond para starts lower. fine.", "Para one. End.\n\nSecond para starts lower. Fine.")]
         [TestCase("i think it's fine. it's okay.", "I think it's fine. It's okay.")]
         [TestCase("state-of-the-art devices are here. welcome.", "State-of-the-art devices are here. Welcome.")]
-        // Sentence case should not alter spacing when only IsSentenceCase is true:
         [TestCase(" hello ,world !  ok ", " Hello ,world !  Ok ")]
+        [TestCase("WHEN THAT WRAPPER CLOSES (E.G.,) BRINGS DEPTH BACK TO 0)", "When that wrapper closes (e.g.,) brings depth back to 0)")]
+        [TestCase("THIS WILL NEED A DRAG-AND-DROP PATCH", "This will need a drag-and-drop patch")]
+        [TestCase("This Will Need A Drag-and-drop Patch", "This will need a drag-and-drop patch")]
+        [TestCase("i’m looking at how honorifics like \"mr.\" are processed.", "I’m looking at how honorifics like \"Mr.\" are processed.")]
         public void Clean_SentenceCase_Robust_Scenarios(string input, string expected)
         {
             var vm = NewVm();
@@ -307,7 +310,7 @@ namespace TidyText.Tests.ViewModel
                 Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
                 var vm = NewVm();
                 vm.MainText = "hello from the world of text";
-                vm.IsCapitalizeEachWord = true;
+                vm.IsTitleCase = true;
                 vm.Clean();
                 Assert.That(vm.MainText, Is.EqualTo("Hello From the World of Text"));
             }
