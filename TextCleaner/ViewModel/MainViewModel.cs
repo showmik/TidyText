@@ -129,7 +129,8 @@ namespace TidyText.ViewModel
         // Text statistics related methods
         private int GetWordCount(string text) => string.IsNullOrWhiteSpace(text) ? 0 : text.Split(new[] { ' ', '\t', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries).Length;
 
-        private int GetCharacterCount(string text) => text?.Length ?? 0;
+        private static bool IsLineBreak(char c) => c is '\r' or '\n' or '\u0085' or '\u2028' or '\u2029';
+        private static int GetCharacterCount(string? text) => text?.Count(c => !IsLineBreak(c)) ?? 0;
 
         private int GetSentenceCount(string text)
         {
