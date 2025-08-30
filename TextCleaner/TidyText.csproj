@@ -7,7 +7,6 @@
     <UseWPF>true</UseWPF>
     <ApplicationIcon>tidytext_icon.ico</ApplicationIcon>
 	  <EnableWindowsTargeting>true</EnableWindowsTargeting>
-    <Platforms>x64</Platforms>
 	  <RuntimeIdentifier>win-x64</RuntimeIdentifier>
   </PropertyGroup>
 
