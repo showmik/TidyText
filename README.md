@@ -1,21 +1,39 @@
-# TidyText - Offline Text Cleaner and Formatter
+# TidyText — Offline Text Cleaner & Formatter
 
-<kbd><img src="TidyText_UI.png" /></kbd>
-  
+<p align="center">
+  <kbd><img src="TidyText_UI.png" alt="TidyText screenshot" /></kbd>
+</p>
 
+**TidyText** is a fast, privacy-friendly Windows app for cleaning and formatting plain text. It fixes messy spacing, normalizes casing, and gives you quick stats—without sending a single character to the cloud.
 
-**TidyText** is a user-friendly offline application designed to clean and format your text documents. With TidyText, you can easily enhance the readability and consistency of your text by applying various formatting operations. Whether you're a writer, editor, student, or anyone working with text, TidyText provides essential functionalities to streamline your text cleaning process.
+## Highlights
 
-## Features
+* **Trim Whitespace**
+  Remove stray spaces at the start/end of lines for a neat result.
 
-- **Whitespace Trimming**: Remove unnecessary leading and trailing whitespace from your text, ensuring a neat and tidy appearance.
+* **Collapse Blank Lines**
+  Eliminate extra empty lines between paragraphs/sections.
 
-- **Blank Line Removal**: Eliminate extra blank lines between paragraphs or sections to create a more compact and visually appealing document.
+* **Fix Punctuation Spacing**
+  Normalize spaces around commas, periods, colons, quotes, parentheses, and more.
 
-- **Punctuation Space Fixing**: Correct the spacing around punctuation marks, ensuring consistent and professional typography in your text.
+* **Smart Case Conversion**
+  Convert to **sentence case**, **title case**, **UPPERCASE**, or **lowercase** with sensible rules to keep text readable and consistent.
 
-- **Text Case Conversion**: Transform your text to uppercase, lowercase, sentence case, or title case with just a few clicks. Maintain consistent capitalization throughout your document effortlessly.
+* **Text Statistics**
+  See word, character, sentence, paragraph, and line counts at a glance.
 
-- **Statistics**: Get insightful statistics about your text, including word count, character count, paragraph count, sentence count, and line count. Stay informed about the structure and length of your document.
+* **100% Offline**
+  No telemetry, no internet required—your text stays on your machine.
 
-- **Copy and Undo**: Easily copy the cleaned text to the clipboard for quick use in other applications. TidyText also provides an undo functionality, allowing you to revert changes and restore your original text.
+## Download
+
+Grab the latest build from the repository’s **Releases** page, then run the installer.
+
+## Usage
+
+1. Paste your text into TidyText.
+2. Choose the operations you want (spacing, casing, etc.).
+3. Apply the cleanup and review the result.
+4. **Copy** the cleaned text to use anywhere.
+5. **Undo** if you want to tweak and try again.
