@@ -1,12 +1,20 @@
-﻿using NUnit.Framework;
-using TidyText.Model;
+using NUnit.Framework;
+using TidyText.Core.TextEngine.Processors;
 
 namespace TidyText.Tests.Model
 {
     [TestFixture]
     public class TextSpacingTests
     {
-        private static string Fix(string s, bool treatColon = false) => TextSpacing.FixPunctuationSpacing(s, treatColon);
+        private static string Fix(string s, bool treatColon = false)
+        {
+            var processor = new PunctuationProcessor();
+            return processor.Process(s, new PunctuationProcessorOptions 
+            { 
+                FixPunctuationSpacing = true, 
+                TreatColonAsSentencePunct = treatColon 
+            });
+        }
 
         // --- Core punctuation spacing --------------------------------------------------------
 

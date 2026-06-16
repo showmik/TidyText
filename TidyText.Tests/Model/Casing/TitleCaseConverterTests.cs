@@ -1,5 +1,5 @@
-﻿using NUnit.Framework;
-using TidyText.Model.Casing;
+using NUnit.Framework;
+using TidyText.Core.TextEngine.Casing;
 
 namespace TidyText.Tests.Model.Casing
 {

@@ -37,14 +37,58 @@ namespace TidyText.App.ViewModels
         [ObservableProperty] private string _readabilityScore = "N/A";
 
         // --- Processing Options ---
+        private readonly System.Collections.Generic.Stack<string> _history = new();
+
         [ObservableProperty] private bool _shouldTrim = true;
+        [ObservableProperty] private bool _shouldTrimStart = false;
+        [ObservableProperty] private bool _shouldTrimEnd = false;
         [ObservableProperty] private bool _shouldRemoveMultipleSpaces = true;
         [ObservableProperty] private bool _shouldRemoveMultipleLines = true;
+        [ObservableProperty] private bool _shouldRemoveAllLines = false;
         [ObservableProperty] private bool _shouldFixPunctuationSpace = true;
         [ObservableProperty] private bool _shouldRemoveHtmlTags = false;
         [ObservableProperty] private bool _shouldConvertSmartQuotes = false;
         
         [ObservableProperty] private CasingStyle _selectedCasingStyle = CasingStyle.DoNotChange;
+
+        partial void OnSelectedCasingStyleChanged(CasingStyle value)
+        {
+            OnPropertyChanged(nameof(IsUppercase));
+            OnPropertyChanged(nameof(IsLowercase));
+            OnPropertyChanged(nameof(IsSentenceCase));
+            OnPropertyChanged(nameof(IsTitleCase));
+            OnPropertyChanged(nameof(IsDoNotChange));
+        }
+
+        public bool IsUppercase
+        {
+            get => SelectedCasingStyle == CasingStyle.Uppercase;
+            set { if (value) SelectedCasingStyle = CasingStyle.Uppercase; }
+        }
+
+        public bool IsLowercase
+        {
+            get => SelectedCasingStyle == CasingStyle.Lowercase;
+            set { if (value) SelectedCasingStyle = CasingStyle.Lowercase; }
+        }
+
+        public bool IsSentenceCase
+        {
+            get => SelectedCasingStyle == CasingStyle.SentenceCase;
+            set { if (value) SelectedCasingStyle = CasingStyle.SentenceCase; }
+        }
+
+        public bool IsTitleCase
+        {
+            get => SelectedCasingStyle == CasingStyle.TitleCase;
+            set { if (value) SelectedCasingStyle = CasingStyle.TitleCase; }
+        }
+
+        public bool IsDoNotChange
+        {
+            get => SelectedCasingStyle == CasingStyle.DoNotChange;
+            set { if (value) SelectedCasingStyle = CasingStyle.DoNotChange; }
+        }
 
         public MainViewModel()
         {
@@ -90,12 +134,15 @@ namespace TidyText.App.ViewModels
         {
             if (string.IsNullOrEmpty(MainText)) return;
 
+            _history.Push(MainText);
+
             var options = new WhitespaceProcessorOptions
             {
-                TrimStart = ShouldTrim,
-                TrimEnd = ShouldTrim,
+                TrimStart = ShouldTrim || ShouldTrimStart,
+                TrimEnd = ShouldTrim || ShouldTrimEnd,
                 RemoveMultipleSpaces = ShouldRemoveMultipleSpaces,
-                RemoveMultipleLines = ShouldRemoveMultipleLines
+                RemoveMultipleLines = ShouldRemoveMultipleLines,
+                RemoveAllLines = ShouldRemoveAllLines
             };
 
             // Using reflection/casting to pass specific options if needed, 
@@ -123,6 +170,21 @@ namespace TidyText.App.ViewModels
             result = new CasingProcessor().Process(result, new CasingProcessorOptions { Style = SelectedCasingStyle });
 
             MainText = result;
+        }
+
+        [RelayCommand]
+        public void Clean()
+        {
+            CleanText();
+        }
+
+        [RelayCommand]
+        public void Undo()
+        {
+            if (_history.Count > 0)
+            {
+                MainText = _history.Pop();
+            }
         }
 
         [RelayCommand]

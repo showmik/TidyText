@@ -1,9 +1,9 @@
-﻿using NUnit.Framework;
+using NUnit.Framework;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Windows; // WPF Application
-using TidyText.ViewModel;
+using TidyText.App.ViewModels;
 
 namespace TidyText.Tests.ViewModel
 {
