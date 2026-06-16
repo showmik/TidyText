@@ -9,6 +9,7 @@
     <Color x:Key="AccentColor">#0EA5E9</Color>
     <Color x:Key="AccentHoverColor">#0284C7</Color>
     <Color x:Key="AccentForegroundColor">#FFFFFF</Color>
+    <Color x:Key="AccentHoverForegroundColor">#FFFFFF</Color>
     <Color x:Key="HoverColor">#F1F5F9</Color>
     <Color x:Key="PressedColor">#E2E8F0</Color>
 
@@ -27,6 +28,7 @@
     <SolidColorBrush x:Key="AccentBrush" Color="{DynamicResource AccentColor}"/>
     <SolidColorBrush x:Key="AccentHoverBrush" Color="{DynamicResource AccentHoverColor}"/>
     <SolidColorBrush x:Key="AccentForegroundBrush" Color="{DynamicResource AccentForegroundColor}"/>
+    <SolidColorBrush x:Key="AccentHoverForegroundBrush" Color="{DynamicResource AccentHoverForegroundColor}"/>
     <SolidColorBrush x:Key="HoverBrush" Color="{DynamicResource HoverColor}"/>
     <SolidColorBrush x:Key="PressedBrush" Color="{DynamicResource PressedColor}"/>
 
