@@ -10,10 +10,37 @@
         Title="TidyText" Height="760" Width="1200"
         WindowStartupLocation="CenterScreen"
         FontFamily="Segoe UI, -apple-system, BlinkMacSystemFont, Roboto, sans-serif"
-        Background="{StaticResource BgBrush}">
+        Background="{StaticResource BgBrush}"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        ResizeMode="CanResizeWithGrip">
+        
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="32" CornerRadius="8" GlassFrameThickness="0" UseAeroCaptionButtons="False" />
+    </WindowChrome.WindowChrome>
     
+    <!-- Outer Grid to hold Custom Title Bar + Rest of Window -->
     <Grid>
-        <Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="32" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Custom Title Bar -->
+        <Grid Grid.Row="0" Background="Transparent">
+            <!-- Window Drag Area handled natively by WindowChrome -->
+            <TextBlock Text="TidyText" FontSize="12" Foreground="{StaticResource TextMutedBrush}" VerticalAlignment="Center" Margin="16,0,0,0" IsHitTestVisible="False" />
+            
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" WindowChrome.IsHitTestVisibleInChrome="True">
+                <Button Content="" Width="46" Click="Minimize_Click" Style="{StaticResource WindowControlButtonStyle}" ToolTip="Minimize"/>
+                <Button Content="" Width="46" Click="Maximize_Click" Style="{StaticResource WindowControlButtonStyle}" ToolTip="Maximize"/>
+                <Button Content="" Width="46" Click="Close_Click" Style="{StaticResource WindowCloseButtonStyle}" ToolTip="Close"/>
+            </StackPanel>
+        </Grid>
+
+        <!-- Inner Content Grid -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
             <!-- Main Editor Area -->
             <ColumnDefinition Width="*" />
             <!-- AI Panel Area -->
@@ -153,5 +180,6 @@
                 Effect="{StaticResource SoftGlow}">
             <views:AIAssistantPanel DataContext="{Binding AIAssistantVM}" />
         </Border>
+        </Grid>
     </Grid>
 </Window>
