@@ -6,19 +6,20 @@
     <converters:BooleanToWrapConverter x:Key="BooleanToWrapConverter"/>
 
     <!-- Color Palette: Premium Dark Mode -->
-    <Color x:Key="BgColor">#0F1115</Color>
-    <Color x:Key="PanelBgColor">#1C1F26</Color>
-    <Color x:Key="BorderColor">#2D313A</Color>
-    <Color x:Key="TextColor">#F8FAFC</Color>
-    <Color x:Key="TextMutedColor">#94A3B8</Color>
+    <Color x:Key="BgColor">#09090B</Color>
+    <Color x:Key="PanelBgColor">#18181B</Color>
+    <Color x:Key="BorderColor">#27272A</Color>
+    <Color x:Key="TextColor">#FAFAFA</Color>
+    <Color x:Key="TextMutedColor">#A1A1AA</Color>
     <Color x:Key="AccentColor">#0EA5E9</Color>
     <Color x:Key="AccentHoverColor">#0284C7</Color>
-    <Color x:Key="HoverColor">#282C34</Color>
-    <Color x:Key="PressedColor">#1C1F26</Color>
+    <Color x:Key="AccentForegroundColor">#09090B</Color>
+    <Color x:Key="HoverColor">#27272A</Color>
+    <Color x:Key="PressedColor">#3F3F46</Color>
 
     <RadialGradientBrush x:Key="BgBrush" Center="0.5,0" RadiusX="0.8" RadiusY="0.8" GradientOrigin="0.5,0">
-        <GradientStop Color="#1A1C29" Offset="0" />
-        <GradientStop Color="#0F1115" Offset="1" />
+        <GradientStop Color="#18181B" Offset="0" />
+        <GradientStop Color="#09090B" Offset="1" />
     </RadialGradientBrush>
     <SolidColorBrush x:Key="PanelBgBrush" Color="{StaticResource PanelBgColor}"/>
     <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource BorderColor}"/>
@@ -26,6 +27,7 @@
     <SolidColorBrush x:Key="TextMutedBrush" Color="{StaticResource TextMutedColor}"/>
     <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource AccentColor}"/>
     <SolidColorBrush x:Key="AccentHoverBrush" Color="{StaticResource AccentHoverColor}"/>
+    <SolidColorBrush x:Key="AccentForegroundBrush" Color="{StaticResource AccentForegroundColor}"/>
     <SolidColorBrush x:Key="HoverBrush" Color="{StaticResource HoverColor}"/>
     <SolidColorBrush x:Key="PressedBrush" Color="{StaticResource PressedColor}"/>
 
@@ -94,7 +96,6 @@
 
     <!-- TextBlock Style -->
     <Style TargetType="TextBlock">
-        <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
         <Setter Property="VerticalAlignment" Value="Center"/>
     </Style>
 
@@ -179,7 +180,7 @@
                                 VerticalAlignment="Center">
                             <Path x:Name="CheckMark" 
                                   Data="M 3,8 L 7,12 L 13,4" 
-                                  Stroke="{StaticResource TextBrush}" 
+                                  Stroke="{StaticResource AccentForegroundBrush}" 
                                   StrokeThickness="2" 
                                   StrokeStartLineCap="Round" 
                                   StrokeEndLineCap="Round" 
@@ -246,13 +247,14 @@
     <!-- Primary Button Style -->
     <Style x:Key="PrimaryButtonStyle" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
         <Setter Property="Background" Value="{StaticResource AccentBrush}"/>
-        <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
+        <Setter Property="Foreground" Value="{StaticResource AccentForegroundBrush}"/>
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="FontWeight" Value="Bold"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
                     <Border x:Name="Border" Background="{TemplateBinding Background}" 
+                            TextElement.Foreground="{TemplateBinding Foreground}"
                             CornerRadius="8" RenderTransformOrigin="0.5,0.5">
                         <Border.RenderTransform>
                             <ScaleTransform ScaleX="1" ScaleY="1" />
@@ -363,7 +365,7 @@
                         <Trigger Property="IsChecked" Value="True">
                             <Setter TargetName="Track" Property="Background" Value="{StaticResource AccentBrush}"/>
                             <Setter TargetName="Track" Property="BorderBrush" Value="{StaticResource AccentBrush}"/>
-                            <Setter TargetName="Thumb" Property="Background" Value="White"/>
+                            <Setter TargetName="Thumb" Property="Background" Value="{StaticResource AccentForegroundBrush}"/>
                             <Trigger.EnterActions>
                                 <BeginStoryboard>
                                     <Storyboard>
@@ -421,7 +423,7 @@
                         <Trigger Property="IsChecked" Value="True">
                             <Setter TargetName="Border" Property="Background" Value="{StaticResource AccentBrush}"/>
                             <Setter TargetName="Border" Property="BorderThickness" Value="0"/>
-                            <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
+                            <Setter Property="Foreground" Value="{StaticResource AccentForegroundBrush}"/>
                             <Setter Property="FontWeight" Value="SemiBold"/>
                         </Trigger>
                         <Trigger Property="IsMouseOver" Value="True">
