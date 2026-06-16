@@ -8,6 +8,27 @@ namespace TidyText.App.Views
         public MainWindow()
         {
             InitializeComponent();
+            LoadTheme();
+        }
+
+        private string GetThemeFilePath() => System.IO.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData), "TidyText", "theme.txt");
+
+        private void LoadTheme()
+        {
+            try
+            {
+                var path = GetThemeFilePath();
+                if (System.IO.File.Exists(path))
+                {
+                    var theme = System.IO.File.ReadAllText(path).Trim();
+                    if (theme == "Light")
+                    {
+                        _isDarkTheme = false;
+                        ApplyTheme(save: false);
+                    }
+                }
+            }
+            catch { /* Ignore errors on load */ }
         }
 
         private void SettingsButton_Click(object sender, RoutedEventArgs e)
@@ -27,15 +48,32 @@ namespace TidyText.App.Views
         private void Close_Click(object sender, RoutedEventArgs e) => Close();
 
         private bool _isDarkTheme = true;
+        
         private void ThemeToggle_Click(object sender, RoutedEventArgs e)
         {
             _isDarkTheme = !_isDarkTheme;
+            ApplyTheme(save: true);
+        }
+
+        private void ApplyTheme(bool save)
+        {
             var newTheme = new ResourceDictionary { Source = new System.Uri($"Themes/{(_isDarkTheme ? "DarkTheme" : "LightTheme")}.xaml", System.UriKind.Relative) };
             
             var appResources = Application.Current.Resources.MergedDictionaries;
-            // The theme dictionary is at index 0 because Styles.xaml is at index 1
             appResources.RemoveAt(0);
             appResources.Insert(0, newTheme);
+
+            if (save)
+            {
+                try
+                {
+                    var path = GetThemeFilePath();
+                    var dir = System.IO.Path.GetDirectoryName(path);
+                    if (!System.IO.Directory.Exists(dir)) System.IO.Directory.CreateDirectory(dir!);
+                    System.IO.File.WriteAllText(path, _isDarkTheme ? "Dark" : "Light");
+                }
+                catch { /* Ignore errors on save */ }
+            }
         }
 
         private void CheckBox_Checked(object sender, RoutedEventArgs e)
