@@ -1,4 +1,4 @@
-﻿// TidyText/Model/Casing/SentenceCaseConverter.cs
+// TidyText/Model/Casing/SentenceCaseConverter.cs
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -158,7 +158,9 @@ namespace TidyText.Model.Casing
                                     _lex.NonTerminalAbbreviations.Contains(noDotsLower) ||
                                     _lex.NonTerminalAbbreviations.Contains(dottedLower);
 
-                                if (preferUpper)
+                                if (noDotsUpper == "AM" || noDotsUpper == "PM")
+                                    outTok = token;
+                                else if (preferUpper)
                                     outTok = token.ToUpper(culture);   // e.g., A.M., U.S., U.S.A.
                                 else if (preferLower)
                                     outTok = token.ToLower(culture);   // e.g., e.g., i.e., etc.

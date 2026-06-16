@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
@@ -22,6 +22,8 @@ namespace TidyText.ViewModel
         [ObservableProperty] private bool _shouldRemoveMultipleLines;
         [ObservableProperty] private bool _shouldRemoveAllLines;
         [ObservableProperty] private bool _shouldFixPunctuationSpace;
+        [ObservableProperty] private bool _shouldRemoveHtmlTags;
+        [ObservableProperty] private bool _shouldConvertSmartQuotes;
         [ObservableProperty] private bool _wrapLines;
 
         // Letter Case
@@ -110,6 +112,15 @@ namespace TidyText.ViewModel
                 if (ShouldRemoveMultipleSpaces) text = CollapseIntraLineWhitespace(text);
             }
 
+            if (ShouldRemoveHtmlTags)
+                text = Regex.Replace(text, "<.*?>", string.Empty);
+
+            if (ShouldConvertSmartQuotes)
+            {
+                text = text.Replace('“', '"').Replace('”', '"')
+                           .Replace('‘', '\'').Replace('’', '\'');
+            }
+
             if (ShouldFixPunctuationSpace)
                 text = TextSpacing.FixPunctuationSpacing(text, spaceAfterColon: false);
 
@@ -130,7 +141,7 @@ namespace TidyText.ViewModel
         private int GetWordCount(string text) => string.IsNullOrWhiteSpace(text) ? 0 : text.Split(new[] { ' ', '\t', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries).Length;
 
         private static bool IsLineBreak(char c) => c is '\r' or '\n' or '\u0085' or '\u2028' or '\u2029';
-        private static int GetCharacterCount(string? text) => text?.Count(c => !IsLineBreak(c)) ?? 0;
+        private static int GetCharacterCount(string? text) => text?.Length ?? 0;
 
         private int GetSentenceCount(string text)
         {
@@ -253,6 +264,8 @@ namespace TidyText.ViewModel
             ShouldRemoveMultipleLines = Properties.Settings.Default.ShouldTrimMultipleLines;
             ShouldRemoveAllLines = Properties.Settings.Default.ShouldRemoveAllLines;
             ShouldFixPunctuationSpace = Properties.Settings.Default.ShouldFixPunctuaionSpace;
+            ShouldRemoveHtmlTags = Properties.Settings.Default.ShouldRemoveHtmlTags;
+            ShouldConvertSmartQuotes = Properties.Settings.Default.ShouldConvertSmartQuotes;
         }
 
         public void SaveSettings()
@@ -265,6 +278,8 @@ namespace TidyText.ViewModel
             Properties.Settings.Default.ShouldTrimMultipleLines = ShouldRemoveMultipleLines;
             Properties.Settings.Default.ShouldRemoveAllLines = ShouldRemoveAllLines;
             Properties.Settings.Default.ShouldFixPunctuaionSpace = ShouldFixPunctuationSpace;
+            Properties.Settings.Default.ShouldRemoveHtmlTags = ShouldRemoveHtmlTags;
+            Properties.Settings.Default.ShouldConvertSmartQuotes = ShouldConvertSmartQuotes;
             Properties.Settings.Default.Save();
         }
 

@@ -1,4 +1,4 @@
-﻿// TidyText/Model/Casing/DefaultSentenceCaseLexicon.cs
+// TidyText/Model/Casing/DefaultSentenceCaseLexicon.cs
 using System;
 using System.Collections.Generic;
 
@@ -48,7 +48,6 @@ namespace TidyText.Model.Casing
             // 2–3 letters
             "AI","ML","API","SDK","CLI","UI","UX","ID","IP","DNS","TCP","UDP","SSL","TLS","SSH",
             "CPU","GPU","RAM","ROM","SSD","HDD","USB","WPF","GPT","US","USA","UK","EU","UN","UAE","SLS",
-            "AM","PM",
             "AP","MLA","BB","AMA","NY","APA",
             // trusted 4+ letters
             "NASA","HTTP","HTTPS","HTML","JSON","XML","SQL","UUID","GUID","JPEG","PNG","WASM","WLAN","SSID"
