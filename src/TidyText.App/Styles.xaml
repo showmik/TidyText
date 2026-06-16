@@ -264,6 +264,7 @@
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="Border" Property="Background" Value="{StaticResource AccentHoverBrush}"/>
+                            <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
                             <Trigger.EnterActions>
                                 <BeginStoryboard>
                                     <Storyboard>
@@ -283,6 +284,7 @@
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
                             <Setter TargetName="Border" Property="Background" Value="{StaticResource AccentBrush}"/>
+                            <Setter Property="Foreground" Value="{StaticResource AccentForegroundBrush}"/>
                             <Trigger.EnterActions>
                                 <BeginStoryboard>
                                     <Storyboard>
@@ -430,6 +432,14 @@
                             <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource AccentBrush}"/>
                             <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
                         </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsChecked" Value="True"/>
+                                <Condition Property="IsMouseOver" Value="True"/>
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="Border" Property="Background" Value="{StaticResource AccentHoverBrush}"/>
+                            <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
+                        </MultiTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
