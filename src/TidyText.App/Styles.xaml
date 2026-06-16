@@ -11,8 +11,8 @@
     <Color x:Key="BorderColor">#2D313A</Color>
     <Color x:Key="TextColor">#F8FAFC</Color>
     <Color x:Key="TextMutedColor">#94A3B8</Color>
-    <Color x:Key="AccentColor">#6366F1</Color>
-    <Color x:Key="AccentHoverColor">#4F46E5</Color>
+    <Color x:Key="AccentColor">#0EA5E9</Color>
+    <Color x:Key="AccentHoverColor">#0284C7</Color>
     <Color x:Key="HoverColor">#282C34</Color>
     <Color x:Key="PressedColor">#1C1F26</Color>
 
