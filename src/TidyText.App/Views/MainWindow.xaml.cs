@@ -19,5 +19,10 @@ namespace TidyText.App.Views
             };
             settingsWindow.ShowDialog();
         }
+
+        private void CheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
