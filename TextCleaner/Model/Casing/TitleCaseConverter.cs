@@ -1,4 +1,4 @@
-﻿// TidyText/Model/Casing/TitleCaseConverter.cs
+// TidyText/Model/Casing/TitleCaseConverter.cs
 using System;
 using System.Globalization;
 using System.Text;
@@ -64,9 +64,9 @@ namespace TidyText.Model.Casing
                 bool isFirstWord = (wi == 0);
                 bool isLastWord = (wi == nWords - 1);
 
-                string prevWord = wi > 0 ? text.Substring(wordSpans[wi - 1].Start, wordSpans[wi - 1].Length) : null;
-                string nextWord = wi + 1 < nWords ? text.Substring(wordSpans[wi + 1].Start, wordSpans[wi + 1].Length) : null;
-                string nextNextWord = wi + 2 < nWords ? text.Substring(wordSpans[wi + 2].Start, wordSpans[wi + 2].Length) : null;
+                string? prevWord = wi > 0 ? text.Substring(wordSpans[wi - 1].Start, wordSpans[wi - 1].Length) : null;
+                string? nextWord = wi + 1 < nWords ? text.Substring(wordSpans[wi + 1].Start, wordSpans[wi + 1].Length) : null;
+                string? nextNextWord = wi + 2 < nWords ? text.Substring(wordSpans[wi + 2].Start, wordSpans[wi + 2].Length) : null;
 
                 // Treat the first word after a newline as “first”
                 int prevEnd = (wi == 0) ? 0 : wordSpans[wi - 1].End;
@@ -104,7 +104,7 @@ namespace TidyText.Model.Casing
                 }
 
                 // Uppercase single-letter tokens adjacent to '&' with no spaces (Q&A, R&D)
-                string forced = null;
+                string? forced = null;
                 bool nextIsAmp = noSpaceToNext && delimToNext == '&';
                 bool prevIsAmp = noSpaceFromPrev && delimFromPrev == '&';
                 if (word.Length == 1 && char.IsLetter(word[0]) && (nextIsAmp || prevIsAmp))
@@ -138,7 +138,7 @@ namespace TidyText.Model.Casing
 
         // ===== Core per-word logic =====
 
-        private string ProcessWord(string word, string prevWord, string nextWord, string nextNextWord,
+        private string ProcessWord(string word, string? prevWord, string? nextWord, string? nextNextWord,
                                    CultureInfo culture, bool isFirstWord, bool isLastWord,
                                    bool mustCapBecauseOfColon, bool isMathVariableContext)
         {
@@ -164,7 +164,7 @@ namespace TidyText.Model.Casing
 
             // Acronyms (GPU, GPT, AP) stay as ALL CAPS if known
             if (_opt.PreserveAcronyms && TryMapKnownAcronymOrAllCaps(word, out var mappedAcr))
-                return mappedAcr;
+                return mappedAcr!;
 
             // Mixed/camel case (iPhone, eBay, macOS) preserved
             if (_opt.PreserveCamelOrMixedCase && IsCamelOrMixedCase(word))
@@ -172,7 +172,7 @@ namespace TidyText.Model.Casing
 
             // Small word logic (a, an, the, in, of, to, ...)
             // Small word logic (a, an, the, in, of, to, ...)
-            bool isSmall = _titleLex.SmallWords.Contains(word) || _titleLex.SmallWords.Contains(word?.ToLowerInvariant());
+            bool isSmall = _titleLex.SmallWords.Contains(word) || _titleLex.SmallWords.Contains(word.ToLowerInvariant());
             bool mustCap = mustCapBecauseOfColon || (_opt.ForceCapFirstAndLast && (isFirstWord || isLastWord));
             if (isSmall && !mustCap)
             {
@@ -225,7 +225,7 @@ namespace TidyText.Model.Casing
                 // 2) Acronyms (GPU, AP, GPT) as ALL CAPS
                 else if (_opt.PreserveAcronyms && TryMapKnownAcronymOrAllCaps(seg, out var mappedAcr))
                 {
-                    outSeg = mappedAcr;
+                    outSeg = mappedAcr!;
                 }
                 // 3) Mixed/camel case preserved (iPhone, eBay, macOS)
                 else if (_opt.PreserveCamelOrMixedCase && IsCamelOrMixedCase(seg))
@@ -332,7 +332,7 @@ namespace TidyText.Model.Casing
             return -1;
         }
 
-        private bool TryMapKnownAcronymOrAllCaps(string seg, out string mapped)
+        private bool TryMapKnownAcronymOrAllCaps(string seg, out string? mapped)
         {
             if (seg.Length == 0) { mapped = null; return false; }
 
@@ -526,7 +526,7 @@ namespace TidyText.Model.Casing
             return new string(chars);
         }
 
-        private static bool LooksLikeLetterNameContext(string prev, string cur, string next, string nextNext)
+        private static bool LooksLikeLetterNameContext(string? prev, string cur, string? next, string? nextNext)
         {
             if (string.IsNullOrEmpty(cur) || cur.Length != 1 || !char.IsLetter(cur[0])) return false;
 

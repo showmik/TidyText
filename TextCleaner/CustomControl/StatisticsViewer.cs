@@ -1,12 +1,12 @@
-﻿using System.Windows;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace TidyText.CustomControl
 {
     public class StatisticsViewer : Control
     {
-        private Label label;
-        private Label content;
+        private Label? label;
+        private Label? content;
 
         public static DependencyProperty LabelProperty = DependencyProperty.Register("Label", typeof(string), typeof(StatisticsViewer), new PropertyMetadata("", OnLabelPropertyChanged));
         public static DependencyProperty ContentProperty = DependencyProperty.Register("Content", typeof(string), typeof(StatisticsViewer), new PropertyMetadata("", OnLabelPropertyChanged));
