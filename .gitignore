@@ -363,3 +363,7 @@ MigrationBackup/
 FodyWeavers.xsd
 *.zip
 /TidyText.Package
+/graphify-out
+/.gemini
+/.agents
+/GEMINI.md
