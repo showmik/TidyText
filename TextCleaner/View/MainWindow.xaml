@@ -12,7 +12,6 @@
         Width="960"
         MinHeight="470"
         MinWidth="960"
-        Background="{DynamicResource BackgroundColor}"
         SizeChanged="Window_SizeChanged">
 
     <Window.DataContext>
@@ -39,8 +38,11 @@
 
         <TextBox x:Name="MainTextBox"
                  Grid.Row="0"
+                 BorderThickness="2"
                  FontFamily="{StaticResource InterFont}"
+                 BorderBrush="Black"
                  Margin="0, 15, 0, 0"
+                 Padding="8"
                  FontSize="16"
                  Text="{Binding MainText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                  VerticalScrollBarVisibility="Visible"
@@ -129,7 +131,6 @@
                         Command="{Binding UndoCommand}" />
 
                 <Button Content="Clean"
-                        Style="{StaticResource PrimaryButtonStyle}"
                         Margin="8, 0, 0, 0"
                         Command="{Binding CleanCommand}" />
             </StackPanel>
