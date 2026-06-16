@@ -3,40 +3,72 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Settings" Height="420" Width="480"
         WindowStartupLocation="CenterOwner" ResizeMode="NoResize"
-        Background="{StaticResource BgBrush}"
-        FontFamily="Segoe UI, -apple-system, BlinkMacSystemFont, Roboto, sans-serif">
+        FontFamily="Segoe UI, -apple-system, BlinkMacSystemFont, Roboto, sans-serif"
+        Background="Transparent"
+        WindowStyle="None"
+        AllowsTransparency="True">
     
-    <Grid Margin="32">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-        
-        <TextBlock Text="AI Provider API Keys" FontSize="24" FontWeight="Bold" Margin="0,0,0,24" Foreground="{StaticResource TextBrush}"/>
-        
-        <StackPanel Grid.Row="1" Margin="0,0,0,20">
-            <TextBlock Text="Gemini API Key:" Margin="0,0,0,8" FontWeight="SemiBold" Foreground="{StaticResource TextMutedBrush}"/>
-            <TextBox Text="{Binding GeminiApiKey, UpdateSourceTrigger=PropertyChanged}"/>
-        </StackPanel>
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="48" CornerRadius="8" GlassFrameThickness="0" UseAeroCaptionButtons="False" />
+    </WindowChrome.WindowChrome>
 
-        <StackPanel Grid.Row="2" Margin="0,0,0,20">
-            <TextBlock Text="DeepSeek API Key:" Margin="0,0,0,8" FontWeight="SemiBold" Foreground="{StaticResource TextMutedBrush}"/>
-            <TextBox Text="{Binding DeepSeekApiKey, UpdateSourceTrigger=PropertyChanged}"/>
-        </StackPanel>
+    <Border Background="{DynamicResource BgBrush}" CornerRadius="8" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="48"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="3" Margin="0,0,0,20">
-            <TextBlock Text="OpenAI API Key:" Margin="0,0,0,8" FontWeight="SemiBold" Foreground="{StaticResource TextMutedBrush}"/>
-            <TextBox Text="{Binding OpenAIApiKey, UpdateSourceTrigger=PropertyChanged}"/>
-        </StackPanel>
-        
-        <TextBlock Grid.Row="4" Text="{Binding StatusMessage}" Foreground="{StaticResource TextMutedBrush}" VerticalAlignment="Center" TextWrapping="Wrap"/>
+            <!-- Custom Title Bar -->
+            <Grid Grid.Row="0" Background="Transparent">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="24,0,0,0" IsHitTestVisible="False">
+                    <TextBlock Text="⚙️ Settings" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Center"/>
+                </StackPanel>
+                
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Stretch" WindowChrome.IsHitTestVisibleInChrome="True">
+                    <Button Content="" Width="46" Click="Close_Click" Style="{DynamicResource WindowCloseButtonStyle}" ToolTip="Close"/>
+                </StackPanel>
+            </Grid>
 
-        <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
-            <Button Content="Save Keys" Command="{Binding SaveKeysCommand}" Style="{StaticResource PrimaryButtonStyle}" MinWidth="120" Effect="{StaticResource AccentGlow}"/>
-        </StackPanel>
-    </Grid>
+            <!-- Content Area -->
+            <Grid Grid.Row="1" Margin="32,8,32,32">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                
+                <TextBlock Text="AI Provider API Keys" FontSize="20" FontWeight="Bold" Margin="0,0,0,24" Foreground="{DynamicResource TextBrush}"/>
+                
+                <StackPanel Grid.Row="1" Margin="0,0,0,20">
+                    <TextBlock Text="Gemini API Key:" Margin="0,0,0,8" FontWeight="SemiBold" Foreground="{DynamicResource TextMutedBrush}"/>
+                    <TextBox Text="{Binding GeminiApiKey, UpdateSourceTrigger=PropertyChanged}" Background="{DynamicResource PanelBgBrush}" Foreground="{DynamicResource TextBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="8,6" />
+                </StackPanel>
+
+                <StackPanel Grid.Row="2" Margin="0,0,0,20">
+                    <TextBlock Text="DeepSeek API Key:" Margin="0,0,0,8" FontWeight="SemiBold" Foreground="{DynamicResource TextMutedBrush}"/>
+                    <TextBox Text="{Binding DeepSeekApiKey, UpdateSourceTrigger=PropertyChanged}" Background="{DynamicResource PanelBgBrush}" Foreground="{DynamicResource TextBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="8,6" />
+                </StackPanel>
+
+                <StackPanel Grid.Row="3" Margin="0,0,0,20">
+                    <TextBlock Text="OpenAI API Key:" Margin="0,0,0,8" FontWeight="SemiBold" Foreground="{DynamicResource TextMutedBrush}"/>
+                    <TextBox Text="{Binding OpenAIApiKey, UpdateSourceTrigger=PropertyChanged}" Background="{DynamicResource PanelBgBrush}" Foreground="{DynamicResource TextBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="8,6" />
+                </StackPanel>
+                
+                <TextBlock Grid.Row="4" Text="{Binding StatusMessage}" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" TextWrapping="Wrap"/>
+
+                <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
+                    <Button Content="Save Keys" Command="{Binding SaveKeysCommand}" Style="{DynamicResource PrimaryButtonStyle}" MinWidth="120" Effect="{DynamicResource AccentGlow}"/>
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </Border>
 </Window>
