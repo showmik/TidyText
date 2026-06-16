@@ -23,8 +23,8 @@
                 <DataTemplate>
                     <Button Command="{Binding DataContext.ExecuteTemplateCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" 
                             CommandParameter="{Binding}"
-                            Background="{DynamicResource PanelBgBrush}" BorderThickness="1" BorderBrush="{DynamicResource BorderBrush}" Margin="0,0,0,8" Padding="12"
-                            HorizontalContentAlignment="Left" Cursor="Hand" Effect="{DynamicResource SoftGlow}">
+                            Style="{StaticResource AIActionButtonStyle}"
+                            Effect="{DynamicResource SoftGlow}">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <TextBlock Text="{Binding Icon}" Margin="0,0,12,0" VerticalAlignment="Center" FontSize="16"/>
                             <TextBlock Text="{Binding Name}" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="14" Foreground="{DynamicResource TextBrush}"/>
