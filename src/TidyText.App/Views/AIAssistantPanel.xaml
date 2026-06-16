@@ -14,20 +14,20 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Text="✨ AI Assistant" FontSize="20" FontWeight="Bold" Margin="0,0,0,16" Foreground="{StaticResource TextBrush}"/>
+        <TextBlock Grid.Row="0" Text="✨ AI Assistant" FontSize="20" FontWeight="Bold" Margin="0,0,0,16" Foreground="{DynamicResource TextBrush}"/>
         
-        <TextBlock Grid.Row="1" Text="Actions" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,12" Foreground="{StaticResource TextBrush}"/>
+        <TextBlock Grid.Row="1" Text="Actions" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,12" Foreground="{DynamicResource TextBrush}"/>
         
         <ItemsControl Grid.Row="2" ItemsSource="{Binding Templates}" ScrollViewer.VerticalScrollBarVisibility="Auto">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Button Command="{Binding DataContext.ExecuteTemplateCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" 
                             CommandParameter="{Binding}"
-                            Background="{StaticResource PanelBgBrush}" BorderThickness="1" BorderBrush="{StaticResource BorderBrush}" Margin="0,0,0,8" Padding="12"
-                            HorizontalContentAlignment="Left" Cursor="Hand" Effect="{StaticResource SoftGlow}">
+                            Background="{DynamicResource PanelBgBrush}" BorderThickness="1" BorderBrush="{DynamicResource BorderBrush}" Margin="0,0,0,8" Padding="12"
+                            HorizontalContentAlignment="Left" Cursor="Hand" Effect="{DynamicResource SoftGlow}">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <TextBlock Text="{Binding Icon}" Margin="0,0,12,0" VerticalAlignment="Center" FontSize="16"/>
-                            <TextBlock Text="{Binding Name}" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="14" Foreground="{StaticResource TextBrush}"/>
+                            <TextBlock Text="{Binding Name}" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="14" Foreground="{DynamicResource TextBrush}"/>
                         </StackPanel>
                     </Button>
                 </DataTemplate>
@@ -41,17 +41,17 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             
-            <TextBlock Grid.Row="0" Text="{Binding StatusMessage}" Margin="0,0,0,8" Foreground="{StaticResource TextMutedBrush}" TextWrapping="Wrap" />
+            <TextBlock Grid.Row="0" Text="{Binding StatusMessage}" Margin="0,0,0,8" Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap" />
             
             <TextBox Grid.Row="1" Text="{Binding ResponseContent}" 
                      TextWrapping="Wrap" AcceptsReturn="True" 
                      VerticalScrollBarVisibility="Auto"
-                     Background="{StaticResource PanelBgBrush}" BorderThickness="1" BorderBrush="{StaticResource BorderBrush}" Padding="12" IsReadOnly="True"
-                     Foreground="{StaticResource TextBrush}" CaretBrush="{StaticResource TextBrush}"
+                     Background="{DynamicResource PanelBgBrush}" BorderThickness="1" BorderBrush="{DynamicResource BorderBrush}" Padding="12" IsReadOnly="True"
+                     Foreground="{DynamicResource TextBrush}" CaretBrush="{DynamicResource TextBrush}"
                      FontFamily="Consolas" FontSize="14" />
                      
             <Button Grid.Row="2" Content="Apply to Editor" Command="{Binding ApplyResponseToEditorCommand}" 
-                    Style="{StaticResource PrimaryButtonStyle}" Margin="0,12,0,0" Effect="{StaticResource AccentGlow}"/>
+                    Style="{StaticResource PrimaryButtonStyle}" Margin="0,12,0,0" Effect="{DynamicResource AccentGlow}"/>
         </Grid>
     </Grid>
 </UserControl>

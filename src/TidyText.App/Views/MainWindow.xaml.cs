@@ -26,6 +26,18 @@ namespace TidyText.App.Views
         
         private void Close_Click(object sender, RoutedEventArgs e) => Close();
 
+        private bool _isDarkTheme = true;
+        private void ThemeToggle_Click(object sender, RoutedEventArgs e)
+        {
+            _isDarkTheme = !_isDarkTheme;
+            var newTheme = new ResourceDictionary { Source = new System.Uri($"Themes/{(_isDarkTheme ? "DarkTheme" : "LightTheme")}.xaml", System.UriKind.Relative) };
+            
+            var appResources = Application.Current.Resources.MergedDictionaries;
+            // The theme dictionary is at index 0 because Styles.xaml is at index 1
+            appResources.RemoveAt(0);
+            appResources.Insert(0, newTheme);
+        }
+
         private void CheckBox_Checked(object sender, RoutedEventArgs e)
         {
 
