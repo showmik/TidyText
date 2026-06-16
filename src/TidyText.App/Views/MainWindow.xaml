@@ -98,7 +98,7 @@
                              FontSize="14"/>
 
                     <!-- Integrated Status Bar -->
-                    <Border Grid.Row="1" Background="#14171D" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,1,0,0" CornerRadius="0,0,8,8" Padding="16,8">
+                    <Border Grid.Row="1" Background="{DynamicResource StatusBgBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,1,0,0" CornerRadius="0,0,8,8" Padding="16,8">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />

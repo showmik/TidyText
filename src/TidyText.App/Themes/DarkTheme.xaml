@@ -16,6 +16,10 @@
         <GradientStop Color="#18181B" Offset="0" />
         <GradientStop Color="#09090B" Offset="1" />
     </RadialGradientBrush>
+    
+    <Color x:Key="StatusBgColor">#14171D</Color>
+    <SolidColorBrush x:Key="StatusBgBrush" Color="{DynamicResource StatusBgColor}"/>
+    
     <SolidColorBrush x:Key="PanelBgBrush" Color="{DynamicResource PanelBgColor}"/>
     <SolidColorBrush x:Key="BorderBrush" Color="{DynamicResource BorderColor}"/>
     <SolidColorBrush x:Key="TextBrush" Color="{DynamicResource TextColor}"/>
