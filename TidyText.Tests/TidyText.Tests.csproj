@@ -19,6 +19,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\TextCleaner\TidyText.csproj" />
+		<ProjectReference Include="..\src\TidyText.Core\TidyText.Core.csproj" />
+		<ProjectReference Include="..\src\TidyText.App\TidyText.App.csproj" />
 	</ItemGroup>
 </Project>

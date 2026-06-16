@@ -4,9 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="700" d:DesignWidth="350"
-             Foreground="#E0E0E0">
-    <Grid Margin="15">
+             d:DesignHeight="700" d:DesignWidth="380">
+    <Grid Margin="24">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -15,42 +14,44 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Text="✨ AI Assistant" FontSize="20" FontWeight="Bold" Foreground="#00B4D8" Margin="0,0,0,15"/>
+        <TextBlock Grid.Row="0" Text="✨ AI Assistant" FontSize="26" FontWeight="Bold" Margin="0,0,0,24" Foreground="{StaticResource TextBrush}"/>
         
-        <TextBlock Grid.Row="1" Text="Actions" FontWeight="SemiBold" Margin="0,0,0,10"/>
+        <TextBlock Grid.Row="1" Text="Actions" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,16" Foreground="{StaticResource TextBrush}"/>
         
         <ItemsControl Grid.Row="2" ItemsSource="{Binding Templates}" ScrollViewer.VerticalScrollBarVisibility="Auto">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Button Command="{Binding DataContext.ExecuteTemplateCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" 
                             CommandParameter="{Binding}"
-                            Background="#333333" BorderThickness="0" Margin="0,0,0,5" Padding="10,8"
-                            HorizontalContentAlignment="Left" Cursor="Hand">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{Binding Icon}" Margin="0,0,10,0"/>
-                            <TextBlock Text="{Binding Name}"/>
+                            Background="{StaticResource PanelBgBrush}" BorderThickness="1" BorderBrush="{StaticResource BorderBrush}" Margin="0,0,0,12" Padding="20,16"
+                            HorizontalContentAlignment="Left" Cursor="Hand" Effect="{StaticResource SoftGlow}">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="{Binding Icon}" Margin="0,0,15,0" VerticalAlignment="Center" FontSize="20"/>
+                            <TextBlock Text="{Binding Name}" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="15" Foreground="{StaticResource TextBrush}"/>
                         </StackPanel>
                     </Button>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
 
-        <Grid Grid.Row="3" Margin="0,15,0,0">
+        <Grid Grid.Row="3" Margin="0,24,0,0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="200"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             
-            <TextBlock Grid.Row="0" Text="{Binding StatusMessage}" Margin="0,0,0,5" Foreground="#00B4D8"/>
+            <TextBlock Grid.Row="0" Text="{Binding StatusMessage}" Margin="0,0,0,12" Foreground="{StaticResource TextMutedBrush}" TextWrapping="Wrap" />
             
             <TextBox Grid.Row="1" Text="{Binding ResponseContent}" 
                      TextWrapping="Wrap" AcceptsReturn="True" 
                      VerticalScrollBarVisibility="Auto"
-                     Background="#1E1E1E" Foreground="#D4D4D4" BorderThickness="1" BorderBrush="#444444" Padding="8" IsReadOnly="True"/>
+                     Background="{StaticResource PanelBgBrush}" BorderThickness="1" BorderBrush="{StaticResource BorderBrush}" Padding="16" IsReadOnly="True"
+                     Foreground="{StaticResource TextBrush}" CaretBrush="{StaticResource TextBrush}"
+                     FontFamily="Consolas" FontSize="15" />
                      
             <Button Grid.Row="2" Content="Apply to Editor" Command="{Binding ApplyResponseToEditorCommand}" 
-                    Margin="0,10,0,0" Padding="10,5" Background="#0077B6" Foreground="White" BorderThickness="0" Cursor="Hand"/>
+                    Style="{StaticResource PrimaryButtonStyle}" Margin="0,20,0,0" Effect="{StaticResource AccentGlow}"/>
         </Grid>
     </Grid>
 </UserControl>

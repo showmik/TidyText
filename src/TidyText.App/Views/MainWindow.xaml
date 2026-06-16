@@ -7,21 +7,21 @@
         xmlns:viewmodels="clr-namespace:TidyText.App.ViewModels"
         xmlns:views="clr-namespace:TidyText.App.Views"
         mc:Ignorable="d"
-        Title="TidyText v2" Height="700" Width="1100"
+        Title="TidyText" Height="740" Width="1200"
         WindowStartupLocation="CenterScreen"
-        Background="#1E1E1E" Foreground="#E0E0E0"
-        FontFamily="Segoe UI">
+        FontFamily="Segoe UI, -apple-system, BlinkMacSystemFont, Roboto, sans-serif"
+        Background="{StaticResource BgBrush}">
     
     <Grid>
         <Grid.ColumnDefinitions>
             <!-- Main Editor Area -->
             <ColumnDefinition Width="*" />
             <!-- AI Panel Area -->
-            <ColumnDefinition Width="350" x:Name="AIPanelColumn" />
+            <ColumnDefinition Width="380" x:Name="AIPanelColumn" />
         </Grid.ColumnDefinitions>
 
         <!-- Main Content -->
-        <Grid Grid.Column="0" Margin="20">
+        <Grid Grid.Column="0" Margin="30">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/> <!-- Header -->
                 <RowDefinition Height="*"/>    <!-- Editor -->
@@ -30,87 +30,99 @@
             </Grid.RowDefinitions>
 
             <!-- Header -->
-            <Grid Grid.Row="0" Margin="0,0,0,15">
-                <TextBlock Text="TidyText" FontSize="24" FontWeight="Bold" Foreground="#00B4D8" />
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                    <Button Content="⚙️ Settings" Click="SettingsButton_Click" Padding="5,2" Background="Transparent" Foreground="#E0E0E0" BorderThickness="0" Cursor="Hand" />
-                    <Button Content="✨ AI Assistant" Padding="5,2" Background="Transparent" Foreground="#00B4D8" BorderThickness="0" Cursor="Hand" Command="{Binding ToggleAIPanelCommand}" Margin="10,0,0,0"/>
+            <Grid Grid.Row="0" Margin="0,0,0,24">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="TidyText" FontSize="32" FontWeight="Bold" Foreground="{StaticResource TextBrush}" VerticalAlignment="Center"/>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Button Content="⚙️ Settings" Click="SettingsButton_Click" Style="{StaticResource IconButtonStyle}" Margin="0,0,15,0"/>
+                    <Button Content="✨ AI Assistant" Command="{Binding ToggleAIPanelCommand}" Style="{StaticResource PrimaryButtonStyle}" Effect="{StaticResource AccentGlow}"/>
                 </StackPanel>
             </Grid>
 
             <!-- Text Editor -->
-            <Border Grid.Row="1" BorderBrush="#333333" BorderThickness="1" CornerRadius="4" Background="#252526">
+            <Border Grid.Row="1" Background="{StaticResource PanelBgBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="12" Effect="{StaticResource SoftGlow}">
                 <TextBox Text="{Binding MainText, UpdateSourceTrigger=PropertyChanged}" 
                          AcceptsReturn="True" 
                          TextWrapping="{Binding WrapLines, Converter={StaticResource BooleanToWrapConverter}}"
                          VerticalScrollBarVisibility="Auto"
                          Background="Transparent" 
-                         Foreground="#D4D4D4"
                          BorderThickness="0"
-                         Padding="10"
+                         Padding="20"
+                         Foreground="{StaticResource TextBrush}"
+                         CaretBrush="{StaticResource TextBrush}"
                          FontFamily="Consolas"
-                         FontSize="14"/>
+                         FontSize="16"/>
             </Border>
 
             <!-- Status Bar -->
-            <Border Grid.Row="2" Background="#2D2D30" CornerRadius="4" Margin="0,15,0,15" Padding="10">
+            <Border Grid.Row="2" Background="{StaticResource PanelBgBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="12" Margin="0,24,0,24" Padding="20,16" Effect="{StaticResource SoftGlow}">
                 <Grid>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{Binding WordCount, StringFormat='W: \{0\}'}" Margin="0,0,15,0" />
-                        <TextBlock Text="{Binding CharacterCount, StringFormat='C: \{0\}'}" Margin="0,0,15,0" />
-                        <TextBlock Text="{Binding SentenceCount, StringFormat='S: \{0\}'}" Margin="0,0,15,0" />
-                        <TextBlock Text="{Binding ParagraphCount, StringFormat='P: \{0\}'}" Margin="0,0,15,0" />
-                        <TextBlock Text="{Binding LineCount, StringFormat='L: \{0\}'}" Margin="0,0,25,0" />
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding WordCount, StringFormat='W: \{0\}'}" Margin="0,0,20,0" FontWeight="SemiBold"/>
+                        <TextBlock Text="{Binding CharacterCount, StringFormat='C: \{0\}'}" Margin="0,0,20,0" FontWeight="SemiBold"/>
+                        <TextBlock Text="{Binding SentenceCount, StringFormat='S: \{0\}'}" Margin="0,0,20,0" FontWeight="SemiBold"/>
+                        <TextBlock Text="{Binding ParagraphCount, StringFormat='P: \{0\}'}" Margin="0,0,20,0" FontWeight="SemiBold"/>
+                        <TextBlock Text="{Binding LineCount, StringFormat='L: \{0\}'}" Margin="0,0,30,0" FontWeight="SemiBold"/>
                         
-                        <TextBlock Text="{Binding ReadingTimeSeconds, StringFormat='⏱️ ~\{0\} sec'}" Foreground="#A0A0A0" Margin="0,0,15,0"/>
-                        <TextBlock Text="{Binding ReadabilityScore, StringFormat='📖 \{0\}'}" Foreground="#A0A0A0"/>
+                        <TextBlock Text="{Binding ReadingTimeSeconds, StringFormat='⏱️ ~\{0\} sec'}" Foreground="{StaticResource TextMutedBrush}" Margin="0,0,20,0"/>
+                        <TextBlock Text="{Binding ReadabilityScore, StringFormat='📖 \{0\}'}" Foreground="{StaticResource TextMutedBrush}"/>
                     </StackPanel>
                     
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                        <Button Content="Copy" Command="{Binding CopyCommand}" Padding="15,5" Background="#3E3E42" Foreground="White" BorderThickness="0" Margin="0,0,10,0" Cursor="Hand"/>
-                        <Button Content="Clean" Command="{Binding CleanTextCommand}" Padding="20,5" Background="#00B4D8" Foreground="White" BorderThickness="0" FontWeight="Bold" Cursor="Hand"/>
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                        <Button Content="Copy" Command="{Binding CopyCommand}" Margin="0,0,15,0" />
+                        <Button Content="Clean Text" Command="{Binding CleanTextCommand}" Style="{StaticResource PrimaryButtonStyle}" />
                     </StackPanel>
                 </Grid>
             </Border>
 
             <!-- Options Panel -->
-            <Grid Grid.Row="3">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
+            <Border Grid.Row="3" Background="{StaticResource PanelBgBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="12" Padding="25,20" Effect="{StaticResource SoftGlow}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
 
-                <StackPanel Grid.Column="0">
-                    <TextBlock Text="Whitespace" FontWeight="Bold" Margin="0,0,0,10" Foreground="#00B4D8"/>
-                    <CheckBox Content="Trim Ends" IsChecked="{Binding ShouldTrim}" Margin="0,2"/>
-                    <CheckBox Content="Remove Multiple Spaces" IsChecked="{Binding ShouldRemoveMultipleSpaces}" Margin="0,2"/>
-                    <CheckBox Content="Remove Multiple Lines" IsChecked="{Binding ShouldRemoveMultipleLines}" Margin="0,2"/>
-                </StackPanel>
+                    <StackPanel Grid.Column="0" Margin="0,0,20,0">
+                        <TextBlock Text="Whitespace" FontWeight="Bold" FontSize="16" Margin="0,0,0,15" Foreground="{StaticResource TextBrush}" />
+                        <CheckBox Content="Trim Ends" IsChecked="{Binding ShouldTrim}"/>
+                        <CheckBox Content="Remove Multiple Spaces" IsChecked="{Binding ShouldRemoveMultipleSpaces}"/>
+                        <CheckBox Content="Remove Multiple Lines" IsChecked="{Binding ShouldRemoveMultipleLines}"/>
+                    </StackPanel>
 
-                <StackPanel Grid.Column="1">
-                    <TextBlock Text="Letter Case" FontWeight="Bold" Margin="0,0,0,10" Foreground="#00B4D8"/>
-                    <!-- Simplified radio buttons logic for demo purposes -->
-                    <RadioButton Content="Do Not Change" IsChecked="True" GroupName="Case" Margin="0,2"/>
-                    <RadioButton Content="Sentence Case" GroupName="Case" Margin="0,2"/>
-                    <RadioButton Content="Title Case" GroupName="Case" Margin="0,2"/>
-                    <RadioButton Content="UPPERCASE" GroupName="Case" Margin="0,2"/>
-                    <RadioButton Content="lowercase" GroupName="Case" Margin="0,2"/>
-                </StackPanel>
+                    <StackPanel Grid.Column="1" Margin="0,0,20,0">
+                        <TextBlock Text="Letter Case" FontWeight="Bold" FontSize="16" Margin="0,0,0,15" Foreground="{StaticResource TextBrush}" />
+                        <RadioButton Content="Do Not Change" IsChecked="True" GroupName="Case"/>
+                        <RadioButton Content="Sentence Case" GroupName="Case"/>
+                        <RadioButton Content="Title Case" GroupName="Case"/>
+                        <RadioButton Content="UPPERCASE" GroupName="Case"/>
+                        <RadioButton Content="lowercase" GroupName="Case"/>
+                    </StackPanel>
 
-                <StackPanel Grid.Column="2">
-                    <TextBlock Text="Formatting" FontWeight="Bold" Margin="0,0,0,10" Foreground="#00B4D8"/>
-                    <CheckBox Content="Fix Punctuation Spacing" IsChecked="{Binding ShouldFixPunctuationSpace}" Margin="0,2"/>
-                    <CheckBox Content="Remove HTML Tags" IsChecked="{Binding ShouldRemoveHtmlTags}" Margin="0,2"/>
-                    <CheckBox Content="Convert Smart Quotes" IsChecked="{Binding ShouldConvertSmartQuotes}" Margin="0,2"/>
-                    <CheckBox Content="Wrap Lines" IsChecked="{Binding WrapLines}" Margin="0,2"/>
-                </StackPanel>
-            </Grid>
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Text="Formatting" FontWeight="Bold" FontSize="16" Margin="0,0,0,15" Foreground="{StaticResource TextBrush}" />
+                        <CheckBox Content="Fix Punctuation Spacing" IsChecked="{Binding ShouldFixPunctuationSpace}"/>
+                        <CheckBox Content="Remove HTML Tags" IsChecked="{Binding ShouldRemoveHtmlTags}"/>
+                        <CheckBox Content="Convert Smart Quotes" IsChecked="{Binding ShouldConvertSmartQuotes}"/>
+                        <CheckBox Content="Wrap Lines" IsChecked="{Binding WrapLines}"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
         </Grid>
 
         <!-- AI Side Panel -->
-        <Border Grid.Column="1" Background="#252526" BorderBrush="#333333" BorderThickness="1,0,0,0"
-                Visibility="{Binding IsAIPanelOpen, Converter={StaticResource BooleanToVisibilityConverter}}">
+        <Border Grid.Column="1" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1,0,0,0" Background="{StaticResource PanelBgBrush}"
+                Visibility="{Binding IsAIPanelOpen, Converter={StaticResource BooleanToVisibilityConverter}}"
+                Effect="{StaticResource SoftGlow}">
             <views:AIAssistantPanel DataContext="{Binding AIAssistantVM}" />
         </Border>
     </Grid>
