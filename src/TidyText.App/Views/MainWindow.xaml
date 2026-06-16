@@ -11,12 +11,11 @@
         WindowStartupLocation="CenterScreen"
         FontFamily="Segoe UI, -apple-system, BlinkMacSystemFont, Roboto, sans-serif"
         Background="{DynamicResource BgBrush}"
-        WindowStyle="None"
-        AllowsTransparency="True"
-        ResizeMode="CanResizeWithGrip">
+        WindowStyle="SingleBorderWindow"
+        ResizeMode="CanResize">
         
     <WindowChrome.WindowChrome>
-        <WindowChrome CaptionHeight="48" CornerRadius="8" GlassFrameThickness="0" UseAeroCaptionButtons="False" />
+        <WindowChrome CaptionHeight="48" CornerRadius="0" GlassFrameThickness="1" UseAeroCaptionButtons="False" />
     </WindowChrome.WindowChrome>
     
     <!-- Outer Grid to hold Custom Title Bar + Rest of Window -->
