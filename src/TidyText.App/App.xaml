@@ -28,7 +28,7 @@
         <SolidColorBrush x:Key="PressedBrush" Color="{StaticResource PressedColor}"/>
 
         <!-- Drop Shadows for Depth -->
-        <DropShadowEffect x:Key="SoftGlow" BlurRadius="15" ShadowDepth="0" Color="#000000" Opacity="0.4" />
+        <DropShadowEffect x:Key="SoftGlow" BlurRadius="16" ShadowDepth="0" Color="#000000" Opacity="0.4" />
         <DropShadowEffect x:Key="AccentGlow" BlurRadius="12" ShadowDepth="0" Color="{StaticResource AccentColor}" Opacity="0.6" />
 
         <!-- Window Style -->
@@ -51,7 +51,7 @@
             <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
             <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
             <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Padding" Value="12,10"/>
+            <Setter Property="Padding" Value="12,8"/>
             <Setter Property="CaretBrush" Value="{StaticResource TextBrush}"/>
             <Setter Property="Template">
                 <Setter.Value>
@@ -78,7 +78,7 @@
             <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
             <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
             <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Padding" Value="16,10"/>
+            <Setter Property="Padding" Value="12,8"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Template">
                 <Setter.Value>
@@ -110,22 +110,22 @@
         <!-- CheckBox Style -->
         <Style TargetType="CheckBox">
             <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
-            <Setter Property="Margin" Value="0,6"/>
+            <Setter Property="Margin" Value="0,4"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="CheckBox">
                         <StackPanel Orientation="Horizontal">
-                            <Border x:Name="Border" Width="20" Height="20" 
+                            <Border x:Name="Border" Width="16" Height="16" 
                                     Background="{StaticResource BgBrush}" 
                                     BorderBrush="{StaticResource BorderBrush}" 
                                     BorderThickness="1" 
-                                    CornerRadius="5"
+                                    CornerRadius="4"
                                     VerticalAlignment="Center">
                                 <Path x:Name="CheckMark" 
-                                      Data="M 5,10 L 9,14 L 15,6" 
+                                      Data="M 3,8 L 7,12 L 13,4" 
                                       Stroke="{StaticResource TextBrush}" 
-                                      StrokeThickness="2.5" 
+                                      StrokeThickness="2" 
                                       StrokeStartLineCap="Round" 
                                       StrokeEndLineCap="Round" 
                                       StrokeLineJoin="Round" 
@@ -133,7 +133,7 @@
                                       HorizontalAlignment="Center" 
                                       VerticalAlignment="Center"/>
                             </Border>
-                            <ContentPresenter Margin="10,0,0,0" VerticalAlignment="Center"/>
+                            <ContentPresenter Margin="8,0,0,0" VerticalAlignment="Center"/>
                         </StackPanel>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsChecked" Value="True">
@@ -153,25 +153,25 @@
         <!-- RadioButton Style -->
         <Style TargetType="RadioButton">
             <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
-            <Setter Property="Margin" Value="0,6"/>
+            <Setter Property="Margin" Value="0,4"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="RadioButton">
                         <StackPanel Orientation="Horizontal">
-                            <Border x:Name="Border" Width="20" Height="20" 
+                            <Border x:Name="Border" Width="16" Height="16" 
                                     Background="{StaticResource BgBrush}" 
                                     BorderBrush="{StaticResource BorderBrush}" 
                                     BorderThickness="1" 
-                                    CornerRadius="10"
+                                    CornerRadius="8"
                                     VerticalAlignment="Center">
-                                <Ellipse x:Name="CheckMark" Width="10" Height="10" 
+                                <Ellipse x:Name="CheckMark" Width="6" Height="6" 
                                          Fill="{StaticResource TextBrush}" 
                                          Visibility="Collapsed" 
                                          HorizontalAlignment="Center" 
                                          VerticalAlignment="Center"/>
                             </Border>
-                            <ContentPresenter Margin="10,0,0,0" VerticalAlignment="Center"/>
+                            <ContentPresenter Margin="8,0,0,0" VerticalAlignment="Center"/>
                         </StackPanel>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsChecked" Value="True">
@@ -246,18 +246,19 @@
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
             <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="Margin" Value="0,4"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="CheckBox">
                         <BulletDecorator Background="Transparent" Cursor="Hand">
                             <BulletDecorator.Bullet>
-                                <Grid Width="38" Height="20" Margin="0,0,10,0" VerticalAlignment="Center">
-                                    <Border x:Name="Track" CornerRadius="10" 
+                                <Grid Width="32" Height="16" Margin="0,0,8,0" VerticalAlignment="Center">
+                                    <Border x:Name="Track" CornerRadius="8" 
                                             Background="{StaticResource BgBrush}" 
                                             BorderBrush="{StaticResource BorderBrush}" 
                                             BorderThickness="1"/>
-                                    <Border x:Name="Thumb" Width="14" Height="14" CornerRadius="7" 
-                                            HorizontalAlignment="Left" Margin="3,0,0,0" 
+                                    <Border x:Name="Thumb" Width="12" Height="12" CornerRadius="6" 
+                                            HorizontalAlignment="Left" Margin="2,0,0,0" 
                                             Background="{StaticResource TextMutedBrush}"
                                             VerticalAlignment="Center">
                                         <Border.RenderTransform>
@@ -280,7 +281,7 @@
                                         <Storyboard>
                                             <DoubleAnimation Storyboard.TargetName="Thumb" 
                                                              Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)" 
-                                                             To="18" Duration="0:0:0.15"/>
+                                                             To="16" Duration="0:0:0.15"/>
                                         </Storyboard>
                                     </BeginStoryboard>
                                 </Trigger.EnterActions>
@@ -312,8 +313,8 @@
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
             <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Padding" Value="12,6"/>
-            <Setter Property="Margin" Value="0,0,8,0"/>
+            <Setter Property="Padding" Value="12,4"/>
+            <Setter Property="Margin" Value="0,0,4,0"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Template">
                 <Setter.Value>
@@ -322,7 +323,7 @@
                                 Background="{TemplateBinding Background}" 
                                 BorderBrush="{TemplateBinding BorderBrush}" 
                                 BorderThickness="{TemplateBinding BorderThickness}" 
-                                CornerRadius="6"
+                                CornerRadius="4"
                                 SnapsToDevicePixels="True">
                             <ContentPresenter Margin="{TemplateBinding Padding}" 
                                               HorizontalAlignment="Center" 

@@ -21,7 +21,7 @@
         </Grid.ColumnDefinitions>
 
         <!-- Main Content -->
-        <Grid Grid.Column="0" Margin="24,20">
+        <Grid Grid.Column="0" Margin="24">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/> <!-- Header -->
                 <RowDefinition Height="*"/>    <!-- Editor Workspace Card -->
@@ -35,19 +35,19 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-                    <TextBlock Text="✨ TidyText" FontSize="26" FontWeight="Bold" Foreground="{StaticResource AccentBrush}" VerticalAlignment="Center"/>
-                    <TextBlock Text="text engine" FontSize="14" Foreground="{StaticResource TextMutedBrush}" Margin="12,0,0,0" VerticalAlignment="Bottom"/>
+                    <TextBlock Text="✨ TidyText" FontSize="20" FontWeight="Bold" Foreground="{StaticResource AccentBrush}" VerticalAlignment="Center"/>
+                    <TextBlock Text="text engine" FontSize="12" Foreground="{StaticResource TextMutedBrush}" Margin="8,0,0,0" VerticalAlignment="Bottom"/>
                 </StackPanel>
                 <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                    <Button Content="⚙️ Settings" Click="SettingsButton_Click" Style="{StaticResource IconButtonStyle}" Margin="0,0,10,0" ToolTip="API Keys &amp; Settings"/>
-                    <Button Content="↩️ Undo" Command="{Binding UndoCommand}" Style="{StaticResource IconButtonStyle}" Margin="0,0,10,0" ToolTip="Undo Last Clean"/>
-                    <Button Content="📋 Copy" Command="{Binding CopyCommand}" Style="{StaticResource IconButtonStyle}" Margin="0,0,15,0" ToolTip="Copy Text"/>
+                    <Button Content="⚙️ Settings" Click="SettingsButton_Click" Style="{StaticResource IconButtonStyle}" Margin="0,0,8,0" ToolTip="API Keys &amp; Settings"/>
+                    <Button Content="↩️ Undo" Command="{Binding UndoCommand}" Style="{StaticResource IconButtonStyle}" Margin="0,0,8,0" ToolTip="Undo Last Clean"/>
+                    <Button Content="📋 Copy" Command="{Binding CopyCommand}" Style="{StaticResource IconButtonStyle}" Margin="0,0,12,0" ToolTip="Copy Text"/>
                     <Button Content="🤖 AI Assistant" Command="{Binding ToggleAIPanelCommand}" Style="{StaticResource PrimaryButtonStyle}" Effect="{StaticResource AccentGlow}"/>
                 </StackPanel>
             </Grid>
 
             <!-- Text Editor Workspace Card -->
-            <Border Grid.Row="1" Background="{StaticResource PanelBgBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="10" Effect="{StaticResource SoftGlow}">
+            <Border Grid.Row="1" Background="{StaticResource PanelBgBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="8" Effect="{StaticResource SoftGlow}">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*"/>
@@ -61,14 +61,14 @@
                              VerticalScrollBarVisibility="Auto"
                              Background="Transparent" 
                              BorderThickness="0"
-                             Padding="16"
+                             Padding="12"
                              Foreground="{StaticResource TextBrush}"
                              CaretBrush="{StaticResource TextBrush}"
                              FontFamily="Consolas"
-                             FontSize="15"/>
+                             FontSize="14"/>
 
                     <!-- Integrated Status Bar -->
-                    <Border Grid.Row="1" Background="#14171D" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,1,0,0" CornerRadius="0,0,10,10" Padding="16,8">
+                    <Border Grid.Row="1" Background="#14171D" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,1,0,0" CornerRadius="0,0,8,8" Padding="16,8">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
@@ -76,29 +76,29 @@
                             </Grid.ColumnDefinitions>
                             
                             <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-                                <TextBlock Margin="0,0,15,0" VerticalAlignment="Center">
+                                <TextBlock Margin="0,0,12,0" VerticalAlignment="Center">
                                     <Run Text="Words:" Foreground="{StaticResource TextMutedBrush}"/> <Run Text="{Binding WordCount}" FontWeight="Bold" Foreground="{StaticResource TextBrush}"/>
                                 </TextBlock>
-                                <TextBlock Margin="0,0,15,0" VerticalAlignment="Center">
+                                <TextBlock Margin="0,0,12,0" VerticalAlignment="Center">
                                     <Run Text="Chars:" Foreground="{StaticResource TextMutedBrush}"/> <Run Text="{Binding CharacterCount}" FontWeight="Bold" Foreground="{StaticResource TextBrush}"/>
                                 </TextBlock>
-                                <TextBlock Margin="0,0,15,0" VerticalAlignment="Center">
+                                <TextBlock Margin="0,0,12,0" VerticalAlignment="Center">
                                     <Run Text="Sentences:" Foreground="{StaticResource TextMutedBrush}"/> <Run Text="{Binding SentenceCount}" FontWeight="Bold" Foreground="{StaticResource TextBrush}"/>
                                 </TextBlock>
-                                <TextBlock Margin="0,0,15,0" VerticalAlignment="Center">
+                                <TextBlock Margin="0,0,12,0" VerticalAlignment="Center">
                                     <Run Text="Paragraphs:" Foreground="{StaticResource TextMutedBrush}"/> <Run Text="{Binding ParagraphCount}" FontWeight="Bold" Foreground="{StaticResource TextBrush}"/>
                                 </TextBlock>
-                                <TextBlock Margin="0,0,20,0" VerticalAlignment="Center">
+                                <TextBlock Margin="0,0,16,0" VerticalAlignment="Center">
                                     <Run Text="Lines:" Foreground="{StaticResource TextMutedBrush}"/> <Run Text="{Binding LineCount}" FontWeight="Bold" Foreground="{StaticResource TextBrush}"/>
                                 </TextBlock>
-                                <TextBlock Text="|" Foreground="{StaticResource BorderBrush}" Margin="0,0,20,0" VerticalAlignment="Center"/>
-                                <TextBlock Text="{Binding ReadingTimeSeconds, StringFormat='⏱️ ~\{0\}s'}" Foreground="{StaticResource TextMutedBrush}" Margin="0,0,20,0" VerticalAlignment="Center"/>
+                                <TextBlock Text="|" Foreground="{StaticResource BorderBrush}" Margin="0,0,16,0" VerticalAlignment="Center"/>
+                                <TextBlock Text="{Binding ReadingTimeSeconds, StringFormat='⏱️ ~\{0\}s'}" Foreground="{StaticResource TextMutedBrush}" Margin="0,0,16,0" VerticalAlignment="Center"/>
                                 <TextBlock Text="{Binding ReadabilityScore, StringFormat='📖 \{0\}'}" Foreground="{StaticResource TextMutedBrush}" VerticalAlignment="Center"/>
                             </StackPanel>
                             
                             <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                                <CheckBox Content="Wrap" IsChecked="{Binding WrapLines}" Margin="0,0,20,0" Style="{StaticResource ToggleSwitchStyle}" VerticalAlignment="Center"/>
-                                <Button Content="✨ Clean Text" Command="{Binding CleanCommand}" Style="{StaticResource PrimaryButtonStyle}" Padding="16,6" Height="30" VerticalAlignment="Center"/>
+                                <CheckBox Content="Wrap" IsChecked="{Binding WrapLines}" Margin="0,0,16,0" Style="{StaticResource ToggleSwitchStyle}" VerticalAlignment="Center"/>
+                                <Button Content="✨ Clean Text" Command="{Binding CleanCommand}" Style="{StaticResource PrimaryButtonStyle}" Padding="12,6" Height="28" VerticalAlignment="Center"/>
                             </StackPanel>
                         </Grid>
                     </Border>
@@ -106,7 +106,7 @@
             </Border>
 
             <!-- Options Panel -->
-            <Border Grid.Row="2" Background="{StaticResource PanelBgBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="10" Margin="0,16,0,0" Padding="20,16" Effect="{StaticResource SoftGlow}">
+            <Border Grid.Row="2" Background="{StaticResource PanelBgBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="8" Margin="0,16,0,0" Padding="24" Effect="{StaticResource SoftGlow}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
@@ -116,7 +116,7 @@
 
                     <!-- Whitespace Section -->
                     <StackPanel Grid.Column="0" Margin="0,0,16,0">
-                        <TextBlock Text="Whitespace" FontWeight="Bold" FontSize="15" Margin="0,0,0,12" Foreground="{StaticResource AccentBrush}" />
+                        <TextBlock Text="Whitespace" FontWeight="Bold" FontSize="14" Margin="0,0,0,12" Foreground="{StaticResource AccentBrush}" />
                         <CheckBox Content="Trim Ends" IsChecked="{Binding ShouldTrim}" Style="{StaticResource ToggleSwitchStyle}"/>
                         <CheckBox Content="Remove Multiple Spaces" IsChecked="{Binding ShouldRemoveMultipleSpaces}" Style="{StaticResource ToggleSwitchStyle}"/>
                         <CheckBox Content="Remove Multiple Lines" IsChecked="{Binding ShouldRemoveMultipleLines}" Style="{StaticResource ToggleSwitchStyle}"/>
@@ -125,19 +125,19 @@
 
                     <!-- Letter Case Section -->
                     <StackPanel Grid.Column="1" Margin="0,0,16,0">
-                        <TextBlock Text="Letter Case" FontWeight="Bold" FontSize="15" Margin="0,0,0,12" Foreground="{StaticResource AccentBrush}" />
+                        <TextBlock Text="Letter Case" FontWeight="Bold" FontSize="14" Margin="0,0,0,12" Foreground="{StaticResource AccentBrush}" />
                         <WrapPanel Orientation="Horizontal" Margin="0,4,0,0">
-                            <RadioButton Content="None" IsChecked="{Binding IsDoNotChange, Mode=TwoWay}" GroupName="Case" Style="{StaticResource SegmentedRadioButtonStyle}" Margin="0,0,6,6"/>
-                            <RadioButton Content="Sentence" IsChecked="{Binding IsSentenceCase, Mode=TwoWay}" GroupName="Case" Style="{StaticResource SegmentedRadioButtonStyle}" Margin="0,0,6,6"/>
-                            <RadioButton Content="Title" IsChecked="{Binding IsTitleCase, Mode=TwoWay}" GroupName="Case" Style="{StaticResource SegmentedRadioButtonStyle}" Margin="0,0,6,6"/>
-                            <RadioButton Content="UPPER" IsChecked="{Binding IsUppercase, Mode=TwoWay}" GroupName="Case" Style="{StaticResource SegmentedRadioButtonStyle}" Margin="0,0,6,6"/>
-                            <RadioButton Content="lower" IsChecked="{Binding IsLowercase, Mode=TwoWay}" GroupName="Case" Style="{StaticResource SegmentedRadioButtonStyle}" Margin="0,0,6,6"/>
+                            <RadioButton Content="None" IsChecked="{Binding IsDoNotChange, Mode=TwoWay}" GroupName="Case" Style="{StaticResource SegmentedRadioButtonStyle}" Margin="0,0,8,8"/>
+                            <RadioButton Content="Sentence" IsChecked="{Binding IsSentenceCase, Mode=TwoWay}" GroupName="Case" Style="{StaticResource SegmentedRadioButtonStyle}" Margin="0,0,8,8"/>
+                            <RadioButton Content="Title" IsChecked="{Binding IsTitleCase, Mode=TwoWay}" GroupName="Case" Style="{StaticResource SegmentedRadioButtonStyle}" Margin="0,0,8,8"/>
+                            <RadioButton Content="UPPER" IsChecked="{Binding IsUppercase, Mode=TwoWay}" GroupName="Case" Style="{StaticResource SegmentedRadioButtonStyle}" Margin="0,0,8,8"/>
+                            <RadioButton Content="lower" IsChecked="{Binding IsLowercase, Mode=TwoWay}" GroupName="Case" Style="{StaticResource SegmentedRadioButtonStyle}" Margin="0,0,8,8"/>
                         </WrapPanel>
                     </StackPanel>
 
                     <!-- Formatting Section -->
                     <StackPanel Grid.Column="2">
-                        <TextBlock Text="Formatting" FontWeight="Bold" FontSize="15" Margin="0,0,0,12" Foreground="{StaticResource AccentBrush}" />
+                        <TextBlock Text="Formatting" FontWeight="Bold" FontSize="14" Margin="0,0,0,12" Foreground="{StaticResource AccentBrush}" />
                         <CheckBox Content="Fix Punctuation Spacing" IsChecked="{Binding ShouldFixPunctuationSpace}" Style="{StaticResource ToggleSwitchStyle}"/>
                         <CheckBox Content="Remove HTML Tags" IsChecked="{Binding ShouldRemoveHtmlTags}" Style="{StaticResource ToggleSwitchStyle}"/>
                         <CheckBox Content="Convert Smart Quotes" IsChecked="{Binding ShouldConvertSmartQuotes}" Style="{StaticResource ToggleSwitchStyle}"/>
@@ -147,7 +147,7 @@
         </Grid>
 
         <!-- AI Side Panel -->
-        <Border Grid.Column="1" Width="380" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1,0,0,0" Background="{StaticResource PanelBgBrush}"
+        <Border Grid.Column="1" Width="300" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1,0,0,0" Background="{StaticResource PanelBgBrush}"
                 Visibility="{Binding IsAIPanelOpen, Converter={StaticResource BooleanToVisibilityConverter}}"
                 Effect="{StaticResource SoftGlow}">
             <views:AIAssistantPanel DataContext="{Binding AIAssistantVM}" />
