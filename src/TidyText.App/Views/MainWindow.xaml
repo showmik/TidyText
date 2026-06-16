@@ -16,22 +16,43 @@
         ResizeMode="CanResizeWithGrip">
         
     <WindowChrome.WindowChrome>
-        <WindowChrome CaptionHeight="32" CornerRadius="8" GlassFrameThickness="0" UseAeroCaptionButtons="False" />
+        <WindowChrome CaptionHeight="48" CornerRadius="8" GlassFrameThickness="0" UseAeroCaptionButtons="False" />
     </WindowChrome.WindowChrome>
     
     <!-- Outer Grid to hold Custom Title Bar + Rest of Window -->
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="32" />
+            <RowDefinition Height="48" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
         <!-- Custom Title Bar -->
         <Grid Grid.Row="0" Background="Transparent">
-            <!-- Window Drag Area handled natively by WindowChrome -->
-            <TextBlock Text="TidyText" FontSize="12" Foreground="{StaticResource TextMutedBrush}" VerticalAlignment="Center" Margin="16,0,0,0" IsHitTestVisible="False" />
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" /> <!-- Branding -->
+                <ColumnDefinition Width="*" />    <!-- Drag Area -->
+                <ColumnDefinition Width="Auto" /> <!-- Actions -->
+                <ColumnDefinition Width="Auto" /> <!-- Window Controls -->
+            </Grid.ColumnDefinitions>
             
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" WindowChrome.IsHitTestVisibleInChrome="True">
+            <!-- Branding (Left) -->
+            <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="24,0,0,0" IsHitTestVisible="False">
+                <TextBlock Text="✨ TidyText" FontSize="16" FontWeight="Bold" Foreground="{StaticResource AccentBrush}" VerticalAlignment="Center"/>
+                <TextBlock Text="text engine" FontSize="12" Foreground="{StaticResource TextMutedBrush}" Margin="8,0,0,0" VerticalAlignment="Bottom" Padding="0,0,0,2"/>
+            </StackPanel>
+            
+            <!-- Window Drag Area (Middle) handled natively by WindowChrome -->
+            
+            <!-- Toolbar Actions (Right, separate from controls) -->
+            <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,24,0" WindowChrome.IsHitTestVisibleInChrome="True">
+                <Button Content="⚙️ Settings" Click="SettingsButton_Click" Style="{StaticResource IconButtonStyle}" Margin="0,0,4,0" ToolTip="API Keys &amp; Settings"/>
+                <Button Content="↩️ Undo" Command="{Binding UndoCommand}" Style="{StaticResource IconButtonStyle}" Margin="0,0,4,0" ToolTip="Undo Last Clean"/>
+                <Button Content="📋 Copy" Command="{Binding CopyCommand}" Style="{StaticResource IconButtonStyle}" Margin="0,0,16,0" ToolTip="Copy Text"/>
+                <Button Content="🤖 AI Assistant" Command="{Binding ToggleAIPanelCommand}" Style="{StaticResource PrimaryButtonStyle}" Padding="16,6" Effect="{StaticResource AccentGlow}"/>
+            </StackPanel>
+            
+            <!-- Window Controls (Far Right) -->
+            <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Stretch" WindowChrome.IsHitTestVisibleInChrome="True">
                 <Button Content="" Width="46" Click="Minimize_Click" Style="{StaticResource WindowControlButtonStyle}" ToolTip="Minimize"/>
                 <Button Content="" Width="46" Click="Maximize_Click" Style="{StaticResource WindowControlButtonStyle}" ToolTip="Maximize"/>
                 <Button Content="" Width="46" Click="Close_Click" Style="{StaticResource WindowCloseButtonStyle}" ToolTip="Close"/>
@@ -41,40 +62,21 @@
         <!-- Inner Content Grid -->
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-            <!-- Main Editor Area -->
-            <ColumnDefinition Width="*" />
-            <!-- AI Panel Area -->
-            <ColumnDefinition Width="Auto" x:Name="AIPanelColumn" />
-        </Grid.ColumnDefinitions>
+                <!-- Main Editor Area -->
+                <ColumnDefinition Width="*" />
+                <!-- AI Panel Area -->
+                <ColumnDefinition Width="Auto" x:Name="AIPanelColumn" />
+            </Grid.ColumnDefinitions>
 
-        <!-- Main Content -->
-        <Grid Grid.Column="0" Margin="24">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/> <!-- Header -->
-                <RowDefinition Height="*"/>    <!-- Editor Workspace Card -->
-                <RowDefinition Height="Auto"/> <!-- Options Panel -->
-            </Grid.RowDefinitions>
+            <!-- Main Content -->
+            <Grid Grid.Column="0" Margin="24,16,24,24">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>    <!-- Editor Workspace Card -->
+                    <RowDefinition Height="Auto"/> <!-- Options Panel -->
+                </Grid.RowDefinitions>
 
-            <!-- Header -->
-            <Grid Grid.Row="0" Margin="0,0,0,16">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-                    <TextBlock Text="✨ TidyText" FontSize="20" FontWeight="Bold" Foreground="{StaticResource AccentBrush}" VerticalAlignment="Center"/>
-                    <TextBlock Text="text engine" FontSize="12" Foreground="{StaticResource TextMutedBrush}" Margin="8,0,0,0" VerticalAlignment="Bottom"/>
-                </StackPanel>
-                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                    <Button Content="⚙️ Settings" Click="SettingsButton_Click" Style="{StaticResource IconButtonStyle}" Margin="0,0,8,0" ToolTip="API Keys &amp; Settings"/>
-                    <Button Content="↩️ Undo" Command="{Binding UndoCommand}" Style="{StaticResource IconButtonStyle}" Margin="0,0,8,0" ToolTip="Undo Last Clean"/>
-                    <Button Content="📋 Copy" Command="{Binding CopyCommand}" Style="{StaticResource IconButtonStyle}" Margin="0,0,12,0" ToolTip="Copy Text"/>
-                    <Button Content="🤖 AI Assistant" Command="{Binding ToggleAIPanelCommand}" Style="{StaticResource PrimaryButtonStyle}" Effect="{StaticResource AccentGlow}"/>
-                </StackPanel>
-            </Grid>
-
-            <!-- Text Editor Workspace Card -->
-            <Border Grid.Row="1" Background="{StaticResource PanelBgBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="8" Effect="{StaticResource SoftGlow}">
+                <!-- Text Editor Workspace Card -->
+                <Border Grid.Row="0" Background="{StaticResource PanelBgBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="8" Effect="{StaticResource SoftGlow}">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*"/>
@@ -175,7 +177,7 @@
         </Grid>
 
         <!-- AI Side Panel -->
-        <Border Grid.Column="1" Width="300" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1,0,0,0" Background="{StaticResource PanelBgBrush}"
+        <Border Grid.Column="1" Width="300" Margin="0,16,24,24" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="8" Background="{StaticResource PanelBgBrush}"
                 Visibility="{Binding IsAIPanelOpen, Converter={StaticResource BooleanToVisibilityConverter}}"
                 Effect="{StaticResource SoftGlow}">
             <views:AIAssistantPanel DataContext="{Binding AIAssistantVM}" />
