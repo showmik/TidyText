@@ -39,81 +39,88 @@
 
             <!-- Content Area -->
             <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-                <StackPanel Margin="32,24,32,24">
+                <StackPanel Margin="16,16,16,24">
                     
                     <TextBlock Text="API Providers" FontSize="18" FontWeight="Bold" Margin="0,0,0,8" Foreground="{DynamicResource TextBrush}"/>
                     <TextBlock Text="Configure your AI provider access keys. Keys are securely encrypted using Windows DPAPI and stored locally." 
                                Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap" Margin="0,0,0,24" FontSize="13"/>
                     
-                    <!-- Gemini Card -->
-                    <Border Background="{DynamicResource PanelBgBrush}" CornerRadius="8" Padding="16" Margin="0,0,0,16" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+                    <!-- Unified Settings List -->
+                    <Border Background="{DynamicResource PanelBgBrush}" CornerRadius="8" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
                         <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <Border Width="40" Height="40" CornerRadius="8" Background="#1E1E2E" VerticalAlignment="Top" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
-                                <TextBlock Text="✨" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Border>
-                            <StackPanel Grid.Column="1" Margin="16,0,0,0">
-                                <TextBlock Text="Google Gemini" FontWeight="Bold" FontSize="15" Foreground="{DynamicResource TextBrush}"/>
-                                <TextBlock Text="Get your API key from Google AI Studio." Foreground="{DynamicResource TextMutedBrush}" FontSize="12" Margin="0,4,0,12"/>
-                                <TextBox Text="{Binding GeminiApiKey, UpdateSourceTrigger=PropertyChanged}" Background="{DynamicResource BgBrush}" Foreground="{DynamicResource TextBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="10,8" />
-                            </StackPanel>
-                        </Grid>
-                    </Border>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
 
-                    <!-- OpenAI Card -->
-                    <Border Background="{DynamicResource PanelBgBrush}" CornerRadius="8" Padding="16" Margin="0,0,0,16" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <Border Width="40" Height="40" CornerRadius="8" Background="#1E1E2E" VerticalAlignment="Top" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
-                                <TextBlock Text="O" FontSize="20" FontWeight="Bold" Foreground="#10A37F" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Border>
-                            <StackPanel Grid.Column="1" Margin="16,0,0,0">
-                                <TextBlock Text="OpenAI" FontWeight="Bold" FontSize="15" Foreground="{DynamicResource TextBrush}"/>
-                                <TextBlock Text="Requires a funded OpenAI platform account." Foreground="{DynamicResource TextMutedBrush}" FontSize="12" Margin="0,4,0,12"/>
-                                <TextBox Text="{Binding OpenAIApiKey, UpdateSourceTrigger=PropertyChanged}" Background="{DynamicResource BgBrush}" Foreground="{DynamicResource TextBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="10,8" />
-                            </StackPanel>
-                        </Grid>
-                    </Border>
+                            <!-- Gemini -->
+                            <Grid Grid.Row="0" Margin="16,16">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Width="36" Height="36" CornerRadius="6" Background="#1E1E2E" VerticalAlignment="Top" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+                                    <TextBlock Text="✨" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <StackPanel Grid.Column="1" Margin="16,0,0,0">
+                                    <TextBlock Text="Google Gemini" FontWeight="SemiBold" FontSize="14" Foreground="{DynamicResource TextBrush}"/>
+                                    <TextBlock Text="Get your API key from Google AI Studio." Foreground="{DynamicResource TextMutedBrush}" FontSize="12" Margin="0,2,0,8"/>
+                                    <TextBox Text="{Binding GeminiApiKey, UpdateSourceTrigger=PropertyChanged}" FontFamily="Consolas, Courier New, monospace" Background="{DynamicResource BgBrush}" Foreground="{DynamicResource TextBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="8,6" />
+                                </StackPanel>
+                            </Grid>
+                            <Border Grid.Row="0" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1" VerticalAlignment="Bottom" Margin="16,0,0,0"/>
 
-                    <!-- Anthropic Card -->
-                    <Border Background="{DynamicResource PanelBgBrush}" CornerRadius="8" Padding="16" Margin="0,0,0,16" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <Border Width="40" Height="40" CornerRadius="8" Background="#1E1E2E" VerticalAlignment="Top" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
-                                <TextBlock Text="A" FontSize="20" FontWeight="Bold" Foreground="#D97757" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Border>
-                            <StackPanel Grid.Column="1" Margin="16,0,0,0">
-                                <TextBlock Text="Anthropic Claude" FontWeight="Bold" FontSize="15" Foreground="{DynamicResource TextBrush}"/>
-                                <TextBlock Text="Get your API key from the Anthropic Console." Foreground="{DynamicResource TextMutedBrush}" FontSize="12" Margin="0,4,0,12"/>
-                                <TextBox Text="{Binding AnthropicApiKey, UpdateSourceTrigger=PropertyChanged}" Background="{DynamicResource BgBrush}" Foreground="{DynamicResource TextBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="10,8" />
-                            </StackPanel>
-                        </Grid>
-                    </Border>
+                            <!-- OpenAI -->
+                            <Grid Grid.Row="1" Margin="16,16">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Width="36" Height="36" CornerRadius="6" Background="#1E1E2E" VerticalAlignment="Top" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+                                    <TextBlock Text="O" FontSize="18" FontWeight="Bold" Foreground="#10A37F" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <StackPanel Grid.Column="1" Margin="16,0,0,0">
+                                    <TextBlock Text="OpenAI" FontWeight="SemiBold" FontSize="14" Foreground="{DynamicResource TextBrush}"/>
+                                    <TextBlock Text="Requires a funded OpenAI platform account." Foreground="{DynamicResource TextMutedBrush}" FontSize="12" Margin="0,2,0,8"/>
+                                    <TextBox Text="{Binding OpenAIApiKey, UpdateSourceTrigger=PropertyChanged}" FontFamily="Consolas, Courier New, monospace" Background="{DynamicResource BgBrush}" Foreground="{DynamicResource TextBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="8,6" />
+                                </StackPanel>
+                            </Grid>
+                            <Border Grid.Row="1" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1" VerticalAlignment="Bottom" Margin="16,0,0,0"/>
 
-                    <!-- DeepSeek Card -->
-                    <Border Background="{DynamicResource PanelBgBrush}" CornerRadius="8" Padding="16" Margin="0,0,0,8" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <Border Width="40" Height="40" CornerRadius="8" Background="#1E1E2E" VerticalAlignment="Top" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
-                                <TextBlock Text="D" FontSize="20" FontWeight="Bold" Foreground="#4D6BFE" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Border>
-                            <StackPanel Grid.Column="1" Margin="16,0,0,0">
-                                <TextBlock Text="DeepSeek" FontWeight="Bold" FontSize="15" Foreground="{DynamicResource TextBrush}"/>
-                                <TextBlock Text="Cost-effective and highly capable open weights models." Foreground="{DynamicResource TextMutedBrush}" FontSize="12" Margin="0,4,0,12"/>
-                                <TextBox Text="{Binding DeepSeekApiKey, UpdateSourceTrigger=PropertyChanged}" Background="{DynamicResource BgBrush}" Foreground="{DynamicResource TextBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="10,8" />
-                            </StackPanel>
+                            <!-- Anthropic -->
+                            <Grid Grid.Row="2" Margin="16,16">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Width="36" Height="36" CornerRadius="6" Background="#1E1E2E" VerticalAlignment="Top" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+                                    <TextBlock Text="A" FontSize="18" FontWeight="Bold" Foreground="#D97757" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <StackPanel Grid.Column="1" Margin="16,0,0,0">
+                                    <TextBlock Text="Anthropic Claude" FontWeight="SemiBold" FontSize="14" Foreground="{DynamicResource TextBrush}"/>
+                                    <TextBlock Text="Get your API key from the Anthropic Console." Foreground="{DynamicResource TextMutedBrush}" FontSize="12" Margin="0,2,0,8"/>
+                                    <TextBox Text="{Binding AnthropicApiKey, UpdateSourceTrigger=PropertyChanged}" FontFamily="Consolas, Courier New, monospace" Background="{DynamicResource BgBrush}" Foreground="{DynamicResource TextBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="8,6" />
+                                </StackPanel>
+                            </Grid>
+                            <Border Grid.Row="2" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1" VerticalAlignment="Bottom" Margin="16,0,0,0"/>
+
+                            <!-- DeepSeek -->
+                            <Grid Grid.Row="3" Margin="16,16">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Width="36" Height="36" CornerRadius="6" Background="#1E1E2E" VerticalAlignment="Top" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+                                    <TextBlock Text="D" FontSize="18" FontWeight="Bold" Foreground="#4D6BFE" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <StackPanel Grid.Column="1" Margin="16,0,0,0">
+                                    <TextBlock Text="DeepSeek" FontWeight="SemiBold" FontSize="14" Foreground="{DynamicResource TextBrush}"/>
+                                    <TextBlock Text="Cost-effective and highly capable open weights models." Foreground="{DynamicResource TextMutedBrush}" FontSize="12" Margin="0,2,0,8"/>
+                                    <TextBox Text="{Binding DeepSeekApiKey, UpdateSourceTrigger=PropertyChanged}" FontFamily="Consolas, Courier New, monospace" Background="{DynamicResource BgBrush}" Foreground="{DynamicResource TextBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="8,6" />
+                                </StackPanel>
+                            </Grid>
                         </Grid>
                     </Border>
                     
