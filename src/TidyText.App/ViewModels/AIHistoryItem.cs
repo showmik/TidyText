@@ -16,10 +16,19 @@ namespace TidyText.App.ViewModels
 
         [ObservableProperty]
         private DateTime _timestamp = DateTime.Now;
+        
+        [ObservableProperty]
+        private bool _isExpanded = false;
 
         public AIHistoryItem(MainViewModel mainViewModel)
         {
             _mainViewModel = mainViewModel;
+        }
+
+        [RelayCommand]
+        public void ToggleExpand()
+        {
+            IsExpanded = !IsExpanded;
         }
 
         [RelayCommand]

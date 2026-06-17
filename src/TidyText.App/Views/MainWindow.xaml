@@ -87,13 +87,17 @@
                         <ItemsControl ItemsSource="{Binding AIAssistantVM.History}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Background="{DynamicResource BgBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="4" Margin="0,0,0,4" Padding="8,6">
+                                    <Border Background="{DynamicResource BgBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="4" Margin="0,0,0,4" Padding="8,6" Cursor="Hand">
+                                        <Border.InputBindings>
+                                            <MouseBinding MouseAction="LeftClick" Command="{Binding ToggleExpandCommand}"/>
+                                        </Border.InputBindings>
                                         <Grid>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="*"/>
                                                 <ColumnDefinition Width="Auto"/>
                                             </Grid.ColumnDefinitions>
                                             <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
                                                 <RowDefinition Height="Auto"/>
                                                 <RowDefinition Height="Auto"/>
                                             </Grid.RowDefinitions>
@@ -104,6 +108,16 @@
                                             <Button Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Content="↩️" Command="{Binding RestoreCommand}" ToolTip="Restore"
                                                     Background="Transparent" BorderThickness="0" Foreground="{DynamicResource AccentBrush}"
                                                     Padding="4" Cursor="Hand" VerticalAlignment="Center" FontSize="14"/>
+                                                    
+                                            <!-- Expanded Content -->
+                                            <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,8,0,0"
+                                                        Visibility="{Binding IsExpanded, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                                <TextBlock Text="Prompt:" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextMutedBrush}"/>
+                                                <TextBlock Text="{Binding Prompt}" FontSize="11" Foreground="{DynamicResource TextBrush}" TextWrapping="Wrap" Margin="0,2,0,8"/>
+                                                
+                                                <TextBlock Text="Result:" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextMutedBrush}"/>
+                                                <TextBlock Text="{Binding GeneratedText}" FontSize="11" Foreground="{DynamicResource TextBrush}" TextWrapping="Wrap" Margin="0,2,0,4"/>
+                                            </StackPanel>
                                         </Grid>
                                     </Border>
                                 </DataTemplate>
