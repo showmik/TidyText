@@ -28,7 +28,7 @@
             <ComboBox Grid.Row="0" Grid.Column="1" Width="130" ItemsSource="{Binding AvailableProviders}" SelectedItem="{Binding ActiveProviderName}" Background="{DynamicResource PanelBgBrush}" Foreground="{DynamicResource TextBrush}" BorderBrush="{DynamicResource BorderBrush}" Padding="6,4" Margin="0,0,0,8"/>
             
             <TextBlock Grid.Row="1" Grid.Column="0" Text="Model:" FontSize="13" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,8,0"/>
-            <ComboBox Grid.Row="1" Grid.Column="1" Width="130" ItemsSource="{Binding AvailableModels}" IsEditable="True" Text="{Binding ActiveModel, UpdateSourceTrigger=PropertyChanged}" Background="{DynamicResource PanelBgBrush}" Foreground="{DynamicResource TextBrush}" BorderBrush="{DynamicResource BorderBrush}" Padding="6,4"/>
+            <ComboBox Grid.Row="1" Grid.Column="1" Width="130" ItemsSource="{Binding AvailableModels}" SelectedItem="{Binding ActiveModel}" Background="{DynamicResource PanelBgBrush}" Foreground="{DynamicResource TextBrush}" BorderBrush="{DynamicResource BorderBrush}" Padding="6,4"/>
         </Grid>
         
         <TextBlock Grid.Row="1" Text="Actions" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,12" Foreground="{DynamicResource TextBrush}"/>
