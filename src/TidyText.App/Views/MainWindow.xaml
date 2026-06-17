@@ -44,12 +44,12 @@
             <!-- Window Drag Area (Middle) handled natively by WindowChrome -->
             
             <!-- Toolbar Actions (Right, separate from controls) -->
-            <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,24,0" WindowChrome.IsHitTestVisibleInChrome="True">
+            <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,12,0" WindowChrome.IsHitTestVisibleInChrome="True">
                 <Button Content="🌗 Theme" Click="ThemeToggle_Click" Style="{StaticResource IconButtonStyle}" Margin="0,0,4,0" ToolTip="Toggle Light/Dark Mode"/>
                 <Button Content="⚙️ Settings" Click="SettingsButton_Click" Style="{StaticResource IconButtonStyle}" Margin="0,0,4,0" ToolTip="API Keys &amp; Settings"/>
                 <Button Content="↩️ Undo" Command="{Binding UndoCommand}" Style="{StaticResource IconButtonStyle}" Margin="0,0,4,0" ToolTip="Undo Last Clean"/>
-                <Button Content="📋 Copy" Command="{Binding CopyCommand}" Style="{StaticResource IconButtonStyle}" Margin="0,0,16,0" ToolTip="Copy Text"/>
-                <Button Content="🤖 AI Assistant" Command="{Binding ToggleAIPanelCommand}" Style="{StaticResource PrimaryButtonStyle}" Padding="16,6" Effect="{DynamicResource AccentGlow}"/>
+                <Button Content="📋 Copy" Command="{Binding CopyCommand}" Style="{StaticResource IconButtonStyle}" Margin="0,0,12,0" ToolTip="Copy Text"/>
+                <Button Content="🤖 AI Assistant" Command="{Binding ToggleAIPanelCommand}" Style="{StaticResource PrimaryButtonStyle}" Padding="12,4" Effect="{DynamicResource AccentGlow}"/>
             </StackPanel>
             
             <!-- Window Controls (Far Right) -->
@@ -72,7 +72,7 @@
             </Grid.ColumnDefinitions>
 
             <!-- History Side Panel (Left) -->
-            <Border Grid.Column="0" Width="220" Margin="24,16,0,24" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8" Background="{DynamicResource PanelBgBrush}"
+            <Border Grid.Column="0" Width="220" Margin="12,12,0,12" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8" Background="{DynamicResource PanelBgBrush}"
                     Visibility="{Binding IsHistoryPanelOpen, Converter={StaticResource BooleanToVisibilityConverter}}"
                     Effect="{DynamicResource SoftGlow}">
                 <Grid Margin="12">
@@ -129,7 +129,7 @@
             </Border>
 
             <!-- Main Content -->
-            <Grid Grid.Column="1" Margin="24,16,24,24">
+            <Grid Grid.Column="1" Margin="12,12,12,12">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>    <!-- Editor Workspace Card -->
                     <RowDefinition Height="Auto"/> <!-- Options Panel -->
@@ -195,7 +195,7 @@
             </Border>
 
             <!-- Options Panel -->
-            <Border Grid.Row="2" Background="{DynamicResource PanelBgBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8" Margin="0,16,0,0" Padding="24" Effect="{DynamicResource SoftGlow}">
+            <Border Grid.Row="2" Background="{DynamicResource PanelBgBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8" Margin="0,12,0,0" Padding="16" Effect="{DynamicResource SoftGlow}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
@@ -237,7 +237,7 @@
         </Grid>
 
         <!-- AI Side Panel -->
-        <Border Grid.Column="2" Width="300" Margin="0,16,24,24" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8" Background="{DynamicResource PanelBgBrush}"
+        <Border Grid.Column="2" Width="280" Margin="0,12,12,12" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8" Background="{DynamicResource PanelBgBrush}"
                 Visibility="{Binding IsAIPanelOpen, Converter={StaticResource BooleanToVisibilityConverter}}"
                 Effect="{DynamicResource SoftGlow}">
             <views:AIAssistantPanel DataContext="{Binding AIAssistantVM}" />
