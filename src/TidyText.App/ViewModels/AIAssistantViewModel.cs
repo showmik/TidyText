@@ -37,7 +37,10 @@ namespace TidyText.App.ViewModels
         private string _activeModel = string.Empty;
 
         [ObservableProperty]
-        private string _responseContent = string.Empty;
+        private string _customPrompt = string.Empty;
+
+        [ObservableProperty]
+        private ObservableCollection<AIHistoryItem> _history = new();
 
         [ObservableProperty]
         private bool _isProcessing = false;
@@ -139,7 +142,6 @@ namespace TidyText.App.ViewModels
             SelectedTemplate = template;
             IsProcessing = true;
             StatusMessage = "Processing with " + ActiveProviderName + "...";
-            ResponseContent = string.Empty;
 
             if (_cancellationTokenSource != null)
             {
@@ -162,13 +164,20 @@ namespace TidyText.App.ViewModels
 
                 if (response.IsError)
                 {
-                    StatusMessage = "Error occurred.";
-                    ResponseContent = response.ErrorMessage;
+                    StatusMessage = "Error occurred: " + response.ErrorMessage;
                 }
                 else
                 {
                     StatusMessage = "Done.";
-                    ResponseContent = response.Text;
+                    _mainViewModel.MainText = response.Text;
+                    
+                    // Add to history
+                    History.Insert(0, new AIHistoryItem(_mainViewModel)
+                    {
+                        Prompt = template.Name,
+                        GeneratedText = response.Text,
+                        Timestamp = DateTime.Now
+                    });
                 }
             }
             catch (OperationCanceledException)
@@ -177,8 +186,7 @@ namespace TidyText.App.ViewModels
             }
             catch (Exception ex)
             {
-                StatusMessage = "Error occurred.";
-                ResponseContent = ex.Message;
+                StatusMessage = "Error occurred: " + ex.Message;
             }
             finally
             {
@@ -193,11 +201,62 @@ namespace TidyText.App.ViewModels
         }
 
         [RelayCommand]
-        public void ApplyResponseToEditor()
+        public async Task ExecuteCustomPromptAsync()
         {
-            if (!string.IsNullOrWhiteSpace(ResponseContent) && StatusMessage == "Done.")
+            if (string.IsNullOrWhiteSpace(CustomPrompt) || string.IsNullOrWhiteSpace(_mainViewModel.MainText)) return;
+
+            IsProcessing = true;
+            StatusMessage = "Processing custom prompt with " + ActiveProviderName + "...";
+
+            if (_cancellationTokenSource != null)
             {
-                _mainViewModel.MainText = ResponseContent;
+                _cancellationTokenSource.Cancel();
+                _cancellationTokenSource.Dispose();
+            }
+            _cancellationTokenSource = new CancellationTokenSource();
+
+            // The template essentially just prepends the custom prompt to the text
+            var prompt = $"{CustomPrompt}\n\nText:\n{_mainViewModel.MainText}";
+            var options = new AIOptions 
+            { 
+                Temperature = 0.5,
+                Model = ActiveModel
+            };
+
+            try
+            {
+                var response = await _router.RouteAsync(ActiveProviderName, prompt, options, _cancellationTokenSource.Token);
+
+                if (response.IsError)
+                {
+                    StatusMessage = "Error occurred: " + response.ErrorMessage;
+                }
+                else
+                {
+                    StatusMessage = "Done.";
+                    _mainViewModel.MainText = response.Text;
+                    
+                    History.Insert(0, new AIHistoryItem(_mainViewModel)
+                    {
+                        Prompt = CustomPrompt,
+                        GeneratedText = response.Text,
+                        Timestamp = DateTime.Now
+                    });
+                    
+                    CustomPrompt = string.Empty; // Clear after success
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                StatusMessage = "Cancelled.";
+            }
+            catch (Exception ex)
+            {
+                StatusMessage = "Error occurred: " + ex.Message;
+            }
+            finally
+            {
+                IsProcessing = false;
             }
         }
     }
