@@ -15,6 +15,9 @@ namespace TidyText.Core.Statistics
         
         // Count syllables for readability formulas
         public int SyllableCount { get; }
+        
+        // Count words with more than 6 letters for LIX readability
+        public int LongWordCount { get; }
 
         private static readonly Regex ParagraphRegex = new Regex(@"(?:\r?\n[\t\x20]*){2,}", RegexOptions.Compiled);
         private static readonly Regex SentenceRegex = new Regex(@"(?<=[.!?])\s+", RegexOptions.Compiled);
@@ -32,6 +35,7 @@ namespace TidyText.Core.Statistics
                 ParagraphCount = 0;
                 LineCount = 0;
                 SyllableCount = 0;
+                LongWordCount = 0;
                 return;
             }
 
@@ -49,6 +53,7 @@ namespace TidyText.Core.Statistics
             SentenceCount = sentences.Count(s => !string.IsNullOrWhiteSpace(s));
 
             SyllableCount = words.Sum(w => CountSyllables(w));
+            LongWordCount = words.Count(w => w.Count(char.IsLetter) > 6);
         }
 
         public static TextStatistics Calculate(string text)

@@ -132,7 +132,7 @@ namespace TidyText.App.ViewModels
             var scores = ReadabilityScorer.Calculate(stats);
             if (WordCount > 0)
             {
-                ReadabilityScore = $"{scores.FleschReadingEase:F1} ({scores.ReadingEaseDescription})";
+                ReadabilityScore = $"{scores.LixIndex:F1} ({scores.ReadingEaseDescription})";
             }
             else
             {

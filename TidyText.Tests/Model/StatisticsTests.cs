@@ -40,6 +40,22 @@ namespace TidyText.Tests.Model
         }
 
         [Test]
+        public void ReadabilityScorer_CalculatesLixCorrectly()
+        {
+            var text = "Paste this code into your application to complete authentication.";
+            var stats = TextStatistics.Calculate(text);
+            var scores = ReadabilityScorer.Calculate(stats);
+
+            // 9 words, 1 sentence.
+            // Long words (> 6 letters): "application", "complete", "authentication" (3 words)
+            // LIX = (9 / 1) + (3 * 100 / 9) = 9 + 33.333 = 42.333
+            
+            Assert.That(stats.LongWordCount, Is.EqualTo(3));
+            Assert.That(scores.LixIndex, Is.EqualTo(42.33).Within(0.1));
+            Assert.That(scores.ReadingEaseDescription, Is.EqualTo("Standard"));
+        }
+
+        [Test]
         public void TextStatistics_ParagraphCount_UsesDoubleNewline()
         {
             var text = "Line 1\nLine 2\n\nParagraph 2\n\nParagraph 3";
