@@ -28,7 +28,13 @@ namespace TidyText.App.ViewModels
         private ObservableCollection<string> _availableProviders = new();
 
         [ObservableProperty]
-        private string _activeProviderName = "Gemini";
+        private string _activeProviderName = string.Empty;
+
+        [ObservableProperty]
+        private ObservableCollection<string> _availableModels = new();
+
+        [ObservableProperty]
+        private string _activeModel = string.Empty;
 
         [ObservableProperty]
         private string _responseContent = string.Empty;
@@ -61,6 +67,51 @@ namespace TidyText.App.ViewModels
             {
                 ActiveProviderName = savedProvider;
             }
+            else
+            {
+                ActiveProviderName = "Gemini";
+            }
+        }
+
+        private void UpdateAvailableModels(string provider)
+        {
+            AvailableModels.Clear();
+            switch (provider)
+            {
+                case "Gemini":
+                    AvailableModels.Add("gemini-3.5-flash");
+                    AvailableModels.Add("gemini-3.5-pro");
+                    AvailableModels.Add("gemini-3.1-pro");
+                    AvailableModels.Add("gemini-3.1-flash-lite");
+                    break;
+                case "OpenAI":
+                    AvailableModels.Add("gpt-5.5-instant");
+                    AvailableModels.Add("gpt-5.5-pro");
+                    AvailableModels.Add("gpt-5.4-mini");
+                    AvailableModels.Add("gpt-5.4-pro");
+                    AvailableModels.Add("gpt-5.4-nano");
+                    break;
+                case "Anthropic":
+                    AvailableModels.Add("claude-fable-5");
+                    AvailableModels.Add("claude-opus-4.8");
+                    AvailableModels.Add("claude-sonnet-4.6");
+                    AvailableModels.Add("claude-haiku-4.5");
+                    break;
+                case "DeepSeek":
+                    AvailableModels.Add("deepseek-v4-pro");
+                    AvailableModels.Add("deepseek-v4-flash");
+                    break;
+            }
+
+            var savedModel = _keyVault?.GetKey($"ActiveModel_{provider}");
+            if (!string.IsNullOrEmpty(savedModel) && AvailableModels.Contains(savedModel))
+            {
+                ActiveModel = savedModel;
+            }
+            else if (AvailableModels.Count > 0)
+            {
+                ActiveModel = AvailableModels[0];
+            }
         }
 
         partial void OnActiveProviderNameChanged(string value)
@@ -68,6 +119,15 @@ namespace TidyText.App.ViewModels
             if (_keyVault != null)
             {
                 _keyVault.SetKey("ActiveProviderName", value);
+                UpdateAvailableModels(value);
+            }
+        }
+
+        partial void OnActiveModelChanged(string value)
+        {
+            if (_keyVault != null && !string.IsNullOrEmpty(ActiveProviderName) && !string.IsNullOrEmpty(value))
+            {
+                _keyVault.SetKey($"ActiveModel_{ActiveProviderName}", value);
             }
         }
 
@@ -92,7 +152,8 @@ namespace TidyText.App.ViewModels
             var options = new AIOptions 
             { 
                 SystemPrompt = template.SystemPrompt,
-                Temperature = 0.4
+                Temperature = 0.4,
+                Model = ActiveModel
             };
 
             try
