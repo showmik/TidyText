@@ -75,7 +75,7 @@
                          Background="{DynamicResource BgBrush}" BorderThickness="1" BorderBrush="{DynamicResource BorderBrush}" Padding="12"
                          Foreground="{DynamicResource TextBrush}" CaretBrush="{DynamicResource TextBrush}"
                          FontFamily="Consolas" FontSize="14" />
-                <TextBlock IsHitTestVisible="False" Text="Ask AI to modify text or write something..." VerticalAlignment="Top" HorizontalAlignment="Left" Margin="14,14,0,0" Foreground="{DynamicResource TextMutedBrush}" FontSize="14">
+                <TextBlock IsHitTestVisible="False" Text="Ask AI to modify text or write something..." TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Stretch" Margin="14,14,14,0" Foreground="{DynamicResource TextMutedBrush}" FontSize="14">
                     <TextBlock.Style>
                         <Style TargetType="TextBlock">
                             <Setter Property="Visibility" Value="Collapsed"/>
