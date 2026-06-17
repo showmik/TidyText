@@ -20,9 +20,18 @@ namespace TidyText.App.ViewModels
         [ObservableProperty]
         private bool _isExpanded = false;
 
-        public AIHistoryItem(MainViewModel mainViewModel)
+        private readonly Action<AIHistoryItem>? _deleteAction;
+
+        public AIHistoryItem(MainViewModel mainViewModel, Action<AIHistoryItem>? deleteAction = null)
         {
             _mainViewModel = mainViewModel;
+            _deleteAction = deleteAction;
+        }
+
+        [RelayCommand]
+        public void Delete()
+        {
+            _deleteAction?.Invoke(this);
         }
 
         [RelayCommand]

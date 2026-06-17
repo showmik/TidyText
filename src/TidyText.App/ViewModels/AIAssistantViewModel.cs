@@ -291,7 +291,7 @@ namespace TidyText.App.ViewModels
         {
             _mainViewModel.MainText = _proposedText;
 
-            History.Insert(0, new AIHistoryItem(_mainViewModel)
+            History.Insert(0, new AIHistoryItem(_mainViewModel, DeleteHistoryItem)
             {
                 Prompt = _currentPromptOrTemplate,
                 GeneratedText = _proposedText,
@@ -316,6 +316,22 @@ namespace TidyText.App.ViewModels
             IsReviewing = false;
             StatusMessage = "Changes rejected.";
             DiffChunks.Clear();
+        }
+        
+        private void DeleteHistoryItem(AIHistoryItem item)
+        {
+            if (item != null && History.Contains(item))
+            {
+                History.Remove(item);
+                SaveHistory();
+            }
+        }
+        
+        [RelayCommand]
+        public void ClearHistory()
+        {
+            History.Clear();
+            SaveHistory();
         }
 
         private void SaveHistory()
@@ -356,7 +372,7 @@ namespace TidyText.App.ViewModels
                         History.Clear();
                         foreach (var item in items)
                         {
-                            History.Add(new AIHistoryItem(_mainViewModel)
+                            History.Add(new AIHistoryItem(_mainViewModel, DeleteHistoryItem)
                             {
                                 Prompt = item.Prompt ?? "",
                                 GeneratedText = item.GeneratedText ?? "",
