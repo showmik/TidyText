@@ -95,21 +95,69 @@
             
             <TextBlock Grid.Row="0" Text="Custom Prompt" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,8" Foreground="{DynamicResource TextBrush}"/>
             
-            <TextBox Grid.Row="1" Text="{Binding CustomPrompt, UpdateSourceTrigger=PropertyChanged}" 
-                     TextWrapping="Wrap" AcceptsReturn="True" 
-                     VerticalScrollBarVisibility="Auto"
-                     Background="{DynamicResource BgBrush}" BorderThickness="1" BorderBrush="{DynamicResource BorderBrush}" Padding="12"
-                     Foreground="{DynamicResource TextBrush}" CaretBrush="{DynamicResource TextBrush}"
-                     FontFamily="Consolas" FontSize="14" />
+            <Grid Grid.Row="1">
+                <TextBox Text="{Binding CustomPrompt, UpdateSourceTrigger=PropertyChanged}" 
+                         TextWrapping="Wrap" AcceptsReturn="True" 
+                         VerticalScrollBarVisibility="Auto"
+                         Background="{DynamicResource BgBrush}" BorderThickness="1" BorderBrush="{DynamicResource BorderBrush}" Padding="12"
+                         Foreground="{DynamicResource TextBrush}" CaretBrush="{DynamicResource TextBrush}"
+                         FontFamily="Consolas" FontSize="14" />
+                <TextBlock IsHitTestVisible="False" Text="Ask AI to modify text or write something..." VerticalAlignment="Top" HorizontalAlignment="Left" Margin="14,14,0,0" Foreground="{DynamicResource TextMutedBrush}" FontSize="14">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding CustomPrompt}" Value="">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+            </Grid>
                      
             <Grid Grid.Row="2" Margin="0,8,0,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="0" Text="{Binding StatusMessage}" Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap" VerticalAlignment="Center" />
-                <Button Grid.Column="1" Content="Submit" Command="{Binding ExecuteCustomPromptCommand}" 
-                        Style="{StaticResource PrimaryButtonStyle}" Effect="{DynamicResource AccentGlow}" Padding="16,6"/>
+                
+                <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                    <ProgressBar IsIndeterminate="True" Height="4" Margin="0,0,8,4" Background="{DynamicResource BorderBrush}" Foreground="{DynamicResource AccentBrush}" Visibility="{Binding IsProcessing, Converter={StaticResource BoolToVis}}" />
+                    <TextBlock Text="{Binding StatusMessage}" Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Visibility" Value="Visible"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsProcessing}" Value="True">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </StackPanel>
+                
+                <Button Grid.Column="1" Padding="16,6" MinWidth="80">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource PrimaryButtonStyle}">
+                            <Setter Property="Content" Value="Submit"/>
+                            <Setter Property="Command" Value="{Binding ExecuteCustomPromptCommand}"/>
+                            <Setter Property="Effect" Value="{DynamicResource AccentGlow}"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsProcessing}" Value="True">
+                                    <Setter Property="Content" Value="Stop"/>
+                                    <Setter Property="Command" Value="{Binding CancelProcessingCommand}"/>
+                                    <Setter Property="Background" Value="Transparent"/>
+                                    <Setter Property="Foreground" Value="#FF7B72"/>
+                                    <Setter Property="BorderBrush" Value="#FF7B72"/>
+                                    <Setter Property="BorderThickness" Value="1"/>
+                                    <Setter Property="Effect" Value="{x:Null}"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
             </Grid>
             </Grid>
         </Border>
