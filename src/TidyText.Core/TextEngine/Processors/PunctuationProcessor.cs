@@ -261,9 +261,19 @@ namespace TidyText.Core.TextEngine.Processors
             int n = s.Length;
             char c = s[i];
             bool isColon = c == ':';
-            if (IsClosing(s[i]))
+
+            if (IsOpening(c))
             {
-                sb.Append(s[i]);
+                if (sb.Length > 0 && IsWordChar(sb[^1]))
+                    sb.Append(' ');
+                sb.Append(c);
+                i++;
+                return true;
+            }
+
+            if (IsClosing(c))
+            {
+                sb.Append(c);
                 int j = i + 1;
                 if (j < n)
                 {
@@ -762,6 +772,7 @@ namespace TidyText.Core.TextEngine.Processors
 
 
         private static bool IsSentencePunct(char c) => c == '.' || c == ',' || c == '!' || c == '?' || c == ';' || c == '。' || c == '！' || c == '？';
+        private static bool IsOpening(char c) => c == '(' || c == '[' || c == '{';
         private static bool IsClosing(char c) => c == ')' || c == ']' || c == '}' || c == '»' || c == '”' || c == '’';
         private static bool IsOpeningQuote(char c) => c == '"' || c == '\'' || c == '“' || c == '‘' || c == '«';
         private static bool IsWordChar(char c) => char.IsLetterOrDigit(c) || c == '_';

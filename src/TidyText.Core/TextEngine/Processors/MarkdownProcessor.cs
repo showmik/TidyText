@@ -26,18 +26,18 @@ namespace TidyText.Core.TextEngine.Processors
             // Remove headers
             result = Regex.Replace(result, @"^#{1,6}\s+", "", RegexOptions.Multiline);
             
-            // Remove bold/italic (**, __, *, _)
-            result = Regex.Replace(result, @"(\*\*|__)(.*?)\1", "$2");
-            result = Regex.Replace(result, @"(\*|_)(.*?)\1", "$2");
+            // Remove bold/italic (**, __, *, _) - adding Singleline to handle multiline
+            result = Regex.Replace(result, @"(\*\*|__)(.*?)\1", "$2", RegexOptions.Singleline);
+            result = Regex.Replace(result, @"(\*|_)(.*?)\1", "$2", RegexOptions.Singleline);
             
             // Remove strikethrough
-            result = Regex.Replace(result, @"~~(.*?)~~", "$1");
+            result = Regex.Replace(result, @"~~(.*?)~~", "$1", RegexOptions.Singleline);
             
+            // Remove images ![alt](url) -> alt (Must happen BEFORE links!)
+            result = Regex.Replace(result, @"\!\[([^\]]+)\]\([^\)]+\)", "$1");
+
             // Remove links [text](url) -> text
             result = Regex.Replace(result, @"\[([^\]]+)\]\([^\)]+\)", "$1");
-            
-            // Remove images ![alt](url) -> alt
-            result = Regex.Replace(result, @"\!\[([^\]]+)\]\([^\)]+\)", "$1");
             
             // Remove blockquotes
             result = Regex.Replace(result, @"^\>\s+", "", RegexOptions.Multiline);

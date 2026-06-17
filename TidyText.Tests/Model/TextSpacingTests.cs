@@ -512,5 +512,19 @@ namespace TidyText.Tests.Model
             Assert.That(got, Is.EqualTo("Here is code:\n```\nvar url=\"http://example.com/1.html\";\nif(1===1){}\n```\nDone. Yes."));
         }
 
+        [Test]
+        public void Multiple_Punctuations_With_Ellipsis()
+        {
+            var s = "What are you doing...?I need to know?!Now.";
+            var got = Fix(s);
+            Assert.That(got, Is.EqualTo("What are you doing...? I need to know?! Now."));
+        }
+
+        [Test]
+        public void Email_In_Parens()
+        {
+            var got = Fix("Contact me(user@example.com)for details.");
+            Assert.That(got, Is.EqualTo("Contact me (user@example.com) for details."));
+        }
     }
 }

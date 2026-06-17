@@ -20,7 +20,7 @@ namespace TidyText.Core.TextEngine.Processors
             if (opts != null && !opts.RemoveHtmlTags)
                 return input;
 
-            return Regex.Replace(input, "<.*?>", string.Empty);
+            return Regex.Replace(input, "<.*?>", string.Empty, RegexOptions.Singleline);
         }
     }
 }
