@@ -15,6 +15,6 @@ namespace TidyText.Core.TextEngine
         /// <summary>
         /// Processes the input text and returns the modified text.
         /// </summary>
-        string Process(string input, ProcessorOptions? options = null);
+        string Process(string input);
     }
 }

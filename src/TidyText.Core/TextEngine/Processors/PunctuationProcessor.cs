@@ -16,16 +16,19 @@ namespace TidyText.Core.TextEngine.Processors
         public string Name => "Punctuation Processor";
         public string Description => "Fixes spaces around punctuation.";
 
-        public string Process(string input, ProcessorOptions? options = null)
+        private readonly PunctuationProcessorOptions _options;
+
+        public PunctuationProcessor(PunctuationProcessorOptions? options = null)
         {
-            var opts = options as PunctuationProcessorOptions;
-            if (opts != null && !opts.FixPunctuationSpacing)
+            _options = options ?? new PunctuationProcessorOptions();
+        }
+
+        public string Process(string input)
+        {
+            if (!_options.FixPunctuationSpacing)
                 return input;
             
-            bool treatColonAsSentencePunct = opts?.TreatColonAsSentencePunct ?? false;
-            bool spaceAfterColon = opts?.SpaceAfterColon ?? false;
-            
-            return FixPunctuationSpacing(input, treatColonAsSentencePunct, spaceAfterColon);
+            return FixPunctuationSpacing(input, _options.TreatColonAsSentencePunct, _options.SpaceAfterColon);
         }
 
         /// <summary>

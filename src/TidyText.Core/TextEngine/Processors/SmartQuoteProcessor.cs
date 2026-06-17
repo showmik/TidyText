@@ -10,12 +10,18 @@ namespace TidyText.Core.TextEngine.Processors
         public string Name => "Smart Quote Processor";
         public string Description => "Converts curly quotes to straight quotes.";
 
-        public string Process(string input, ProcessorOptions? options = null)
+        private readonly SmartQuoteProcessorOptions _options;
+
+        public SmartQuoteProcessor(SmartQuoteProcessorOptions? options = null)
+        {
+            _options = options ?? new SmartQuoteProcessorOptions();
+        }
+
+        public string Process(string input)
         {
             if (string.IsNullOrEmpty(input)) return input;
             
-            var opts = options as SmartQuoteProcessorOptions;
-            if (opts != null && !opts.ConvertSmartQuotes)
+            if (!_options.ConvertSmartQuotes)
                 return input;
 
             return input.Replace('“', '"').Replace('”', '"')

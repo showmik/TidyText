@@ -12,12 +12,18 @@ namespace TidyText.Core.TextEngine.Processors
         public string Name => "Markdown Processor";
         public string Description => "Strips Markdown formatting characters to produce plain text.";
 
-        public string Process(string input, ProcessorOptions? options = null)
+        private readonly MarkdownProcessorOptions _options;
+
+        public MarkdownProcessor(MarkdownProcessorOptions? options = null)
+        {
+            _options = options ?? new MarkdownProcessorOptions();
+        }
+
+        public string Process(string input)
         {
             if (string.IsNullOrEmpty(input)) return input;
             
-            var opts = options as MarkdownProcessorOptions;
-            if (opts == null || !opts.StripMarkdown)
+            if (!_options.StripMarkdown)
                 return input;
 
             // Simplified markdown stripping (bold, italic, strikethrough, headers, list items)

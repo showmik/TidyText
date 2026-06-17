@@ -23,17 +23,23 @@ namespace TidyText.Core.TextEngine.Processors
         public string Name => "Casing Processor";
         public string Description => "Converts text to uppercase, lowercase, sentence case, or title case.";
 
-        public string Process(string input, ProcessorOptions? options = null)
+        private readonly CasingProcessorOptions _options;
+
+        public CasingProcessor(CasingProcessorOptions? options = null)
+        {
+            _options = options ?? new CasingProcessorOptions();
+        }
+
+        public string Process(string input)
         {
             if (string.IsNullOrEmpty(input)) return input;
 
-            var opts = options as CasingProcessorOptions;
-            if (opts == null || opts.Style == CasingStyle.DoNotChange)
+            if (_options.Style == CasingStyle.DoNotChange)
                 return input;
 
-            var culture = opts.Culture ?? CultureInfo.CurrentCulture;
+            var culture = _options.Culture ?? CultureInfo.CurrentCulture;
 
-            switch (opts.Style)
+            switch (_options.Style)
             {
                 case CasingStyle.Uppercase:
                     return input.ToUpper(culture);

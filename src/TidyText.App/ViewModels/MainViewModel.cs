@@ -145,31 +145,15 @@ namespace TidyText.App.ViewModels
                 RemoveAllLines = ShouldRemoveAllLines
             };
 
-            // Using reflection/casting to pass specific options if needed, 
-            // or simply relying on the new options object approach.
-            // For simplicity, we can pass a combined options object or update processors directly.
-            
-            // Re-configure pipeline with current options:
+            // Re-configure pipeline with current options using the clean unified architecture
             _pipeline.ClearProcessors()
-                .AddProcessor(new HtmlStripProcessor()) // options passed inside process
-                .AddProcessor(new SmartQuoteProcessor())
-                .AddProcessor(new WhitespaceProcessor())
-                .AddProcessor(new PunctuationProcessor())
-                .AddProcessor(new CasingProcessor());
-
-            // A more robust implementation would use a unified options bag.
-            // But for now, we can create an anonymous derived class or pass them down.
+                .AddProcessor(new HtmlStripProcessor(new HtmlStripProcessorOptions { RemoveHtmlTags = ShouldRemoveHtmlTags }))
+                .AddProcessor(new SmartQuoteProcessor(new SmartQuoteProcessorOptions { ConvertSmartQuotes = ShouldConvertSmartQuotes }))
+                .AddProcessor(new WhitespaceProcessor(options))
+                .AddProcessor(new PunctuationProcessor(new PunctuationProcessorOptions { FixPunctuationSpacing = ShouldFixPunctuationSpace, TreatColonAsSentencePunct = true }))
+                .AddProcessor(new CasingProcessor(new CasingProcessorOptions { Style = SelectedCasingStyle }));
             
-            // Let's execute each processor manually to pass correct options
-            string result = MainText;
-
-            result = new HtmlStripProcessor().Process(result, new HtmlStripProcessorOptions { RemoveHtmlTags = ShouldRemoveHtmlTags });
-            result = new SmartQuoteProcessor().Process(result, new SmartQuoteProcessorOptions { ConvertSmartQuotes = ShouldConvertSmartQuotes });
-            result = new WhitespaceProcessor().Process(result, options);
-            result = new PunctuationProcessor().Process(result, new PunctuationProcessorOptions { FixPunctuationSpacing = ShouldFixPunctuationSpace, TreatColonAsSentencePunct = true });
-            result = new CasingProcessor().Process(result, new CasingProcessorOptions { Style = SelectedCasingStyle });
-
-            MainText = result;
+            MainText = _pipeline.Process(MainText);
         }
 
         [RelayCommand]

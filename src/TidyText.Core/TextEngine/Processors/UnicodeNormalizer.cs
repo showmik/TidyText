@@ -13,15 +13,20 @@ namespace TidyText.Core.TextEngine.Processors
         public string Name => "Unicode Normalizer";
         public string Description => "Normalizes Unicode forms and strips zero-width characters.";
 
-        public string Process(string input, ProcessorOptions? options = null)
+        private readonly UnicodeNormalizerOptions _options;
+
+        public UnicodeNormalizer(UnicodeNormalizerOptions? options = null)
+        {
+            _options = options ?? new UnicodeNormalizerOptions();
+        }
+
+        public string Process(string input)
         {
             if (string.IsNullOrEmpty(input)) return input;
-            
-            var opts = options as UnicodeNormalizerOptions ?? new UnicodeNormalizerOptions();
 
-            string result = input.Normalize(opts.Form);
+            string result = input.Normalize(_options.Form);
 
-            if (opts.RemoveZeroWidthChars)
+            if (_options.RemoveZeroWidthChars)
             {
                 result = result.Replace("\u200B", "") // Zero-width space
                                .Replace("\u200C", "") // Zero-width non-joiner

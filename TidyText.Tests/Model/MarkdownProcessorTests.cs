@@ -12,36 +12,41 @@ namespace TidyText.Tests.Model
         [Test]
         public void StripMarkdown_RemovesHeaders()
         {
-            Assert.That(_processor.Process("# Header 1", _opts), Is.EqualTo("Header 1"));
-            Assert.That(_processor.Process("###### Header 6", _opts), Is.EqualTo("Header 6"));
+            var processor = new MarkdownProcessor(new MarkdownProcessorOptions { StripMarkdown = true });
+            Assert.That(processor.Process("# Header 1"), Is.EqualTo("Header 1"));
+            Assert.That(processor.Process("###### Header 6"), Is.EqualTo("Header 6"));
         }
 
         [Test]
         public void StripMarkdown_RemovesBoldAndItalic()
         {
-            Assert.That(_processor.Process("This is **bold** and __also bold__.", _opts), Is.EqualTo("This is bold and also bold."));
-            Assert.That(_processor.Process("This is *italic* and _also italic_.", _opts), Is.EqualTo("This is italic and also italic."));
+            var processor = new MarkdownProcessor(new MarkdownProcessorOptions { StripMarkdown = true });
+            Assert.That(processor.Process("This is **bold** and __also bold__."), Is.EqualTo("This is bold and also bold."));
+            Assert.That(processor.Process("This is *italic* and _also italic_."), Is.EqualTo("This is italic and also italic."));
         }
 
         [Test]
         public void StripMarkdown_RemovesLinksAndImages()
         {
-            Assert.That(_processor.Process("Here is a [link](http://example.com).", _opts), Is.EqualTo("Here is a link."));
-            Assert.That(_processor.Process("Here is an ![image alt](http://example.com/img.jpg).", _opts), Is.EqualTo("Here is an image alt."));
+            var processor = new MarkdownProcessor(new MarkdownProcessorOptions { StripMarkdown = true });
+            Assert.That(processor.Process("Here is a [link](http://example.com)."), Is.EqualTo("Here is a link."));
+            Assert.That(processor.Process("Here is an ![image alt](http://example.com/img.jpg)."), Is.EqualTo("Here is an image alt."));
         }
 
         [Test]
         public void StripMarkdown_RemovesMultilineBold()
         {
+            var processor = new MarkdownProcessor(new MarkdownProcessorOptions { StripMarkdown = true });
             var input = "This is **multiline\nbold** text.";
             var expected = "This is multiline\nbold text.";
-            Assert.That(_processor.Process(input, _opts), Is.EqualTo(expected));
+            Assert.That(processor.Process(input), Is.EqualTo(expected));
         }
 
         [Test]
         public void StripMarkdown_LeavesNormalTextAlone()
         {
-            Assert.That(_processor.Process("Just some normal text.", _opts), Is.EqualTo("Just some normal text."));
+            var processor = new MarkdownProcessor(new MarkdownProcessorOptions { StripMarkdown = true });
+            Assert.That(processor.Process("Just some normal text."), Is.EqualTo("Just some normal text."));
         }
     }
 }

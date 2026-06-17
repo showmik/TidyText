@@ -17,27 +17,32 @@ namespace TidyText.Core.TextEngine.Processors
         public string Name => "Whitespace Processor";
         public string Description => "Handles trimming, line break removal, and whitespace normalization.";
 
-        public string Process(string input, ProcessorOptions? options = null)
+        private readonly WhitespaceProcessorOptions _options;
+
+        public WhitespaceProcessor(WhitespaceProcessorOptions? options = null)
+        {
+            _options = options ?? new WhitespaceProcessorOptions();
+        }
+
+        public string Process(string input)
         {
             if (string.IsNullOrEmpty(input)) return input;
             
-            var opts = options as WhitespaceProcessorOptions ?? new WhitespaceProcessorOptions();
-            
             string text = NormalizeNewlines(input);
 
-            if (opts.TrimStart || opts.TrimEnd)
-                text = TrimEachLine(text, opts.TrimStart, opts.TrimEnd);
+            if (_options.TrimStart || _options.TrimEnd)
+                text = TrimEachLine(text, _options.TrimStart, _options.TrimEnd);
 
-            if (opts.RemoveMultipleSpaces)
+            if (_options.RemoveMultipleSpaces)
                 text = CollapseIntraLineWhitespace(text);
 
-            if (opts.RemoveMultipleLines)
+            if (_options.RemoveMultipleLines)
                 text = ConvertMultipleLinesToSingle(text);
 
-            if (opts.RemoveAllLines)
+            if (_options.RemoveAllLines)
             {
                 text = UnwrapAllLines(text);
-                if (opts.RemoveMultipleSpaces) 
+                if (_options.RemoveMultipleSpaces) 
                     text = CollapseIntraLineWhitespace(text);
             }
 
@@ -53,7 +58,7 @@ namespace TidyText.Core.TextEngine.Processors
         private static string TrimEachLine(string text, bool trimStart, bool trimEnd)
         {
             if (string.IsNullOrEmpty(text)) return text;
-            var lines = NormalizeNewlines(text).Split('\n');
+            var lines = text.Split('\n');
             for (int i = 0; i < lines.Length; i++)
             {
                 var line = lines[i];

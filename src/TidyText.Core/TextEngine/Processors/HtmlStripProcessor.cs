@@ -12,12 +12,18 @@ namespace TidyText.Core.TextEngine.Processors
         public string Name => "HTML Strip Processor";
         public string Description => "Removes HTML tags from text.";
 
-        public string Process(string input, ProcessorOptions? options = null)
+        private readonly HtmlStripProcessorOptions _options;
+
+        public HtmlStripProcessor(HtmlStripProcessorOptions? options = null)
+        {
+            _options = options ?? new HtmlStripProcessorOptions();
+        }
+
+        public string Process(string input)
         {
             if (string.IsNullOrEmpty(input)) return input;
             
-            var opts = options as HtmlStripProcessorOptions;
-            if (opts != null && !opts.RemoveHtmlTags)
+            if (!_options.RemoveHtmlTags)
                 return input;
 
             return Regex.Replace(input, "<.*?>", string.Empty, RegexOptions.Singleline);

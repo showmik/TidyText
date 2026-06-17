@@ -27,7 +27,7 @@ namespace TidyText.Core.TextEngine
             return this;
         }
 
-        public string Process(string input, ProcessorOptions? options = null)
+        public string Process(string input)
         {
             if (string.IsNullOrEmpty(input))
                 return input;
@@ -35,7 +35,7 @@ namespace TidyText.Core.TextEngine
             string result = input;
             foreach (var processor in _processors)
             {
-                result = processor.Process(result, options);
+                result = processor.Process(result);
             }
 
             return result;

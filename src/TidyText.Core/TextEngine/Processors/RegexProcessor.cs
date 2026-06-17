@@ -14,17 +14,21 @@ namespace TidyText.Core.TextEngine.Processors
         public string Name => "Regex Processor";
         public string Description => "Performs advanced regular expression substitutions.";
 
-        public string Process(string input, ProcessorOptions? options = null)
+        private readonly RegexProcessorOptions _options;
+
+        public RegexProcessor(RegexProcessorOptions? options = null)
+        {
+            _options = options ?? new RegexProcessorOptions();
+        }
+
+        public string Process(string input)
         {
             if (string.IsNullOrEmpty(input)) return input;
-            
-            var opts = options as RegexProcessorOptions;
-            if (opts == null || string.IsNullOrEmpty(opts.Pattern))
-                return input;
+            if (string.IsNullOrEmpty(_options.Pattern)) return input;
 
             try
             {
-                return Regex.Replace(input, opts.Pattern, opts.Replacement, opts.RegexOptions);
+                return Regex.Replace(input, _options.Pattern, _options.Replacement ?? string.Empty, _options.RegexOptions);
             }
             catch
             {

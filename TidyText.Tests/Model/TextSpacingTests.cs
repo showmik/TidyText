@@ -8,12 +8,12 @@ namespace TidyText.Tests.Model
     {
         private static string Fix(string s, bool treatColon = false)
         {
-            var processor = new PunctuationProcessor();
-            return processor.Process(s, new PunctuationProcessorOptions 
+            var processor = new PunctuationProcessor(new PunctuationProcessorOptions 
             { 
                 FixPunctuationSpacing = true, 
                 TreatColonAsSentencePunct = treatColon 
             });
+            return processor.Process(s);
         }
 
         // --- Core punctuation spacing --------------------------------------------------------

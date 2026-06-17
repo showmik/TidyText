@@ -14,15 +14,19 @@ namespace TidyText.Core.TextEngine.Processors
         public string Name => "Find and Replace Processor";
         public string Description => "Performs simple text substitution.";
 
-        public string Process(string input, ProcessorOptions? options = null)
+        private readonly FindReplaceProcessorOptions _options;
+
+        public FindReplaceProcessor(FindReplaceProcessorOptions? options = null)
+        {
+            _options = options ?? new FindReplaceProcessorOptions();
+        }
+
+        public string Process(string input)
         {
             if (string.IsNullOrEmpty(input)) return input;
-            
-            var opts = options as FindReplaceProcessorOptions;
-            if (opts == null || string.IsNullOrEmpty(opts.Find))
-                return input;
+            if (string.IsNullOrEmpty(_options.Find)) return input;
 
-            return input.Replace(opts.Find, opts.Replace, opts.ComparisonType);
+            return input.Replace(_options.Find, _options.Replace, _options.ComparisonType);
         }
     }
 }
