@@ -488,5 +488,29 @@ namespace TidyText.Tests.Model
             Assert.That(got, Is.EqualTo("Go to www.example.org; then press enter."));
         }
 
+        // ===================== EXTREME EDGE CASES =====================
+
+        [Test]
+        public void Complex_Nested_Quotes_And_Parens()
+        {
+            var got = Fix("She said,\"Hello (friend)!\".Then left.");
+            Assert.That(got, Is.EqualTo("She said, \"Hello (friend)!\". Then left."));
+        }
+
+        [Test]
+        public void Extreme_Url_With_Auth_Port_Path_And_Query()
+        {
+            var got = Fix("Link: http://user:pass@192.168.1.1:8080/path/file.html?a=1.2&b=3.4#tag1.OK");
+            Assert.That(got, Is.EqualTo("Link: http://user:pass@192.168.1.1:8080/path/file.html?a=1.2&b=3.4#tag1. OK"));
+        }
+
+        [Test]
+        public void Complex_Markdown_Code_Block()
+        {
+            var s = "Here is code:\n```\nvar url=\"http://example.com/1.html\";\nif(1===1){}\n```\nDone.Yes.";
+            var got = Fix(s);
+            Assert.That(got, Is.EqualTo("Here is code:\n```\nvar url=\"http://example.com/1.html\";\nif(1===1){}\n```\nDone. Yes."));
+        }
+
     }
 }

@@ -48,6 +48,7 @@ namespace TidyText.Core.TextEngine.Casing
 
             bool forceNextWordCap = false; // after colon
             bool inEmail = false;          // persist across user@example.com
+            bool inUrl = false;            // persist across http://example.com/
 
             for (int wi = 0, nWords = wordSpans.Count; wi < nWords; wi++)
             {
@@ -98,6 +99,34 @@ namespace TidyText.Core.TextEngine.Casing
                         if (text[k] == ':' && _opt.CapitalizeAfterColon) { forceNextWordCap = true; break; }
 
                     // trailing text after final word
+                    if (wi == nWords - 1 && span.End < text.Length)
+                        sb.Append(text.Substring(span.End));
+                    continue;
+                }
+
+                // Enter/Stay URL mode: http://, https://, www.
+                if (!inUrl && noSpaceToNext)
+                {
+                    int gapLen = nextStart - afterEnd;
+                    if (gapLen >= 3 && (word.Equals("http", StringComparison.OrdinalIgnoreCase) || word.Equals("https", StringComparison.OrdinalIgnoreCase)))
+                    {
+                        if (text.Substring(afterEnd, 3) == "://") inUrl = true;
+                    }
+                    else if (gapLen >= 1 && word.Equals("www", StringComparison.OrdinalIgnoreCase) && text[afterEnd] == '.')
+                    {
+                        inUrl = true;
+                    }
+                }
+                if (inUrl)
+                {
+                    sb.Append(word);
+                    bool stay = noSpaceToNext;
+                    if (!stay) inUrl = false;
+
+                    forceNextWordCap = false;
+                    for (int k = afterEnd; k < nextStart; k++)
+                        if (text[k] == ':' && _opt.CapitalizeAfterColon) { forceNextWordCap = true; break; }
+
                     if (wi == nWords - 1 && span.End < text.Length)
                         sb.Append(text.Substring(span.End));
                     continue;

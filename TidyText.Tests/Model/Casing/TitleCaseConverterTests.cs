@@ -64,6 +64,11 @@ namespace TidyText.Tests.Model.Casing
         [TestCase("number ranges 1–10 and 2—3", "Number Ranges 1–10 and 2—3")]
         [TestCase("variables x^2 and y^3", "Variables X^2 and Y^3")]
         [TestCase("we’re excited", "We’re Excited")]
+        [TestCase("url is http://1.example.com/page1.html", "Url Is http://1.example.com/page1.html")]
+        [TestCase("user@domain.com emailed me", "user@domain.com Emailed Me")]
+        [TestCase("“a nested ‘quote’ here”", "“A Nested ‘Quote’ Here”")]
+        [TestCase("1st, 2nd, and 3rd place", "1st, 2nd, and 3rd Place")]
+        [TestCase("1.23e-4 or 1,000,000", "1.23e-4 or 1,000,000")]
         public void TitleCase_AP_Rules(string input, string expected)
         {
             var tc = TitleCaseConverter.Default;
