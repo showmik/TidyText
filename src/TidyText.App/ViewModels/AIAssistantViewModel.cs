@@ -225,11 +225,12 @@ namespace TidyText.App.ViewModels
             _cancellationTokenSource = new CancellationTokenSource();
 
             // The template essentially just prepends the custom prompt to the text
-            var prompt = $"{CustomPrompt}\n\nText:\n{_mainViewModel.MainText}";
+            var prompt = $"{CustomPrompt}\n\n<text>\n{_mainViewModel.MainText}\n</text>";
             var options = new AIOptions 
             { 
                 Temperature = 0.5,
-                Model = ActiveModel
+                Model = ActiveModel,
+                SystemPrompt = "You are a highly capable AI assistant embedded in a text editor. Execute the user's instructions on the provided text. Return ONLY the modified text without conversational filler, pleasantries, or markdown formatting, unless specifically requested."
             };
 
             try
