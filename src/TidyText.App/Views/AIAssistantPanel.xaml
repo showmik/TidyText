@@ -18,21 +18,23 @@
         
         <TextBlock Grid.Row="1" Text="Actions" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,12" Foreground="{DynamicResource TextBrush}"/>
         
-        <ItemsControl Grid.Row="2" ItemsSource="{Binding Templates}" ScrollViewer.VerticalScrollBarVisibility="Auto">
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <Button Command="{Binding DataContext.ExecuteTemplateCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" 
-                            CommandParameter="{Binding}"
-                            Style="{StaticResource AIActionButtonStyle}"
-                            Effect="{DynamicResource SoftGlow}">
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <TextBlock Text="{Binding Icon}" Margin="0,0,12,0" VerticalAlignment="Center" FontSize="16"/>
-                            <TextBlock Text="{Binding Name}" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="14" Foreground="{DynamicResource TextBrush}"/>
-                        </StackPanel>
-                    </Button>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+            <ItemsControl ItemsSource="{Binding Templates}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button Command="{Binding DataContext.ExecuteTemplateCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" 
+                                CommandParameter="{Binding}"
+                                Style="{StaticResource AIActionButtonStyle}"
+                                Effect="{DynamicResource SoftGlow}">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock Text="{Binding Icon}" Margin="0,0,12,0" VerticalAlignment="Center" FontSize="16"/>
+                                <TextBlock Text="{Binding Name}" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="14" Foreground="{DynamicResource TextBrush}"/>
+                            </StackPanel>
+                        </Button>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
 
         <Grid Grid.Row="3" Margin="0,16,0,0">
             <Grid.RowDefinitions>
