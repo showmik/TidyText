@@ -20,7 +20,7 @@ namespace TidyText.Core.Statistics
         private static readonly Regex SentenceRegex = new Regex(@"(?<=[.!?])\s+", RegexOptions.Compiled);
         private static readonly Regex SyllableSuffixRegex = new Regex(@"(?:[^laeiouy]es|ed|[^laeiouy]e)$", RegexOptions.Compiled);
         private static readonly Regex SyllablePrefixRegex = new Regex(@"^y", RegexOptions.Compiled);
-        private static readonly Regex SyllableVowelsRegex = new Regex(@"[aeiouy]{1,2}", RegexOptions.Compiled);
+        private static readonly Regex SyllableVowelsRegex = new Regex(@"[aeiouy]+", RegexOptions.Compiled);
 
         private TextStatistics(string text)
         {
@@ -58,7 +58,9 @@ namespace TidyText.Core.Statistics
 
         private static int CountSyllables(string word)
         {
-            word = word.ToLowerInvariant();
+            // Strip punctuation before checking length or applying regexes
+            word = new string(word.Where(char.IsLetter).ToArray()).ToLowerInvariant();
+            
             if (word.Length <= 3) return 1;
 
             word = SyllableSuffixRegex.Replace(word, "");
