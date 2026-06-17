@@ -42,8 +42,12 @@
             <!-- Branding (Left) -->
             <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="16,0,0,0">
                 <Button Content="≡" Command="{Binding ToggleHistoryPanelCommand}" Style="{StaticResource IconButtonStyle}" FontSize="18" Padding="8,4" Margin="0,0,12,0" WindowChrome.IsHitTestVisibleInChrome="True" ToolTip="Toggle History Sidebar"/>
-                <TextBlock Text="✨ TidyText" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Center" IsHitTestVisible="False"/>
-                <TextBlock Text="text engine" FontSize="12" Foreground="{DynamicResource TextMutedBrush}" Margin="8,0,0,0" VerticalAlignment="Bottom" Padding="0,0,0,2" IsHitTestVisible="False"/>
+                <TextBlock Text="✨ TidyText"
+                           FontSize="16"
+                           FontWeight="Bold"
+                           Foreground="{DynamicResource AccentBrush}"
+                           VerticalAlignment="Center"
+                           IsHitTestVisible="False" />
             </StackPanel>
             
             <!-- Window Drag Area (Middle) handled natively by WindowChrome -->
