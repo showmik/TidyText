@@ -50,6 +50,8 @@ namespace TidyText.App.ViewModels
 
             AvailableProviders.Add("Gemini");
             AvailableProviders.Add("OpenAI");
+            AvailableProviders.Add("DeepSeek");
+            AvailableProviders.Add("Anthropic");
         }
 
         [RelayCommand]

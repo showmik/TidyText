@@ -25,7 +25,9 @@ namespace TidyText.App
             var providers = new IAIProvider[]
             {
                 new GeminiProvider(keyVault.GetKey("Gemini"), httpClient),
-                new OpenAIProvider(keyVault.GetKey("OpenAI"), httpClient)
+                new OpenAIProvider(keyVault.GetKey("OpenAI"), httpClient),
+                new DeepSeekProvider(keyVault.GetKey("DeepSeek"), httpClient),
+                new AnthropicProvider(keyVault.GetKey("Anthropic"), httpClient)
             };
             
             var aiRouter = new AIProviderRouter(providers);
