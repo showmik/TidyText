@@ -66,6 +66,8 @@ namespace TidyText.App.ViewModels
             _mainViewModel = mainViewModel;
             _keyVault = keyVault;
             
+            LoadHistory();
+            
             var engine = new PromptTemplateEngine();
             foreach (var template in engine.GetBuiltInTemplates())
             {
@@ -295,6 +297,8 @@ namespace TidyText.App.ViewModels
                 GeneratedText = _proposedText,
                 Timestamp = DateTime.Now
             });
+            
+            SaveHistory();
 
             if (_currentPromptOrTemplate == CustomPrompt)
             {
@@ -313,5 +317,63 @@ namespace TidyText.App.ViewModels
             StatusMessage = "Changes rejected.";
             DiffChunks.Clear();
         }
+
+        private void SaveHistory()
+        {
+            try
+            {
+                var appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                var dir = System.IO.Path.Combine(appData, "TidyText");
+                System.IO.Directory.CreateDirectory(dir);
+                var file = System.IO.Path.Combine(dir, "ai_history.json");
+                
+                var options = new System.Text.Json.JsonSerializerOptions { WriteIndented = true };
+                var historyData = System.Linq.Enumerable.ToList(System.Linq.Enumerable.Select(History, h => new AIHistoryDto 
+                { 
+                    Prompt = h.Prompt, 
+                    GeneratedText = h.GeneratedText, 
+                    Timestamp = h.Timestamp 
+                }));
+                
+                var json = System.Text.Json.JsonSerializer.Serialize(historyData, options);
+                System.IO.File.WriteAllText(file, json);
+            }
+            catch { }
+        }
+
+        private void LoadHistory()
+        {
+            try
+            {
+                var appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                var file = System.IO.Path.Combine(appData, "TidyText", "ai_history.json");
+                if (System.IO.File.Exists(file))
+                {
+                    var json = System.IO.File.ReadAllText(file);
+                    var items = System.Text.Json.JsonSerializer.Deserialize<System.Collections.Generic.List<AIHistoryDto>>(json);
+                    if (items != null)
+                    {
+                        History.Clear();
+                        foreach (var item in items)
+                        {
+                            History.Add(new AIHistoryItem(_mainViewModel)
+                            {
+                                Prompt = item.Prompt ?? "",
+                                GeneratedText = item.GeneratedText ?? "",
+                                Timestamp = item.Timestamp
+                            });
+                        }
+                    }
+                }
+            }
+            catch { }
+        }
+    }
+
+    public class AIHistoryDto
+    {
+        public string Prompt { get; set; } = string.Empty;
+        public string GeneratedText { get; set; } = string.Empty;
+        public DateTime Timestamp { get; set; }
     }
 }
