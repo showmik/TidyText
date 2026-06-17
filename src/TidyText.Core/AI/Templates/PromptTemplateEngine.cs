@@ -23,7 +23,12 @@ namespace TidyText.Core.AI.Templates
                 new WriteEmailTemplate(),
                 new SummarizeTemplate(),
                 new MakeConciseTemplate(),
-                new TranslateTemplate()
+                new TranslateTemplate(),
+                new ExtractActionItemsTemplate(),
+                new ExpandTextTemplate(),
+                new SimplifyTemplate(),
+                new CleanFormattingTemplate(),
+                new GenerateTitlesTemplate()
                 // More templates can be added here
             };
         }
@@ -119,6 +124,71 @@ namespace TidyText.Core.AI.Templates
         public string GetPrompt(string text, IDictionary<string, string>? variables = null)
         {
             return $"Translate the following text to English:\n\n<text>\n{text}\n</text>";
+        }
+    }
+
+    public class ExtractActionItemsTemplate : IPromptTemplate
+    {
+        public string Name => "Extract Action Items";
+        public string Description => "Generate a checklist of to-dos from notes or emails.";
+        public string Icon => "✅";
+        public string SystemPrompt => "You are a highly organized project manager. Your task is to read the provided notes or email and extract all implicit and explicit action items. Return ONLY a formatted markdown checklist of these action items. Do not include conversational filler.";
+
+        public string GetPrompt(string text, IDictionary<string, string>? variables = null)
+        {
+            return $"Extract action items from the following text:\n\n<text>\n{text}\n</text>";
+        }
+    }
+
+    public class ExpandTextTemplate : IPromptTemplate
+    {
+        public string Name => "Expand Text";
+        public string Description => "Add detail and length to short text or bullet points.";
+        public string Icon => "➕";
+        public string SystemPrompt => "You are an expert ghostwriter. Your task is to take the provided short text or bullet points and expand them into a fully fleshed-out, detailed, and professional text. Maintain the original core intent but elaborate on the concepts. Return ONLY the expanded text.";
+
+        public string GetPrompt(string text, IDictionary<string, string>? variables = null)
+        {
+            return $"Expand the following text with more detail:\n\n<text>\n{text}\n</text>";
+        }
+    }
+
+    public class SimplifyTemplate : IPromptTemplate
+    {
+        public string Name => "Simplify (ELI5)";
+        public string Description => "Rewrite complex text so anyone can understand it.";
+        public string Icon => "🧠";
+        public string SystemPrompt => "You are an expert teacher. Your task is to take complex, technical, or academic text and rewrite it so that a layman or a smart 5th grader could easily understand it. Use simple analogies if necessary. Return ONLY the simplified text without conversational filler.";
+
+        public string GetPrompt(string text, IDictionary<string, string>? variables = null)
+        {
+            return $"Simplify the following text to be easily understood:\n\n<text>\n{text}\n</text>";
+        }
+    }
+
+    public class CleanFormattingTemplate : IPromptTemplate
+    {
+        public string Name => "Clean Formatting";
+        public string Description => "Fix messy line breaks and spacing.";
+        public string Icon => "🧹";
+        public string SystemPrompt => "You are an expert formatting assistant. Your task is to take the provided messy text (e.g., from PDF copy-paste or bad OCR) and fix all the random line breaks, weird spacing, and broken paragraphs. DO NOT change the actual words, just fix the formatting. Return ONLY the clean text.";
+
+        public string GetPrompt(string text, IDictionary<string, string>? variables = null)
+        {
+            return $"Clean the formatting of the following text:\n\n<text>\n{text}\n</text>";
+        }
+    }
+
+    public class GenerateTitlesTemplate : IPromptTemplate
+    {
+        public string Name => "Generate Titles";
+        public string Description => "Create 5 catchy titles or headlines for the text.";
+        public string Icon => "💡";
+        public string SystemPrompt => "You are an expert copywriter. Your task is to read the provided text and generate exactly 5 strong, catchy, and professional titles or headlines for it. Return ONLY a numbered list of the titles without conversational filler.";
+
+        public string GetPrompt(string text, IDictionary<string, string>? variables = null)
+        {
+            return $"Generate 5 titles for the following text:\n\n<text>\n{text}\n</text>";
         }
     }
 }
