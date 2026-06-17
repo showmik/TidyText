@@ -110,7 +110,7 @@
         </ScrollViewer>
 
         <!-- Review Mode Overlay -->
-        <Border Grid.Row="1" Grid.RowSpan="5" Background="{DynamicResource WindowBgBrush}" 
+        <Border Grid.Row="1" Grid.RowSpan="5" Background="{DynamicResource BgBrush}" 
                 Visibility="{Binding IsReviewing, Converter={StaticResource BoolToVis}}" Margin="0,-8,-8,-8" Padding="0,8,8,8">
             <Grid>
                 <Grid.RowDefinitions>
