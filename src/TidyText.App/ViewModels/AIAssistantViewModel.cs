@@ -56,7 +56,11 @@ namespace TidyText.App.ViewModels
             StatusMessage = "Processing with " + ActiveProviderName + "...";
             ResponseContent = string.Empty;
 
-            _cancellationTokenSource?.Cancel();
+            if (_cancellationTokenSource != null)
+            {
+                _cancellationTokenSource.Cancel();
+                _cancellationTokenSource.Dispose();
+            }
             _cancellationTokenSource = new CancellationTokenSource();
 
             var prompt = template.GetPrompt(_mainViewModel.MainText);

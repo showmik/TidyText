@@ -37,7 +37,8 @@ namespace TidyText.App.ViewModels
         [ObservableProperty] private string _readabilityScore = "N/A";
 
         // --- Processing Options ---
-        private readonly System.Collections.Generic.Stack<string> _history = new();
+        private readonly System.Collections.Generic.List<string> _history = new();
+        private const int MaxHistorySize = 50;
 
         [ObservableProperty] private bool _shouldTrim = true;
         [ObservableProperty] private bool _shouldTrimStart = false;
@@ -134,7 +135,11 @@ namespace TidyText.App.ViewModels
         {
             if (string.IsNullOrEmpty(MainText)) return;
 
-            _history.Push(MainText);
+            _history.Add(MainText);
+            if (_history.Count > MaxHistorySize)
+            {
+                _history.RemoveAt(0);
+            }
 
             var options = new WhitespaceProcessorOptions
             {
@@ -167,7 +172,8 @@ namespace TidyText.App.ViewModels
         {
             if (_history.Count > 0)
             {
-                MainText = _history.Pop();
+                MainText = _history[^1];
+                _history.RemoveAt(_history.Count - 1);
             }
         }
 
