@@ -39,20 +39,35 @@ namespace TidyText.Core.Statistics
                 return;
             }
 
+            // Original raw stats
             CharacterCount = text.Length;
-            LetterAndDigitCount = text.Count(char.IsLetterOrDigit);
             LineCount = text.Split('\n').Length;
+
+            // Strip markdown code blocks before processing readability stats
+            var codeBlockRegex = new Regex(@"```.*?```", RegexOptions.Singleline | RegexOptions.Compiled);
+            string processedText = codeBlockRegex.Replace(text, " ");
+
+            LetterAndDigitCount = processedText.Count(char.IsLetterOrDigit);
             
             // Paragraphs should be separated by two or more newlines (with optional carriage returns or spaces between them)
-            ParagraphCount = ParagraphRegex.Split(text).Count(p => !string.IsNullOrWhiteSpace(p));
+            ParagraphCount = ParagraphRegex.Split(processedText).Count(p => !string.IsNullOrWhiteSpace(p));
             
-            var words = text.Split(new[] { ' ', '\t', '\n', '\r', '—', '–' }, StringSplitOptions.RemoveEmptyEntries)
+            var words = processedText.Split(new[] { ' ', '\t', '\n', '\r', '—', '–' }, StringSplitOptions.RemoveEmptyEntries)
                             .Where(w => w.Any(char.IsLetterOrDigit))
                             .ToArray();
             WordCount = words.Length;
             
-            string[] sentences = SentenceRegex.Split(text);
-            SentenceCount = sentences.Count(s => !string.IsNullOrWhiteSpace(s));
+            // Sentence counting: split by paragraphs and bullet points first to prevent massive run-on lists
+            var blockRegex = new Regex(@"(?:\n\s*\n)|(?:\n\s*(?=[-*\u2022]|\d+\.\s))", RegexOptions.Compiled);
+            var blocks = blockRegex.Split(processedText).Where(b => !string.IsNullOrWhiteSpace(b));
+
+            int sentenceCount = 0;
+            foreach (var block in blocks)
+            {
+                var subSentences = SentenceRegex.Split(block).Where(s => !string.IsNullOrWhiteSpace(s));
+                sentenceCount += subSentences.Count();
+            }
+            SentenceCount = sentenceCount;
 
             SyllableCount = words.Sum(w => CountSyllables(w));
             LongWordCount = words.Count(w => w.Count(char.IsLetter) > 6 && !w.StartsWith("http") && !w.StartsWith("www.") && !w.Contains("@"));

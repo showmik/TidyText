@@ -90,6 +90,30 @@ namespace TidyText.Tests.Model
         }
 
         [Test]
+        public void TextStatistics_HandlesBulletPointsAsSentences()
+        {
+            var text = "Here is a list:\n- First item\n- Second item\n- Third item";
+            var stats = TextStatistics.Calculate(text);
+            
+            // Should be 4 sentences: The intro, and each bullet point.
+            Assert.That(stats.SentenceCount, Is.EqualTo(4));
+        }
+
+        [Test]
+        public void TextStatistics_IgnoresMarkdownCodeBlocks()
+        {
+            var text = "This is normal text.\n```csharp\npublic void ComplexCode() { }\n```\nAnd more text.";
+            var stats = TextStatistics.Calculate(text);
+            
+            // "This is normal text." (4 words)
+            // "And more text." (3 words)
+            // Total words should be 7. The code block is ignored.
+            Assert.That(stats.WordCount, Is.EqualTo(7));
+            // Sentences: 2.
+            Assert.That(stats.SentenceCount, Is.EqualTo(2));
+        }
+
+        [Test]
         public void ReadabilityScorer_CalculatesLixCorrectly()
         {
             var text = "Paste this code into your application to complete authentication.";
