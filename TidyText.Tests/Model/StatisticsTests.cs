@@ -65,6 +65,31 @@ namespace TidyText.Tests.Model
         }
 
         [Test]
+        public void TextStatistics_HandlesQuotesAndPunctuation()
+        {
+            // Punctuation like "..." or "-" shouldn't count as words. Quotes shouldn't break sentences.
+            var text = "He yelled \"Stop!\" and ran ... fast.";
+            var stats = TextStatistics.Calculate(text);
+            
+            // Sentences: 1
+            // Words: He, yelled, "Stop!", and, ran, fast. (6 words)
+            Assert.That(stats.SentenceCount, Is.EqualTo(1));
+            Assert.That(stats.WordCount, Is.EqualTo(6));
+        }
+
+        [Test]
+        public void TextStatistics_IgnoresUrlsForLongWords()
+        {
+            var text = "Check out https://github.com/microsoft/vscode and user@example.com for info.";
+            var stats = TextStatistics.Calculate(text);
+            
+            // "https://github.com/microsoft/vscode" has > 6 letters, but is a URL.
+            // "user@example.com" has > 6 letters, but is an email.
+            // Only "microsoft" and "example" would be long if split, but they are part of the URLs.
+            Assert.That(stats.LongWordCount, Is.EqualTo(0));
+        }
+
+        [Test]
         public void ReadabilityScorer_CalculatesLixCorrectly()
         {
             var text = "Paste this code into your application to complete authentication.";

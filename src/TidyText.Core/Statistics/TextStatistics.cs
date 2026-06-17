@@ -20,7 +20,7 @@ namespace TidyText.Core.Statistics
         public int LongWordCount { get; }
 
         private static readonly Regex ParagraphRegex = new Regex(@"(?:\r?\n[\t\x20]*){2,}", RegexOptions.Compiled);
-        private static readonly Regex SentenceRegex = new Regex(@"(?<=(?<!\b(?:mr|mrs|ms|dr|prof|sr|jr|vs|etc|e\.g|i\.e))[.!?])\s+", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        private static readonly Regex SentenceRegex = new Regex(@"(?<=(?<!\b(?:[Mm]r|[Mm]rs|[Mm]s|[Dd]r|[Pp]rof|[Ss]r|[Jj]r|vs|etc|e\.g|i\.e))[.!?][""']?)\s+(?=[\p{Lu}\p{N}""'])", RegexOptions.Compiled);
         private static readonly Regex SyllableSuffixRegex = new Regex(@"(?:[^laeiouy]es|ed|[^laeiouy]e)$", RegexOptions.Compiled);
         private static readonly Regex SyllablePrefixRegex = new Regex(@"^y", RegexOptions.Compiled);
         private static readonly Regex SyllableVowelsRegex = new Regex(@"[aeiouy]+", RegexOptions.Compiled);
@@ -46,14 +46,16 @@ namespace TidyText.Core.Statistics
             // Paragraphs should be separated by two or more newlines (with optional carriage returns or spaces between them)
             ParagraphCount = ParagraphRegex.Split(text).Count(p => !string.IsNullOrWhiteSpace(p));
             
-            var words = text.Split(new[] { ' ', '\t', '\n', '\r', '—', '–' }, StringSplitOptions.RemoveEmptyEntries);
+            var words = text.Split(new[] { ' ', '\t', '\n', '\r', '—', '–' }, StringSplitOptions.RemoveEmptyEntries)
+                            .Where(w => w.Any(char.IsLetterOrDigit))
+                            .ToArray();
             WordCount = words.Length;
             
             string[] sentences = SentenceRegex.Split(text);
             SentenceCount = sentences.Count(s => !string.IsNullOrWhiteSpace(s));
 
             SyllableCount = words.Sum(w => CountSyllables(w));
-            LongWordCount = words.Count(w => w.Count(char.IsLetter) > 6);
+            LongWordCount = words.Count(w => w.Count(char.IsLetter) > 6 && !w.StartsWith("http") && !w.StartsWith("www.") && !w.Contains("@"));
         }
 
         public static TextStatistics Calculate(string text)
