@@ -12,13 +12,11 @@
     <Grid Margin="16">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
+        <!-- 1. Header (Pinned Top) -->
         <Grid Grid.Row="0" Margin="0,0,0,16">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
@@ -36,39 +34,69 @@
             <ComboBox Grid.Row="1" Grid.Column="1" Width="130" ItemsSource="{Binding AvailableModels}" SelectedItem="{Binding ActiveModel}" Background="{DynamicResource PanelBgBrush}" Foreground="{DynamicResource TextBrush}" BorderBrush="{DynamicResource BorderBrush}" Padding="6,4"/>
         </Grid>
         
-        <TextBlock Grid.Row="1" Text="Actions" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,12" Foreground="{DynamicResource TextBrush}"/>
-        
-        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" Margin="0,0,0,16">
-            <ItemsControl ItemsSource="{Binding Templates}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Button Command="{Binding DataContext.ExecuteTemplateCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" 
-                                CommandParameter="{Binding}"
-                                Style="{StaticResource AIActionButtonStyle}"
-                                Effect="{DynamicResource SoftGlow}">
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <TextBlock Text="{Binding Icon}" Margin="0,0,12,0" VerticalAlignment="Center" FontSize="16"/>
-                                <TextBlock Text="{Binding Name}" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="14" Foreground="{DynamicResource TextBrush}"/>
-                            </StackPanel>
-                        </Button>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+        <!-- 2. Main Scrollable Area (Middle) -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="0,0,0,16">
+            <StackPanel>
+                
+                <TextBlock Text="Quick Actions" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,12" Foreground="{DynamicResource TextBrush}"/>
+                
+                <ItemsControl ItemsSource="{Binding Templates}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Button Command="{Binding DataContext.ExecuteTemplateCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" 
+                                    CommandParameter="{Binding}"
+                                    Style="{StaticResource AIActionButtonStyle}"
+                                    Effect="{DynamicResource SoftGlow}">
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <TextBlock Text="{Binding Icon}" Margin="0,0,12,0" VerticalAlignment="Center" FontSize="16"/>
+                                    <TextBlock Text="{Binding Name}" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="14" Foreground="{DynamicResource TextBrush}"/>
+                                </StackPanel>
+                            </Button>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <TextBlock Text="History" FontSize="14" FontWeight="SemiBold" Margin="0,24,0,8" Foreground="{DynamicResource TextBrush}"/>
+                
+                <ItemsControl ItemsSource="{Binding History}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Background="{DynamicResource PanelBgBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="4" Margin="0,0,0,8" Padding="8">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0">
+                                        <TextBlock Text="{Binding Prompt}" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}" TextTrimming="CharacterEllipsis"/>
+                                        <TextBlock Text="{Binding Timestamp, StringFormat=HH:mm:ss}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}"/>
+                                    </StackPanel>
+                                    <Button Grid.Column="1" Content="Restore" Command="{Binding RestoreCommand}" 
+                                            Background="Transparent" BorderThickness="1" BorderBrush="{DynamicResource BorderBrush}" Foreground="{DynamicResource TextBrush}"
+                                            Padding="8,4" VerticalAlignment="Center" Margin="8,0,0,0" Cursor="Hand"/>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
         </ScrollViewer>
 
-        <Grid Grid.Row="3" Margin="0,0,0,16">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="100"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
+        <!-- 3. Custom Prompt (Pinned Bottom) -->
+        <Border Grid.Row="2" Background="{DynamicResource PanelBgBrush}" Margin="-8,0,-8,-8" Padding="8">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="100"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
             
             <TextBlock Grid.Row="0" Text="Custom Prompt" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,8" Foreground="{DynamicResource TextBrush}"/>
             
             <TextBox Grid.Row="1" Text="{Binding CustomPrompt, UpdateSourceTrigger=PropertyChanged}" 
                      TextWrapping="Wrap" AcceptsReturn="True" 
                      VerticalScrollBarVisibility="Auto"
-                     Background="{DynamicResource PanelBgBrush}" BorderThickness="1" BorderBrush="{DynamicResource BorderBrush}" Padding="12"
+                     Background="{DynamicResource BgBrush}" BorderThickness="1" BorderBrush="{DynamicResource BorderBrush}" Padding="12"
                      Foreground="{DynamicResource TextBrush}" CaretBrush="{DynamicResource TextBrush}"
                      FontFamily="Consolas" FontSize="14" />
                      
@@ -81,37 +109,12 @@
                 <Button Grid.Column="1" Content="Submit" Command="{Binding ExecuteCustomPromptCommand}" 
                         Style="{StaticResource PrimaryButtonStyle}" Effect="{DynamicResource AccentGlow}" Padding="16,6"/>
             </Grid>
-        </Grid>
-
-        <TextBlock Grid.Row="4" Text="History" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,8" Foreground="{DynamicResource TextBrush}"/>
-        
-        <ScrollViewer Grid.Row="5" VerticalScrollBarVisibility="Auto" MaxHeight="150">
-            <ItemsControl ItemsSource="{Binding History}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Border Background="{DynamicResource PanelBgBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="4" Margin="0,0,0,8" Padding="8">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-                                <StackPanel Grid.Column="0">
-                                    <TextBlock Text="{Binding Prompt}" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}" TextTrimming="CharacterEllipsis"/>
-                                    <TextBlock Text="{Binding Timestamp, StringFormat=HH:mm:ss}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}"/>
-                                </StackPanel>
-                                <Button Grid.Column="1" Content="Restore" Command="{Binding RestoreCommand}" 
-                                        Background="Transparent" BorderThickness="1" BorderBrush="{DynamicResource BorderBrush}" Foreground="{DynamicResource TextBrush}"
-                                        Padding="8,4" VerticalAlignment="Center" Margin="8,0,0,0" Cursor="Hand"/>
-                            </Grid>
-                        </Border>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        </ScrollViewer>
+            </Grid>
+        </Border>
 
         <!-- Review Mode Overlay -->
-        <Border Grid.Row="1" Grid.RowSpan="5" Background="{DynamicResource BgBrush}" 
-                Visibility="{Binding IsReviewing, Converter={StaticResource BoolToVis}}" Margin="0,-8,-8,-8" Padding="0,8,8,8">
+        <Border Grid.Row="0" Grid.RowSpan="3" Background="{DynamicResource BgBrush}" 
+                Visibility="{Binding IsReviewing, Converter={StaticResource BoolToVis}}" Margin="-8,-8,-8,-8" Padding="12,12,12,12">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
