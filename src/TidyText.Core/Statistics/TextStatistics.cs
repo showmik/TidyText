@@ -16,6 +16,12 @@ namespace TidyText.Core.Statistics
         // Count syllables for readability formulas
         public int SyllableCount { get; }
 
+        private static readonly Regex ParagraphRegex = new Regex(@"(?:\r?\n[\t\x20]*){2,}", RegexOptions.Compiled);
+        private static readonly Regex SentenceRegex = new Regex(@"(?<=[.!?])\s+", RegexOptions.Compiled);
+        private static readonly Regex SyllableSuffixRegex = new Regex(@"(?:[^laeiouy]es|ed|[^laeiouy]e)$", RegexOptions.Compiled);
+        private static readonly Regex SyllablePrefixRegex = new Regex(@"^y", RegexOptions.Compiled);
+        private static readonly Regex SyllableVowelsRegex = new Regex(@"[aeiouy]{1,2}", RegexOptions.Compiled);
+
         private TextStatistics(string text)
         {
             if (string.IsNullOrEmpty(text))
@@ -34,12 +40,12 @@ namespace TidyText.Core.Statistics
             LineCount = text.Split('\n').Length;
             
             // Paragraphs should be separated by two or more newlines (with optional carriage returns or spaces between them)
-            ParagraphCount = Regex.Split(text, @"(?:\r?\n[\t\x20]*){2,}").Count(p => !string.IsNullOrWhiteSpace(p));
+            ParagraphCount = ParagraphRegex.Split(text).Count(p => !string.IsNullOrWhiteSpace(p));
             
             var words = text.Split(new[] { ' ', '\t', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
             WordCount = words.Length;
             
-            string[] sentences = Regex.Split(text, @"(?<=[.!?])\s+");
+            string[] sentences = SentenceRegex.Split(text);
             SentenceCount = sentences.Count(s => !string.IsNullOrWhiteSpace(s));
 
             SyllableCount = words.Sum(w => CountSyllables(w));
@@ -55,9 +61,9 @@ namespace TidyText.Core.Statistics
             word = word.ToLowerInvariant();
             if (word.Length <= 3) return 1;
 
-            word = Regex.Replace(word, @"(?:[^laeiouy]es|ed|[^laeiouy]e)$", "");
-            word = Regex.Replace(word, @"^y", "");
-            var matches = Regex.Matches(word, @"[aeiouy]{1,2}");
+            word = SyllableSuffixRegex.Replace(word, "");
+            word = SyllablePrefixRegex.Replace(word, "");
+            var matches = SyllableVowelsRegex.Matches(word);
             return Math.Max(1, matches.Count);
         }
     }
