@@ -54,6 +54,24 @@ namespace TidyText.Tests.Model
             Assert.That(got, Is.EqualTo("Start www.example.org, then go."));
         }
 
+        [Test]
+        public void Url_With_Subdomain_Ending_In_Digit()
+        {
+            var s = "Visit http://1.example.com/ for you.";
+            var got = Fix(s);
+            Assert.That(got, Is.EqualTo("Visit http://1.example.com/ for you."));
+        }
+
+        [Test]
+        public void Url_With_Path_Ending_In_Digit_Dot_Extension()
+        {
+            var s = "See http://example.com/page1.html soon.";
+            var got = Fix(s);
+            Assert.That(got, Is.EqualTo("See http://example.com/page1.html soon."));
+        }
+
+
+
         // --- Email / domain / version / decimals --------------------------------------------
 
         [Test]

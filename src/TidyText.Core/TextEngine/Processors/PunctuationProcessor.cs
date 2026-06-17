@@ -848,9 +848,13 @@ namespace TidyText.Core.TextEngine.Processors
             int j = start;
 
             bool inBracketHost = false; // handle http://[2001:db8::1]:443/...
+            bool seenPort = false;
             while (j < n && !char.IsWhiteSpace(s[j]))
             {
                 char ch = s[j];
+
+                if (ch == ':' && !inBracketHost) seenPort = true;
+                if (ch == '/' || ch == '?' || ch == '#') seenPort = false;
 
                 // bracketed IPv6 host: consume until matching ']' (no early-stops inside)
                 if (!inBracketHost && ch == '[')
@@ -865,14 +869,48 @@ namespace TidyText.Core.TextEngine.Processors
                 if (ch == ',' && j + 1 < n && (char.IsLetter(s[j + 1]) || IsOpeningQuote(s[j + 1]))) break;
                 if (ch == ';' && j + 1 < n && (char.IsLetter(s[j + 1]) || IsOpeningQuote(s[j + 1]))) break;
 
-                // sentence boundary patterns: DIGIT '.' LETTER  or  CLOSER '.' LETTER
                 if (ch == '.' && j + 1 < n && char.IsLetter(s[j + 1]))
                 {
                     bool prevIsDigit = j > start && char.IsDigit(s[j - 1]);
                     bool prevIsCloser = j > start && (s[j - 1] == ')' || s[j - 1] == ']' || s[j - 1] == '}' ||
                                                       s[j - 1] == '"' || s[j - 1] == '\'' || s[j - 1] == '»' ||
                                                       s[j - 1] == '”' || s[j - 1] == '’');
-                    if (prevIsDigit || prevIsCloser) break; // stop BEFORE the '.'
+                    
+                    if (prevIsCloser)
+                    {
+                        break; // stop BEFORE the '.'
+                    }
+
+                    if (prevIsDigit)
+                    {
+                        if (seenPort)
+                        {
+                            break; // Ports don't have periods, so must be a sentence boundary
+                        }
+                        
+                        if (char.IsUpper(s[j + 1]))
+                        {
+                            // Check if it's an uppercase extension like .PNG
+                            int idx = j + 1;
+                            while (idx < n && char.IsLetter(s[idx])) idx++;
+                            bool allUpper = true;
+                            for (int x = j + 1; x < idx; x++)
+                            {
+                                if (!char.IsUpper(s[x])) { allUpper = false; break; }
+                            }
+                            
+                            // If it's a short all-uppercase word, assume it's an extension unless it's a known short sentence like OK.
+                            // But OK is handled because it's usually 443.OK (seenPort=true) or after a closer.
+                            if (allUpper && (idx - (j + 1)) <= 4 && s.Substring(j + 1, idx - (j + 1)) != "OK")
+                            {
+                                // keep going, it's likely .PNG or .XML
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                    }
                 }
 
                 j++;
