@@ -23,6 +23,15 @@ namespace TidyText.App.ViewModels
         // --- View State ---
         [ObservableProperty]
         private bool _isAIPanelOpen = false;
+        
+        [ObservableProperty]
+        private bool _isHistoryPanelOpen = false;
+
+        [RelayCommand]
+        private void ToggleHistoryPanel()
+        {
+            IsHistoryPanelOpen = !IsHistoryPanelOpen;
+        }
 
         [ObservableProperty]
         private bool _wrapLines = true;

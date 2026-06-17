@@ -35,9 +35,10 @@
             </Grid.ColumnDefinitions>
             
             <!-- Branding (Left) -->
-            <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="24,0,0,0" IsHitTestVisible="False">
-                <TextBlock Text="✨ TidyText" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Center"/>
-                <TextBlock Text="text engine" FontSize="12" Foreground="{DynamicResource TextMutedBrush}" Margin="8,0,0,0" VerticalAlignment="Bottom" Padding="0,0,0,2"/>
+            <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="16,0,0,0">
+                <Button Content="≡" Command="{Binding ToggleHistoryPanelCommand}" Style="{StaticResource IconButtonStyle}" FontSize="18" Padding="8,4" Margin="0,0,12,0" WindowChrome.IsHitTestVisibleInChrome="True" ToolTip="Toggle History Sidebar"/>
+                <TextBlock Text="✨ TidyText" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Center" IsHitTestVisible="False"/>
+                <TextBlock Text="text engine" FontSize="12" Foreground="{DynamicResource TextMutedBrush}" Margin="8,0,0,0" VerticalAlignment="Bottom" Padding="0,0,0,2" IsHitTestVisible="False"/>
             </StackPanel>
             
             <!-- Window Drag Area (Middle) handled natively by WindowChrome -->
@@ -62,14 +63,73 @@
         <!-- Inner Content Grid -->
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
+                <!-- Left Sidebar (History) Area -->
+                <ColumnDefinition Width="Auto" x:Name="HistoryPanelColumn" />
                 <!-- Main Editor Area -->
                 <ColumnDefinition Width="*" />
                 <!-- AI Panel Area -->
                 <ColumnDefinition Width="Auto" x:Name="AIPanelColumn" />
             </Grid.ColumnDefinitions>
 
+            <!-- History Side Panel (Left) -->
+            <Border Grid.Column="0" Width="220" Margin="24,16,0,24" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8" Background="{DynamicResource PanelBgBrush}"
+                    Visibility="{Binding IsHistoryPanelOpen, Converter={StaticResource BooleanToVisibilityConverter}}"
+                    Effect="{DynamicResource SoftGlow}">
+                <Grid Margin="12">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    
+                    <TextBlock Grid.Row="0" Text="🕒 History" FontSize="14" FontWeight="Bold" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,12"/>
+                    
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                        <ItemsControl ItemsSource="{Binding AIAssistantVM.History}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="{DynamicResource BgBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="4" Margin="0,0,0,4" Padding="8,6">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                            </Grid.RowDefinitions>
+                                            
+                                            <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding Prompt}" FontWeight="SemiBold" FontSize="12" Foreground="{DynamicResource TextBrush}" TextTrimming="CharacterEllipsis" Margin="0,0,4,2"/>
+                                            <TextBlock Grid.Row="1" Grid.Column="0" Text="{Binding Timestamp, StringFormat='MMM dd, HH:mm'}" FontSize="10" Foreground="{DynamicResource TextMutedBrush}"/>
+                                            
+                                            <Button Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Content="↩️" Command="{Binding RestoreCommand}" ToolTip="Restore"
+                                                    Background="Transparent" BorderThickness="0" Foreground="{DynamicResource AccentBrush}"
+                                                    Padding="4" Cursor="Hand" VerticalAlignment="Center" FontSize="14"/>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                            <ItemsControl.Style>
+                                <Style TargetType="ItemsControl">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding AIAssistantVM.History.Count}" Value="0">
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate>
+                                                        <TextBlock Text="No history yet." Foreground="{DynamicResource TextMutedBrush}" HorizontalAlignment="Center" Margin="0,20,0,0"/>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ItemsControl.Style>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </Grid>
+            </Border>
+
             <!-- Main Content -->
-            <Grid Grid.Column="0" Margin="24,16,24,24">
+            <Grid Grid.Column="1" Margin="24,16,24,24">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>    <!-- Editor Workspace Card -->
                     <RowDefinition Height="Auto"/> <!-- Options Panel -->
@@ -177,7 +237,7 @@
         </Grid>
 
         <!-- AI Side Panel -->
-        <Border Grid.Column="1" Width="300" Margin="0,16,24,24" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8" Background="{DynamicResource PanelBgBrush}"
+        <Border Grid.Column="2" Width="300" Margin="0,16,24,24" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8" Background="{DynamicResource PanelBgBrush}"
                 Visibility="{Binding IsAIPanelOpen, Converter={StaticResource BooleanToVisibilityConverter}}"
                 Effect="{DynamicResource SoftGlow}">
             <views:AIAssistantPanel DataContext="{Binding AIAssistantVM}" />
