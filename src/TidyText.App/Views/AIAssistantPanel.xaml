@@ -3,8 +3,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:vm="clr-namespace:TidyText.App.ViewModels"
              mc:Ignorable="d" 
              d:DesignHeight="700" d:DesignWidth="380">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+    </UserControl.Resources>
     <Grid Margin="16">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -104,5 +108,56 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </ScrollViewer>
+
+        <!-- Review Mode Overlay -->
+        <Border Grid.Row="1" Grid.RowSpan="5" Background="{DynamicResource WindowBgBrush}" 
+                Visibility="{Binding IsReviewing, Converter={StaticResource BoolToVis}}" Margin="0,-8,-8,-8" Padding="0,8,8,8">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                
+                <TextBlock Grid.Row="0" Text="Review Proposed Changes" FontSize="16" FontWeight="Bold" Margin="0,0,0,12" Foreground="{DynamicResource TextBrush}"/>
+                
+                <Border Grid.Row="1" Background="{DynamicResource PanelBgBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="4" Padding="8">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <ItemsControl ItemsSource="{Binding DiffChunks}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border x:Name="chunkBorder" CornerRadius="2" Margin="0,0,0,2">
+                                        <TextBlock x:Name="chunkText" Text="{Binding Text}" FontFamily="Consolas" FontSize="13" TextWrapping="Wrap" Foreground="{DynamicResource TextBrush}"/>
+                                    </Border>
+                                    <DataTemplate.Triggers>
+                                        <DataTrigger Binding="{Binding Type}" Value="{x:Static vm:DiffChunkType.Inserted}">
+                                            <Setter TargetName="chunkBorder" Property="Background" Value="#332EA043"/>
+                                            <Setter TargetName="chunkText" Property="Foreground" Value="#56D364"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Type}" Value="{x:Static vm:DiffChunkType.Deleted}">
+                                            <Setter TargetName="chunkBorder" Property="Background" Value="#33F85149"/>
+                                            <Setter TargetName="chunkText" Property="Foreground" Value="#FF7B72"/>
+                                            <Setter TargetName="chunkText" Property="TextDecorations" Value="Strikethrough"/>
+                                        </DataTrigger>
+                                    </DataTemplate.Triggers>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </Border>
+                
+                <Grid Grid.Row="2" Margin="0,16,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="12"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Button Grid.Column="0" Content="❌ Reject" Command="{Binding RejectChangesCommand}" Padding="8,10" FontWeight="SemiBold"
+                            Background="Transparent" BorderThickness="1" BorderBrush="{DynamicResource BorderBrush}" Foreground="{DynamicResource TextBrush}"/>
+                    <Button Grid.Column="2" Content="✅ Accept" Command="{Binding AcceptChangesCommand}" Padding="8,10" FontWeight="SemiBold"
+                            Style="{StaticResource PrimaryButtonStyle}" Effect="{DynamicResource AccentGlow}"/>
+                </Grid>
+            </Grid>
+        </Border>
     </Grid>
 </UserControl>

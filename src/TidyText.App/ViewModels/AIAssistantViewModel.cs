@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using DiffPlex;
+using DiffPlex.DiffBuilder;
+using DiffPlex.DiffBuilder.Model;
 using TidyText.Core.AI;
 using TidyText.Core.AI.Templates;
 using TidyText.Core.Security;
@@ -41,6 +44,15 @@ namespace TidyText.App.ViewModels
 
         [ObservableProperty]
         private ObservableCollection<AIHistoryItem> _history = new();
+
+        [ObservableProperty]
+        private bool _isReviewing = false;
+
+        [ObservableProperty]
+        private ObservableCollection<DiffChunk> _diffChunks = new();
+
+        private string _proposedText = string.Empty;
+        private string _currentPromptOrTemplate = string.Empty;
 
         [ObservableProperty]
         private bool _isProcessing = false;
@@ -168,16 +180,11 @@ namespace TidyText.App.ViewModels
                 }
                 else
                 {
-                    StatusMessage = "Done.";
-                    _mainViewModel.MainText = response.Text;
-                    
-                    // Add to history
-                    History.Insert(0, new AIHistoryItem(_mainViewModel)
-                    {
-                        Prompt = template.Name,
-                        GeneratedText = response.Text,
-                        Timestamp = DateTime.Now
-                    });
+                    StatusMessage = "Reviewing proposed changes...";
+                    _proposedText = response.Text;
+                    _currentPromptOrTemplate = template.Name;
+                    GenerateDiff(_mainViewModel.MainText, _proposedText);
+                    IsReviewing = true;
                 }
             }
             catch (OperationCanceledException)
@@ -233,17 +240,11 @@ namespace TidyText.App.ViewModels
                 }
                 else
                 {
-                    StatusMessage = "Done.";
-                    _mainViewModel.MainText = response.Text;
-                    
-                    History.Insert(0, new AIHistoryItem(_mainViewModel)
-                    {
-                        Prompt = CustomPrompt,
-                        GeneratedText = response.Text,
-                        Timestamp = DateTime.Now
-                    });
-                    
-                    CustomPrompt = string.Empty; // Clear after success
+                    StatusMessage = "Reviewing proposed changes...";
+                    _proposedText = response.Text;
+                    _currentPromptOrTemplate = CustomPrompt;
+                    GenerateDiff(_mainViewModel.MainText, _proposedText);
+                    IsReviewing = true;
                 }
             }
             catch (OperationCanceledException)
@@ -258,6 +259,59 @@ namespace TidyText.App.ViewModels
             {
                 IsProcessing = false;
             }
+        }
+
+        private void GenerateDiff(string oldText, string newText)
+        {
+            DiffChunks.Clear();
+            var diffBuilder = new InlineDiffBuilder(new Differ());
+            var diff = diffBuilder.BuildDiffModel(oldText ?? string.Empty, newText ?? string.Empty);
+
+            foreach (var line in diff.Lines)
+            {
+                var chunkType = line.Type switch
+                {
+                    ChangeType.Inserted => DiffChunkType.Inserted,
+                    ChangeType.Deleted => DiffChunkType.Deleted,
+                    _ => DiffChunkType.Unchanged
+                };
+
+                DiffChunks.Add(new DiffChunk
+                {
+                    Text = line.Text + "\n",
+                    Type = chunkType
+                });
+            }
+        }
+
+        [RelayCommand]
+        public void AcceptChanges()
+        {
+            _mainViewModel.MainText = _proposedText;
+
+            History.Insert(0, new AIHistoryItem(_mainViewModel)
+            {
+                Prompt = _currentPromptOrTemplate,
+                GeneratedText = _proposedText,
+                Timestamp = DateTime.Now
+            });
+
+            if (_currentPromptOrTemplate == CustomPrompt)
+            {
+                CustomPrompt = string.Empty;
+            }
+
+            IsReviewing = false;
+            StatusMessage = "Changes applied.";
+            DiffChunks.Clear();
+        }
+
+        [RelayCommand]
+        public void RejectChanges()
+        {
+            IsReviewing = false;
+            StatusMessage = "Changes rejected.";
+            DiffChunks.Clear();
         }
     }
 }
