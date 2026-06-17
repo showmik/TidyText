@@ -11,6 +11,7 @@ namespace TidyText.Core.Statistics
         public int SentenceCount { get; }
         public int ParagraphCount { get; }
         public int LineCount { get; }
+        public int LetterAndDigitCount { get; }
         
         // Count syllables for readability formulas
         public int SyllableCount { get; }
@@ -29,8 +30,11 @@ namespace TidyText.Core.Statistics
             }
 
             CharacterCount = text.Length;
+            LetterAndDigitCount = text.Count(char.IsLetterOrDigit);
             LineCount = text.Split('\n').Length;
-            ParagraphCount = Regex.Split(text, @"\n+").Count(p => !string.IsNullOrWhiteSpace(p));
+            
+            // Paragraphs should be separated by two or more newlines (with optional carriage returns or spaces between them)
+            ParagraphCount = Regex.Split(text, @"(?:\r?\n[\t\x20]*){2,}").Count(p => !string.IsNullOrWhiteSpace(p));
             
             var words = text.Split(new[] { ' ', '\t', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
             WordCount = words.Length;

@@ -86,12 +86,12 @@ namespace TidyText.Tests.ViewModel
         public void Counters_LargeInput()
         {
             var vm = NewVm();
-            var text = string.Join("\n", Enumerable.Repeat("word1 word2. word3!", 1000));
+            var text = string.Join("\n\n", Enumerable.Repeat("word1 word2. word3!", 1000));
             vm.MainText = text;
             Assert.That(vm.WordCount, Is.EqualTo(3000));
             Assert.That(vm.SentenceCount, Is.GreaterThan(0));
             Assert.That(vm.ParagraphCount, Is.EqualTo(1000));
-            Assert.That(vm.LineCount, Is.EqualTo(1000));
+            Assert.That(vm.LineCount, Is.EqualTo(1999));
             Assert.That(vm.CharacterCount, Is.EqualTo(text.Length));
         }
 

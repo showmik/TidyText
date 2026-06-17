@@ -33,14 +33,14 @@ namespace TidyText.Core.Statistics
 
             double wordsPerSentence = (double)stats.WordCount / stats.SentenceCount;
             double syllablesPerWord = (double)stats.SyllableCount / stats.WordCount;
-            double charactersPerWord = (double)stats.CharacterCount / stats.WordCount;
+            double lettersPerWord = (double)stats.LetterAndDigitCount / stats.WordCount;
 
             return new ReadabilityScores
             {
                 FleschReadingEase = 206.835 - (1.015 * wordsPerSentence) - (84.6 * syllablesPerWord),
                 FleschKincaidGradeLevel = (0.39 * wordsPerSentence) + (11.8 * syllablesPerWord) - 15.59,
-                ColemanLiauIndex = (0.0588 * (charactersPerWord * 100)) - (0.296 * (100.0 / wordsPerSentence)) - 15.8,
-                AutomatedReadabilityIndex = (4.71 * charactersPerWord) + (0.5 * wordsPerSentence) - 21.43
+                ColemanLiauIndex = (0.0588 * (lettersPerWord * 100)) - (0.296 * (100.0 / wordsPerSentence)) - 15.8,
+                AutomatedReadabilityIndex = (4.71 * lettersPerWord) + (0.5 * wordsPerSentence) - 21.43
             };
         }
     }
