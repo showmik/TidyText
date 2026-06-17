@@ -78,6 +78,7 @@ namespace TidyText.App.ViewModels
             AvailableProviders.Add("OpenAI");
             AvailableProviders.Add("DeepSeek");
             AvailableProviders.Add("Anthropic");
+            AvailableProviders.Add("Ollama");
 
             var savedProvider = _keyVault.GetKey("ActiveProviderName");
             if (!string.IsNullOrEmpty(savedProvider) && AvailableProviders.Contains(savedProvider))
@@ -117,6 +118,12 @@ namespace TidyText.App.ViewModels
                 case "DeepSeek":
                     AvailableModels.Add("deepseek-v4-pro");
                     AvailableModels.Add("deepseek-v4-flash");
+                    break;
+                case "Ollama":
+                    AvailableModels.Add("llama3");
+                    AvailableModels.Add("phi3");
+                    AvailableModels.Add("mistral");
+                    AvailableModels.Add("gemma2");
                     break;
             }
 
