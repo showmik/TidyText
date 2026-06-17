@@ -17,6 +17,11 @@
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="48" CornerRadius="0" GlassFrameThickness="1" UseAeroCaptionButtons="False" />
     </WindowChrome.WindowChrome>
+    <Window.InputBindings>
+        <KeyBinding Key="Z" Modifiers="Ctrl" Command="{Binding UndoCommand}" />
+        <KeyBinding Key="Y" Modifiers="Ctrl" Command="{Binding RedoCommand}" />
+        <KeyBinding Key="Z" Modifiers="Ctrl+Shift" Command="{Binding RedoCommand}" />
+    </Window.InputBindings>
     
     <!-- Outer Grid to hold Custom Title Bar + Rest of Window -->
     <Grid>
@@ -47,7 +52,8 @@
             <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,12,0" WindowChrome.IsHitTestVisibleInChrome="True">
                 <Button Content="🌗 Theme" Click="ThemeToggle_Click" Style="{StaticResource IconButtonStyle}" Margin="0,0,4,0" ToolTip="Toggle Light/Dark Mode"/>
                 <Button Content="⚙️ Settings" Click="SettingsButton_Click" Style="{StaticResource IconButtonStyle}" Margin="0,0,4,0" ToolTip="API Keys &amp; Settings"/>
-                <Button Content="↩️ Undo" Command="{Binding UndoCommand}" Style="{StaticResource IconButtonStyle}" Margin="0,0,4,0" ToolTip="Undo Last Clean"/>
+                <Button Content="↩️ Undo" Command="{Binding UndoCommand}" Style="{StaticResource IconButtonStyle}" Margin="0,0,4,0" ToolTip="Undo Last Clean (Ctrl+Z)"/>
+                <Button Content="↪️ Redo" Command="{Binding RedoCommand}" Style="{StaticResource IconButtonStyle}" Margin="0,0,4,0" ToolTip="Redo Last Clean (Ctrl+Y)"/>
                 <Button Content="📋 Copy" Command="{Binding CopyCommand}" Style="{StaticResource IconButtonStyle}" Margin="0,0,12,0" ToolTip="Copy Text"/>
                 <ToggleButton Content="🤖 AI Assistant" IsChecked="{Binding IsAIPanelOpen}" Padding="12,4" Cursor="Hand" ToolTip="Toggle AI Assistant">
                     <ToggleButton.Style>

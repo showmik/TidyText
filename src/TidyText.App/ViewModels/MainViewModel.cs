@@ -47,6 +47,7 @@ namespace TidyText.App.ViewModels
 
         // --- Processing Options ---
         private readonly System.Collections.Generic.List<string> _history = new();
+        private readonly System.Collections.Generic.List<string> _redoHistory = new();
         private const int MaxHistorySize = 50;
 
         [ObservableProperty] private bool _shouldTrim = false;
@@ -145,6 +146,7 @@ namespace TidyText.App.ViewModels
             if (string.IsNullOrEmpty(MainText)) return;
 
             _history.Add(MainText);
+            _redoHistory.Clear();
             if (_history.Count > MaxHistorySize)
             {
                 _history.RemoveAt(0);
@@ -181,8 +183,20 @@ namespace TidyText.App.ViewModels
         {
             if (_history.Count > 0)
             {
+                _redoHistory.Add(MainText);
                 MainText = _history[^1];
                 _history.RemoveAt(_history.Count - 1);
+            }
+        }
+
+        [RelayCommand]
+        public void Redo()
+        {
+            if (_redoHistory.Count > 0)
+            {
+                _history.Add(MainText);
+                MainText = _redoHistory[^1];
+                _redoHistory.RemoveAt(_redoHistory.Count - 1);
             }
         }
 
