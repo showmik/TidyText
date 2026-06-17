@@ -314,7 +314,7 @@
         <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="Margin" Value="0,0,0,8"/>
-        <Setter Property="Padding" Value="12"/>
+        <Setter Property="Padding" Value="12,8"/>
         <Setter Property="HorizontalContentAlignment" Value="Left"/>
         <Setter Property="Cursor" Value="Hand"/>
         <Setter Property="Template">
