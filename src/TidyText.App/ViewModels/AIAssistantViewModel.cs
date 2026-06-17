@@ -23,6 +23,9 @@ namespace TidyText.App.ViewModels
         private IPromptTemplate? _selectedTemplate;
 
         [ObservableProperty]
+        private ObservableCollection<string> _availableProviders = new();
+
+        [ObservableProperty]
         private string _activeProviderName = "Gemini";
 
         [ObservableProperty]
@@ -44,6 +47,9 @@ namespace TidyText.App.ViewModels
             {
                 Templates.Add(template);
             }
+
+            AvailableProviders.Add("Gemini");
+            AvailableProviders.Add("OpenAI");
         }
 
         [RelayCommand]

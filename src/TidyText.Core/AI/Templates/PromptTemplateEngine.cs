@@ -22,7 +22,8 @@ namespace TidyText.Core.AI.Templates
                 new WriteProposalTemplate(),
                 new WriteEmailTemplate(),
                 new SummarizeTemplate(),
-                new MakeConciseTemplate()
+                new MakeConciseTemplate(),
+                new TranslateTemplate()
                 // More templates can be added here
             };
         }
@@ -105,6 +106,19 @@ namespace TidyText.Core.AI.Templates
         public string GetPrompt(string text, IDictionary<string, string>? variables = null)
         {
             return $"Make the following text more concise:\n\n{text}";
+        }
+    }
+
+    public class TranslateTemplate : IPromptTemplate
+    {
+        public string Name => "Translate to English";
+        public string Description => "Translate the text into fluent English.";
+        public string Icon => "🌍";
+        public string SystemPrompt => "You are an expert translator. Translate the provided text into fluent, natural-sounding English. Return ONLY the translated text without conversational filler.";
+
+        public string GetPrompt(string text, IDictionary<string, string>? variables = null)
+        {
+            return $"Translate the following text to English:\n\n{text}";
         }
     }
 }
