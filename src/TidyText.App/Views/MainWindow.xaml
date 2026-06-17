@@ -86,13 +86,17 @@
                         <Button Command="{Binding AIAssistantVM.ClearHistoryCommand}" HorizontalAlignment="Right" VerticalAlignment="Center" Cursor="Hand" ToolTip="Clear All History">
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
-                                    <Border Background="Transparent" Padding="4">
-                                        <TextBlock x:Name="IconText" Text="✕ Clear" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextMutedBrush}" Opacity="0.6" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                    <Border x:Name="Border" Background="Transparent" BorderThickness="1" BorderBrush="{DynamicResource BorderBrush}" CornerRadius="4" Padding="8,4">
+                                        <TextBlock x:Name="BtnText" Text="Clear All" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                                     </Border>
                                     <ControlTemplate.Triggers>
                                         <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter TargetName="IconText" Property="Foreground" Value="#FF4C4C"/>
-                                            <Setter TargetName="IconText" Property="Opacity" Value="1.0"/>
+                                            <Setter TargetName="BtnText" Property="Foreground" Value="#FF4C4C"/>
+                                            <Setter TargetName="Border" Property="BorderBrush" Value="#FF4C4C"/>
+                                            <Setter TargetName="Border" Property="Background" Value="#1AFF4C4C"/>
+                                        </Trigger>
+                                        <Trigger Property="IsPressed" Value="True">
+                                            <Setter TargetName="Border" Property="Background" Value="#33FF4C4C"/>
                                         </Trigger>
                                     </ControlTemplate.Triggers>
                                 </ControlTemplate>
