@@ -7,6 +7,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using TidyText.Core.AI;
 using TidyText.Core.AI.Templates;
+using TidyText.Core.Security;
 
 namespace TidyText.App.ViewModels
 {
@@ -14,6 +15,7 @@ namespace TidyText.App.ViewModels
     {
         private readonly AIProviderRouter _router;
         private readonly MainViewModel _mainViewModel;
+        private readonly SecureKeyVault _keyVault;
         private CancellationTokenSource? _cancellationTokenSource;
 
         [ObservableProperty]
@@ -37,10 +39,11 @@ namespace TidyText.App.ViewModels
         [ObservableProperty]
         private string _statusMessage = "Ready";
 
-        public AIAssistantViewModel(AIProviderRouter router, MainViewModel mainViewModel)
+        public AIAssistantViewModel(AIProviderRouter router, MainViewModel mainViewModel, SecureKeyVault keyVault)
         {
             _router = router;
             _mainViewModel = mainViewModel;
+            _keyVault = keyVault;
             
             var engine = new PromptTemplateEngine();
             foreach (var template in engine.GetBuiltInTemplates())
@@ -52,6 +55,20 @@ namespace TidyText.App.ViewModels
             AvailableProviders.Add("OpenAI");
             AvailableProviders.Add("DeepSeek");
             AvailableProviders.Add("Anthropic");
+
+            var savedProvider = _keyVault.GetKey("ActiveProviderName");
+            if (!string.IsNullOrEmpty(savedProvider) && AvailableProviders.Contains(savedProvider))
+            {
+                ActiveProviderName = savedProvider;
+            }
+        }
+
+        partial void OnActiveProviderNameChanged(string value)
+        {
+            if (_keyVault != null)
+            {
+                _keyVault.SetKey("ActiveProviderName", value);
+            }
         }
 
         [RelayCommand]

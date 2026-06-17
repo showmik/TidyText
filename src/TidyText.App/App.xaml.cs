@@ -33,7 +33,7 @@ namespace TidyText.App
             var aiRouter = new AIProviderRouter(providers);
 
             var mainViewModel = new MainViewModel();
-            var aiViewModel = new AIAssistantViewModel(aiRouter, mainViewModel);
+            var aiViewModel = new AIAssistantViewModel(aiRouter, mainViewModel, keyVault);
             var settingsViewModel = new SettingsViewModel(keyVault);
 
             var mainWindow = new MainWindow
