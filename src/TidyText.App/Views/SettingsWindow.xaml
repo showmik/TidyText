@@ -1,6 +1,7 @@
 <Window x:Class="TidyText.App.Views.SettingsWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:helpers="clr-namespace:TidyText.App.Helpers"
         Title="Settings" Height="650" Width="550"
         WindowStartupLocation="CenterOwner" ResizeMode="NoResize"
         FontFamily="Segoe UI, -apple-system, BlinkMacSystemFont, Roboto, sans-serif"
@@ -67,7 +68,48 @@
                                 <StackPanel Grid.Column="1" Margin="16,0,0,0">
                                     <TextBlock Text="Google Gemini" FontWeight="SemiBold" FontSize="14" Foreground="{DynamicResource TextBrush}"/>
                                     <TextBlock Text="Get your API key from Google AI Studio." Foreground="{DynamicResource TextMutedBrush}" FontSize="12" Margin="0,2,0,8"/>
-                                    <TextBox Text="{Binding GeminiApiKey, UpdateSourceTrigger=PropertyChanged}" FontFamily="Consolas, Courier New, monospace" Background="{DynamicResource BgBrush}" Foreground="{DynamicResource TextBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="8,6" />
+                                    <Grid>
+                                        <PasswordBox helpers:PasswordBoxHelper.BindPassword="True" helpers:PasswordBoxHelper.BoundPassword="{Binding GeminiApiKey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontFamily="Consolas, Courier New, monospace" Background="{DynamicResource BgBrush}" Foreground="{DynamicResource TextBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="8,6,40,6">
+                                            <PasswordBox.Style>
+                                                <Style TargetType="PasswordBox">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding ElementName=TgGemini, Path=IsChecked}" Value="True">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </PasswordBox.Style>
+                                        </PasswordBox>
+                                        <TextBox Text="{Binding GeminiApiKey, UpdateSourceTrigger=PropertyChanged}" FontFamily="Consolas, Courier New, monospace" Background="{DynamicResource BgBrush}" Foreground="{DynamicResource TextBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="8,6,40,6">
+                                            <TextBox.Style>
+                                                <Style TargetType="TextBox">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding ElementName=TgGemini, Path=IsChecked}" Value="True">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBox.Style>
+                                        </TextBox>
+                                        <ToggleButton x:Name="TgGemini" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0" Background="Transparent" BorderThickness="0" Cursor="Hand" ToolTip="Toggle Visibility">
+                                            <ToggleButton.Template>
+                                                <ControlTemplate TargetType="ToggleButton">
+                                                    <TextBlock x:Name="IconText" Text="SHOW" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center"/>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsChecked" Value="True">
+                                                            <Setter TargetName="IconText" Property="Text" Value="HIDE"/>
+                                                            <Setter TargetName="IconText" Property="Foreground" Value="{DynamicResource AccentBrush}"/>
+                                                        </Trigger>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter TargetName="IconText" Property="Foreground" Value="{DynamicResource TextBrush}"/>
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </ToggleButton.Template>
+                                        </ToggleButton>
+                                    </Grid>
                                 </StackPanel>
                             </Grid>
                             <Border Grid.Row="0" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1" VerticalAlignment="Bottom" Margin="16,0,0,0"/>
@@ -84,7 +126,48 @@
                                 <StackPanel Grid.Column="1" Margin="16,0,0,0">
                                     <TextBlock Text="OpenAI" FontWeight="SemiBold" FontSize="14" Foreground="{DynamicResource TextBrush}"/>
                                     <TextBlock Text="Requires a funded OpenAI platform account." Foreground="{DynamicResource TextMutedBrush}" FontSize="12" Margin="0,2,0,8"/>
-                                    <TextBox Text="{Binding OpenAIApiKey, UpdateSourceTrigger=PropertyChanged}" FontFamily="Consolas, Courier New, monospace" Background="{DynamicResource BgBrush}" Foreground="{DynamicResource TextBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="8,6" />
+                                    <Grid>
+                                        <PasswordBox helpers:PasswordBoxHelper.BindPassword="True" helpers:PasswordBoxHelper.BoundPassword="{Binding OpenAIApiKey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontFamily="Consolas, Courier New, monospace" Background="{DynamicResource BgBrush}" Foreground="{DynamicResource TextBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="8,6,40,6">
+                                            <PasswordBox.Style>
+                                                <Style TargetType="PasswordBox">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding ElementName=TgOpenAI, Path=IsChecked}" Value="True">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </PasswordBox.Style>
+                                        </PasswordBox>
+                                        <TextBox Text="{Binding OpenAIApiKey, UpdateSourceTrigger=PropertyChanged}" FontFamily="Consolas, Courier New, monospace" Background="{DynamicResource BgBrush}" Foreground="{DynamicResource TextBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="8,6,40,6">
+                                            <TextBox.Style>
+                                                <Style TargetType="TextBox">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding ElementName=TgOpenAI, Path=IsChecked}" Value="True">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBox.Style>
+                                        </TextBox>
+                                        <ToggleButton x:Name="TgOpenAI" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0" Background="Transparent" BorderThickness="0" Cursor="Hand" ToolTip="Toggle Visibility">
+                                            <ToggleButton.Template>
+                                                <ControlTemplate TargetType="ToggleButton">
+                                                    <TextBlock x:Name="IconText" Text="SHOW" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center"/>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsChecked" Value="True">
+                                                            <Setter TargetName="IconText" Property="Text" Value="HIDE"/>
+                                                            <Setter TargetName="IconText" Property="Foreground" Value="{DynamicResource AccentBrush}"/>
+                                                        </Trigger>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter TargetName="IconText" Property="Foreground" Value="{DynamicResource TextBrush}"/>
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </ToggleButton.Template>
+                                        </ToggleButton>
+                                    </Grid>
                                 </StackPanel>
                             </Grid>
                             <Border Grid.Row="1" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1" VerticalAlignment="Bottom" Margin="16,0,0,0"/>
@@ -101,7 +184,48 @@
                                 <StackPanel Grid.Column="1" Margin="16,0,0,0">
                                     <TextBlock Text="Anthropic Claude" FontWeight="SemiBold" FontSize="14" Foreground="{DynamicResource TextBrush}"/>
                                     <TextBlock Text="Get your API key from the Anthropic Console." Foreground="{DynamicResource TextMutedBrush}" FontSize="12" Margin="0,2,0,8"/>
-                                    <TextBox Text="{Binding AnthropicApiKey, UpdateSourceTrigger=PropertyChanged}" FontFamily="Consolas, Courier New, monospace" Background="{DynamicResource BgBrush}" Foreground="{DynamicResource TextBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="8,6" />
+                                    <Grid>
+                                        <PasswordBox helpers:PasswordBoxHelper.BindPassword="True" helpers:PasswordBoxHelper.BoundPassword="{Binding AnthropicApiKey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontFamily="Consolas, Courier New, monospace" Background="{DynamicResource BgBrush}" Foreground="{DynamicResource TextBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="8,6,40,6">
+                                            <PasswordBox.Style>
+                                                <Style TargetType="PasswordBox">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding ElementName=TgAnthropic, Path=IsChecked}" Value="True">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </PasswordBox.Style>
+                                        </PasswordBox>
+                                        <TextBox Text="{Binding AnthropicApiKey, UpdateSourceTrigger=PropertyChanged}" FontFamily="Consolas, Courier New, monospace" Background="{DynamicResource BgBrush}" Foreground="{DynamicResource TextBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="8,6,40,6">
+                                            <TextBox.Style>
+                                                <Style TargetType="TextBox">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding ElementName=TgAnthropic, Path=IsChecked}" Value="True">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBox.Style>
+                                        </TextBox>
+                                        <ToggleButton x:Name="TgAnthropic" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0" Background="Transparent" BorderThickness="0" Cursor="Hand" ToolTip="Toggle Visibility">
+                                            <ToggleButton.Template>
+                                                <ControlTemplate TargetType="ToggleButton">
+                                                    <TextBlock x:Name="IconText" Text="SHOW" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center"/>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsChecked" Value="True">
+                                                            <Setter TargetName="IconText" Property="Text" Value="HIDE"/>
+                                                            <Setter TargetName="IconText" Property="Foreground" Value="{DynamicResource AccentBrush}"/>
+                                                        </Trigger>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter TargetName="IconText" Property="Foreground" Value="{DynamicResource TextBrush}"/>
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </ToggleButton.Template>
+                                        </ToggleButton>
+                                    </Grid>
                                 </StackPanel>
                             </Grid>
                             <Border Grid.Row="2" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1" VerticalAlignment="Bottom" Margin="16,0,0,0"/>
@@ -118,7 +242,48 @@
                                 <StackPanel Grid.Column="1" Margin="16,0,0,0">
                                     <TextBlock Text="DeepSeek" FontWeight="SemiBold" FontSize="14" Foreground="{DynamicResource TextBrush}"/>
                                     <TextBlock Text="Cost-effective and highly capable open weights models." Foreground="{DynamicResource TextMutedBrush}" FontSize="12" Margin="0,2,0,8"/>
-                                    <TextBox Text="{Binding DeepSeekApiKey, UpdateSourceTrigger=PropertyChanged}" FontFamily="Consolas, Courier New, monospace" Background="{DynamicResource BgBrush}" Foreground="{DynamicResource TextBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="8,6" />
+                                    <Grid>
+                                        <PasswordBox helpers:PasswordBoxHelper.BindPassword="True" helpers:PasswordBoxHelper.BoundPassword="{Binding DeepSeekApiKey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontFamily="Consolas, Courier New, monospace" Background="{DynamicResource BgBrush}" Foreground="{DynamicResource TextBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="8,6,40,6">
+                                            <PasswordBox.Style>
+                                                <Style TargetType="PasswordBox">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding ElementName=TgDeepSeek, Path=IsChecked}" Value="True">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </PasswordBox.Style>
+                                        </PasswordBox>
+                                        <TextBox Text="{Binding DeepSeekApiKey, UpdateSourceTrigger=PropertyChanged}" FontFamily="Consolas, Courier New, monospace" Background="{DynamicResource BgBrush}" Foreground="{DynamicResource TextBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="8,6,40,6">
+                                            <TextBox.Style>
+                                                <Style TargetType="TextBox">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding ElementName=TgDeepSeek, Path=IsChecked}" Value="True">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBox.Style>
+                                        </TextBox>
+                                        <ToggleButton x:Name="TgDeepSeek" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0" Background="Transparent" BorderThickness="0" Cursor="Hand" ToolTip="Toggle Visibility">
+                                            <ToggleButton.Template>
+                                                <ControlTemplate TargetType="ToggleButton">
+                                                    <TextBlock x:Name="IconText" Text="SHOW" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center"/>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsChecked" Value="True">
+                                                            <Setter TargetName="IconText" Property="Text" Value="HIDE"/>
+                                                            <Setter TargetName="IconText" Property="Foreground" Value="{DynamicResource AccentBrush}"/>
+                                                        </Trigger>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter TargetName="IconText" Property="Foreground" Value="{DynamicResource TextBrush}"/>
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </ToggleButton.Template>
+                                        </ToggleButton>
+                                    </Grid>
                                 </StackPanel>
                             </Grid>
                         </Grid>
