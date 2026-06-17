@@ -114,6 +114,48 @@ namespace TidyText.Tests.Model
         }
 
         [Test]
+        public void TextStatistics_HandlesComplexEdgeCases()
+        {
+            var text = @"Dr. Jekyll said, ""Is it 1,000,000?"" 
+No, it's just 10. 
+Here are my items:
+* Item one
+* Item two
+* Item three
+
+Thank you... goodbye!";
+            
+            var stats = TextStatistics.Calculate(text);
+            
+            // Expected sentences: 
+            // 1. Dr. Jekyll said, "Is it 1,000,000?"
+            // 2. No, it's just 10.
+            // 3. Here are my items:
+            // 4. * Item one
+            // 5. * Item two
+            // 6. * Item three
+            // 7. Thank you... goodbye!
+            
+            // Sentences count: 7
+            Assert.That(stats.SentenceCount, Is.EqualTo(7));
+            
+            // Expected long words (> 6 letters):
+            // "1,000,000" -> 0 letters
+            // "goodbye" -> 7 letters
+            Assert.That(stats.LongWordCount, Is.EqualTo(1));
+        }
+
+        [Test]
+        public void TextStatistics_IgnoresNumbersForLongWords()
+        {
+            var text = "I won 1,000,000 dollars. My phone is 123-456-7890.";
+            var stats = TextStatistics.Calculate(text);
+            
+            // Long words: "dollars" (7 letters)
+            Assert.That(stats.LongWordCount, Is.EqualTo(1));
+        }
+
+        [Test]
         public void ReadabilityScorer_CalculatesLixCorrectly()
         {
             var text = "Paste this code into your application to complete authentication.";
