@@ -31,7 +31,11 @@ namespace TidyText.Core.TextEngine.Processors
             string text = NormalizeNewlines(input);
 
             if (_options.TrimStart || _options.TrimEnd)
+            {
                 text = TrimEachLine(text, _options.TrimStart, _options.TrimEnd);
+                if (_options.TrimStart) text = text.TrimStart();
+                if (_options.TrimEnd) text = text.TrimEnd();
+            }
 
             if (_options.RemoveMultipleSpaces)
                 text = CollapseIntraLineWhitespace(text);

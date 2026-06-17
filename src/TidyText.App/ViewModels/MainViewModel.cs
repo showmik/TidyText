@@ -49,9 +49,9 @@ namespace TidyText.App.ViewModels
         private readonly System.Collections.Generic.List<string> _history = new();
         private const int MaxHistorySize = 50;
 
-        [ObservableProperty] private bool _shouldTrim = true;
-        [ObservableProperty] private bool _shouldTrimStart = false;
-        [ObservableProperty] private bool _shouldTrimEnd = false;
+        [ObservableProperty] private bool _shouldTrim = false;
+        [ObservableProperty] private bool _shouldTrimStart = true;
+        [ObservableProperty] private bool _shouldTrimEnd = true;
         [ObservableProperty] private bool _shouldRemoveMultipleSpaces = true;
         [ObservableProperty] private bool _shouldRemoveMultipleLines = true;
         [ObservableProperty] private bool _shouldRemoveAllLines = false;

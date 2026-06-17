@@ -131,6 +131,16 @@ namespace TidyText.Tests.ViewModel
         }
 
         [Test]
+        public void Clean_TrimStart_Removes_Leading_LineBreaks()
+        {
+            var vm = NewVm();
+            vm.MainText = "\n\n  a\n  b  ";
+            vm.ShouldTrimStart = true;
+            vm.Clean();
+            Assert.That(vm.MainText, Is.EqualTo("a\nb  "));
+        }
+
+        [Test]
         public void Clean_TrimEnd_PerLine()
         {
             var vm = NewVm();
@@ -138,6 +148,16 @@ namespace TidyText.Tests.ViewModel
             vm.ShouldTrimEnd = true;
             vm.Clean();
             Assert.That(vm.MainText, Is.EqualTo("a\n b\n c"));
+        }
+
+        [Test]
+        public void Clean_TrimEnd_Removes_Trailing_LineBreaks()
+        {
+            var vm = NewVm();
+            vm.MainText = "  a\n  b  \n\n";
+            vm.ShouldTrimEnd = true;
+            vm.Clean();
+            Assert.That(vm.MainText, Is.EqualTo("  a\n  b"));
         }
 
         [Test]
