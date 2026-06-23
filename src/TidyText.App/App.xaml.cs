@@ -25,6 +25,7 @@ namespace TidyText.App
             var providers = new IAIProvider[]
             {
                 new OllamaProvider(httpClient),
+                new LocalLMProvider(httpClient, keyVault),
                 new GeminiProvider(keyVault.GetKey("Gemini"), httpClient),
                 new OpenAIProvider(keyVault.GetKey("OpenAI"), httpClient),
                 new DeepSeekProvider(keyVault.GetKey("DeepSeek"), httpClient),

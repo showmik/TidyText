@@ -79,6 +79,7 @@ namespace TidyText.App.ViewModels
             AvailableProviders.Add("DeepSeek");
             AvailableProviders.Add("Anthropic");
             AvailableProviders.Add("Ollama");
+            AvailableProviders.Add("Local LM");
 
             var savedProvider = _keyVault.GetKey("ActiveProviderName");
             if (!string.IsNullOrEmpty(savedProvider) && AvailableProviders.Contains(savedProvider))
@@ -124,6 +125,10 @@ namespace TidyText.App.ViewModels
                     AvailableModels.Add("phi3");
                     AvailableModels.Add("mistral");
                     AvailableModels.Add("gemma2");
+                    break;
+                case "Local LM":
+                    AvailableModels.Add("local-model");
+                    AvailableModels.Add("lmstudio-default");
                     break;
             }
 

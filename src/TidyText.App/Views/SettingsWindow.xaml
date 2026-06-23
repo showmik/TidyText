@@ -56,6 +56,7 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
 
                             <!-- Gemini -->
@@ -293,6 +294,25 @@
                                                 </ControlTemplate>
                                             </ToggleButton.Template>
                                         </ToggleButton>
+                                    </Grid>
+                                </StackPanel>
+                            </Grid>
+                            <Border Grid.Row="3" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1" VerticalAlignment="Bottom" Margin="16,0,0,0"/>
+
+                            <!-- Local LM -->
+                            <Grid Grid.Row="4" Margin="16,16">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Width="36" Height="36" CornerRadius="6" Background="#1E1E2E" VerticalAlignment="Center" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+                                    <Path Data="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" Fill="#A9A9A9" Stretch="Uniform" Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <StackPanel Grid.Column="1" Margin="16,0,0,0">
+                                    <TextBlock Text="Local LM Base URL" FontWeight="SemiBold" FontSize="14" Foreground="{DynamicResource TextBrush}"/>
+                                    <TextBlock Text="Leave empty for default: http://localhost:1234/v1" Foreground="{DynamicResource TextMutedBrush}" FontSize="12" Margin="0,2,0,8"/>
+                                    <Grid>
+                                        <TextBox Text="{Binding LocalLMUrl, UpdateSourceTrigger=PropertyChanged}" FontFamily="Consolas, Courier New, monospace" Background="{DynamicResource BgBrush}" Foreground="{DynamicResource TextBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="8,10,40,10" />
                                     </Grid>
                                 </StackPanel>
                             </Grid>

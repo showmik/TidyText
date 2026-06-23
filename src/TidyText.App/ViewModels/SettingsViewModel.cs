@@ -21,6 +21,9 @@ namespace TidyText.App.ViewModels
         private string _anthropicApiKey = string.Empty;
 
         [ObservableProperty]
+        private string _localLMUrl = string.Empty;
+
+        [ObservableProperty]
         private string _statusMessage = string.Empty;
 
         public SettingsViewModel(SecureKeyVault keyVault)
@@ -35,6 +38,7 @@ namespace TidyText.App.ViewModels
             DeepSeekApiKey = _keyVault.GetKey("DeepSeek");
             OpenAIApiKey = _keyVault.GetKey("OpenAI");
             AnthropicApiKey = _keyVault.GetKey("Anthropic");
+            LocalLMUrl = _keyVault.GetKey("LocalLM_Url");
         }
 
         [RelayCommand]
@@ -44,6 +48,7 @@ namespace TidyText.App.ViewModels
             _keyVault.SetKey("DeepSeek", DeepSeekApiKey);
             _keyVault.SetKey("OpenAI", OpenAIApiKey);
             _keyVault.SetKey("Anthropic", AnthropicApiKey);
+            _keyVault.SetKey("LocalLM_Url", LocalLMUrl);
             
             StatusMessage = "API Keys saved securely to Windows Vault.";
         }
