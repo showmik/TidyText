@@ -25,6 +25,7 @@ namespace TidyText.Domain.AI
     {
         string Name { get; }
         bool IsAvailable { get; }
+        System.Collections.Generic.IReadOnlyList<string> AvailableModels { get; }
         
         Task<AIResponse> CompleteAsync(string prompt, AIOptions options, CancellationToken ct = default);
     }

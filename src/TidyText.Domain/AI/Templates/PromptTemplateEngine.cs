@@ -11,9 +11,9 @@ namespace TidyText.Domain.AI.Templates
         string GetPrompt(string text, IDictionary<string, string>? variables = null);
     }
 
-    public class PromptTemplateEngine
+    public class BuiltInTemplateProvider : IPromptTemplateProvider
     {
-        public IReadOnlyList<IPromptTemplate> GetBuiltInTemplates()
+        public IReadOnlyList<IPromptTemplate> GetTemplates()
         {
             return new List<IPromptTemplate>
             {

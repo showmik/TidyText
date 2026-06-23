@@ -5,6 +5,8 @@ using System.Threading;
 using System.Windows; // WPF Application
 using TidyText.App.ViewModels;
 using TidyText.Domain.Services;
+using TidyText.Domain.TextEngine;
+using TidyText.Infrastructure.TextEngine;
 
 namespace TidyText.Tests.ViewModel
 {
@@ -28,7 +30,10 @@ namespace TidyText.Tests.ViewModel
             public void SetText(string text) => LastText = text;
         }
 
-        private static MainViewModel NewVm() => new MainViewModel(new StubClipboardService())
+        private static MainViewModel NewVm() => new MainViewModel(
+            new StubClipboardService(),
+            new DefaultTextProcessorFactory(),
+            new UndoRedoService())
         {
             ShouldTrim = false,
             ShouldTrimStart = false,

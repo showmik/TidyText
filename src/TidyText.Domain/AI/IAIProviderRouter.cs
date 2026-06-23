@@ -10,5 +10,7 @@ namespace TidyText.Domain.AI
     public interface IAIProviderRouter
     {
         Task<AIResponse> RouteAsync(string providerName, string prompt, AIOptions options, CancellationToken ct = default);
+        System.Collections.Generic.IReadOnlyList<string> GetProviderNames();
+        IAIProvider? GetProvider(string name);
     }
 }

@@ -12,6 +12,10 @@ namespace TidyText.Infrastructure.AI.Providers
     public class DeepSeekProvider : IAIProvider
     {
         public string Name => "DeepSeek";
+        public System.Collections.Generic.IReadOnlyList<string> AvailableModels { get; } = new[]
+        {
+            "deepseek-v4-pro", "deepseek-v4-flash"
+        };
         
         private readonly string _apiKey;
         private readonly HttpClient _httpClient;

@@ -9,10 +9,14 @@ using TidyText.Domain.Statistics;
 
 namespace TidyText.App.ViewModels
 {
-    public partial class MainViewModel : ObservableObject
+    public partial class MainViewModel : ObservableObject, ITextEditorMediator
     {
-        private readonly CleaningPipeline _pipeline;
+        public string CurrentText => MainText;
+        public void ReplaceText(string newText) => MainText = newText;
+
         private readonly IClipboardService _clipboardService;
+        private readonly ITextProcessorFactory _processorFactory;
+        private readonly IUndoRedoService _undoRedoService;
         
         public AIAssistantViewModel? AIAssistantVM { get; set; }
 
@@ -47,10 +51,6 @@ namespace TidyText.App.ViewModels
         [ObservableProperty] private string _readabilityScore = "N/A";
 
         // --- Processing Options ---
-        private readonly System.Collections.Generic.List<string> _history = new();
-        private readonly System.Collections.Generic.List<string> _redoHistory = new();
-        private const int MaxHistorySize = 50;
-
         [ObservableProperty] private bool _shouldTrim = false;
         [ObservableProperty] private bool _shouldTrimStart = true;
         [ObservableProperty] private bool _shouldTrimEnd = true;
@@ -102,16 +102,11 @@ namespace TidyText.App.ViewModels
             set { if (value) SelectedCasingStyle = CasingStyle.DoNotChange; }
         }
 
-        public MainViewModel(IClipboardService clipboardService)
+        public MainViewModel(IClipboardService clipboardService, ITextProcessorFactory processorFactory, IUndoRedoService undoRedoService)
         {
             _clipboardService = clipboardService;
-            _pipeline = new CleaningPipeline()
-                .AddProcessor(new MarkdownProcessor()) // Strips markdown if enabled
-                .AddProcessor(new HtmlStripProcessor())
-                .AddProcessor(new SmartQuoteProcessor())
-                .AddProcessor(new WhitespaceProcessor())
-                .AddProcessor(new PunctuationProcessor())
-                .AddProcessor(new CasingProcessor());
+            _processorFactory = processorFactory;
+            _undoRedoService = undoRedoService;
         }
 
         partial void OnMainTextChanged(string value)
@@ -147,31 +142,23 @@ namespace TidyText.App.ViewModels
         {
             if (string.IsNullOrEmpty(MainText)) return;
 
-            _history.Add(MainText);
-            _redoHistory.Clear();
-            if (_history.Count > MaxHistorySize)
-            {
-                _history.RemoveAt(0);
-            }
+            _undoRedoService.Push(MainText);
 
-            var options = new WhitespaceProcessorOptions
+            var cleaningOptions = new CleaningOptions
             {
                 TrimStart = ShouldTrim || ShouldTrimStart,
                 TrimEnd = ShouldTrim || ShouldTrimEnd,
                 RemoveMultipleSpaces = ShouldRemoveMultipleSpaces,
                 RemoveMultipleLines = ShouldRemoveMultipleLines,
-                RemoveAllLines = ShouldRemoveAllLines
+                RemoveAllLines = ShouldRemoveAllLines,
+                FixPunctuationSpacing = ShouldFixPunctuationSpace,
+                RemoveHtmlTags = ShouldRemoveHtmlTags,
+                ConvertSmartQuotes = ShouldConvertSmartQuotes,
+                CasingStyle = SelectedCasingStyle
             };
 
-            // Re-configure pipeline with current options using the clean unified architecture
-            _pipeline.ClearProcessors()
-                .AddProcessor(new HtmlStripProcessor(new HtmlStripProcessorOptions { RemoveHtmlTags = ShouldRemoveHtmlTags }))
-                .AddProcessor(new SmartQuoteProcessor(new SmartQuoteProcessorOptions { ConvertSmartQuotes = ShouldConvertSmartQuotes }))
-                .AddProcessor(new WhitespaceProcessor(options))
-                .AddProcessor(new PunctuationProcessor(new PunctuationProcessorOptions { FixPunctuationSpacing = ShouldFixPunctuationSpace, TreatColonAsSentencePunct = true }))
-                .AddProcessor(new CasingProcessor(new CasingProcessorOptions { Style = SelectedCasingStyle }));
-            
-            MainText = _pipeline.Process(MainText);
+            var pipeline = _processorFactory.BuildPipeline(cleaningOptions);
+            MainText = pipeline.Process(MainText);
         }
 
         [RelayCommand]
@@ -183,23 +170,17 @@ namespace TidyText.App.ViewModels
         [RelayCommand]
         public void Undo()
         {
-            if (_history.Count > 0)
-            {
-                _redoHistory.Add(MainText);
-                MainText = _history[^1];
-                _history.RemoveAt(_history.Count - 1);
-            }
+            var previous = _undoRedoService.Undo(MainText);
+            if (previous != null)
+                MainText = previous;
         }
 
         [RelayCommand]
         public void Redo()
         {
-            if (_redoHistory.Count > 0)
-            {
-                _history.Add(MainText);
-                MainText = _redoHistory[^1];
-                _redoHistory.RemoveAt(_redoHistory.Count - 1);
-            }
+            var next = _undoRedoService.Redo(MainText);
+            if (next != null)
+                MainText = next;
         }
 
         [RelayCommand]

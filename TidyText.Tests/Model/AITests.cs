@@ -17,6 +17,7 @@ namespace TidyText.Tests.Model
             public string Name => "MockProvider";
             public bool IsAvailable { get; set; } = true;
             public bool WillThrow { get; set; } = false;
+            public IReadOnlyList<string> AvailableModels { get; } = new List<string> { "mock-model" };
 
             public Task<AIResponse> CompleteAsync(string prompt, AIOptions options, CancellationToken ct = default)
             {
@@ -75,8 +76,8 @@ namespace TidyText.Tests.Model
         [Test]
         public void PromptTemplateEngine_Returns_BuiltIn_Templates()
         {
-            var engine = new PromptTemplateEngine();
-            var templates = engine.GetBuiltInTemplates();
+            var engine = new BuiltInTemplateProvider();
+            var templates = engine.GetTemplates();
             
             Assert.That(templates.Count, Is.GreaterThan(0));
             Assert.That(templates.Any(t => t.Name == "Check Grammar"), Is.True);
@@ -86,8 +87,8 @@ namespace TidyText.Tests.Model
         [Test]
         public void RewriteTemplate_Uses_Tone_Variable_If_Provided()
         {
-            var engine = new PromptTemplateEngine();
-            var rewrite = engine.GetBuiltInTemplates().First(t => t.Name == "Rewrite");
+            var engine = new BuiltInTemplateProvider();
+            var rewrite = engine.GetTemplates().First(t => t.Name == "Rewrite");
             
             var promptWithoutTone = rewrite.GetPrompt("some text", null);
             Assert.That(promptWithoutTone, Does.Contain("professional and clear"));

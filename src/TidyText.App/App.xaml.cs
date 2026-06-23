@@ -52,8 +52,11 @@ namespace TidyText.App
             IAIProviderRouter aiRouter = new AIProviderRouter(providers);
 
             // ViewModels
-            var mainViewModel = new MainViewModel(clipboard);
-            var aiViewModel = new AIAssistantViewModel(aiRouter, mainViewModel, keyVault, historyRepository);
+            TidyText.Domain.TextEngine.ITextProcessorFactory processorFactory = new TidyText.Infrastructure.TextEngine.DefaultTextProcessorFactory();
+            IUndoRedoService undoRedoService = new UndoRedoService();
+            var mainViewModel = new MainViewModel(clipboard, processorFactory, undoRedoService);
+            var templateProviders = new[] { new TidyText.Domain.AI.Templates.BuiltInTemplateProvider() };
+            var aiViewModel = new AIAssistantViewModel(aiRouter, mainViewModel, keyVault, historyRepository, templateProviders);
             var settingsViewModel = new SettingsViewModel(keyVault);
 
             IThemeRepository themeRepository = new TidyText.Infrastructure.Persistence.FileThemeRepository(tidyTextDataPath);

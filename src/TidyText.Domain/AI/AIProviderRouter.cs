@@ -15,28 +15,38 @@ namespace TidyText.Domain.AI
             _providers = providers;
         }
 
-        public async Task<AIResponse> RouteAsync(string providerName, string prompt, AIOptions options, CancellationToken ct = default)
+        public Task<AIResponse> RouteAsync(string providerName, string prompt, AIOptions options, CancellationToken ct = default)
         {
-            var provider = _providers.FirstOrDefault(p => string.Equals(p.Name, providerName, StringComparison.OrdinalIgnoreCase));
+            var provider = GetProvider(providerName);
 
             if (provider == null)
             {
-                return AIResponse.Error($"Provider '{providerName}' not found.");
+                return Task.FromResult(AIResponse.Error($"Provider '{providerName}' not found."));
             }
 
             if (!provider.IsAvailable)
             {
-                return AIResponse.Error($"Provider '{providerName}' is not available. Please check API keys or connection.");
+                return Task.FromResult(AIResponse.Error($"Provider '{providerName}' is not available. Please check API keys or connection."));
             }
 
             try
             {
-                return await provider.CompleteAsync(prompt, options, ct);
+                return provider.CompleteAsync(prompt, options, ct);
             }
             catch (Exception ex)
             {
-                return AIResponse.Error($"An error occurred with provider '{providerName}': {ex.Message}");
+                return Task.FromResult(AIResponse.Error($"An error occurred with provider '{providerName}': {ex.Message}"));
             }
+        }
+
+        public IReadOnlyList<string> GetProviderNames()
+        {
+            return _providers.Select(p => p.Name).ToList();
+        }
+
+        public IAIProvider? GetProvider(string name)
+        {
+            return _providers.FirstOrDefault(p => string.Equals(p.Name, name, StringComparison.OrdinalIgnoreCase));
         }
     }
 }

@@ -11,6 +11,10 @@ namespace TidyText.Infrastructure.AI.Providers
     public class OllamaProvider : IAIProvider
     {
         public string Name => "Ollama";
+        public System.Collections.Generic.IReadOnlyList<string> AvailableModels { get; } = new[]
+        {
+            "llama3", "phi3", "mistral", "gemma2"
+        };
         
         private readonly HttpClient _httpClient;
         private readonly string _baseUrl;

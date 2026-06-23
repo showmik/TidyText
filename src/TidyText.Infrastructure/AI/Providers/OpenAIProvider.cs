@@ -12,6 +12,10 @@ namespace TidyText.Infrastructure.AI.Providers
     public class OpenAIProvider : IAIProvider
     {
         public string Name => "OpenAI";
+        public System.Collections.Generic.IReadOnlyList<string> AvailableModels { get; } = new[]
+        {
+            "gpt-5.5-instant", "gpt-5.5-pro", "gpt-5.4-mini", "gpt-5.4-pro", "gpt-5.4-nano"
+        };
         
         private readonly string _apiKey;
         private readonly HttpClient _httpClient;

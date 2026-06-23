@@ -12,6 +12,10 @@ namespace TidyText.Infrastructure.AI.Providers
     public class AnthropicProvider : IAIProvider
     {
         public string Name => "Anthropic";
+        public System.Collections.Generic.IReadOnlyList<string> AvailableModels { get; } = new[]
+        {
+            "claude-fable-5", "claude-opus-4.8", "claude-sonnet-4.6", "claude-haiku-4.5"
+        };
         
         private readonly string _apiKey;
         private readonly HttpClient _httpClient;

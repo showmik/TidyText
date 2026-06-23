@@ -12,13 +12,14 @@ using DiffPlex.DiffBuilder.Model;
 using TidyText.Domain.AI;
 using TidyText.Domain.AI.Templates;
 using TidyText.Domain.Security;
+using TidyText.Domain.Services;
 
 namespace TidyText.App.ViewModels
 {
     public partial class AIAssistantViewModel : ObservableObject
     {
         private readonly IAIProviderRouter _router;
-        private readonly MainViewModel _mainViewModel;
+        private readonly ITextEditorMediator _editor;
         private readonly ISecureKeyVault _keyVault;
         private readonly IAIHistoryRepository _historyRepository;
         private CancellationTokenSource? _cancellationTokenSource;
@@ -64,29 +65,30 @@ namespace TidyText.App.ViewModels
 
         public AIAssistantViewModel(
             IAIProviderRouter router,
-            MainViewModel mainViewModel,
+            ITextEditorMediator editorMediator,
             ISecureKeyVault keyVault,
-            IAIHistoryRepository historyRepository)
+            IAIHistoryRepository historyRepository,
+            System.Collections.Generic.IEnumerable<IPromptTemplateProvider> templateProviders)
         {
             _router = router;
-            _mainViewModel = mainViewModel;
+            _editor = editorMediator;
             _keyVault = keyVault;
             _historyRepository = historyRepository;
             
             LoadHistory();
             
-            var engine = new PromptTemplateEngine();
-            foreach (var template in engine.GetBuiltInTemplates())
+            foreach (var provider in templateProviders)
             {
-                Templates.Add(template);
+                foreach (var template in provider.GetTemplates())
+                {
+                    Templates.Add(template);
+                }
             }
 
-            AvailableProviders.Add("Gemini");
-            AvailableProviders.Add("OpenAI");
-            AvailableProviders.Add("DeepSeek");
-            AvailableProviders.Add("Anthropic");
-            AvailableProviders.Add("Ollama");
-            AvailableProviders.Add("Local LM");
+            foreach (var p in _router.GetProviderNames())
+            {
+                AvailableProviders.Add(p);
+            }
 
             var savedProvider = _keyVault.GetKey("ActiveProviderName");
             if (!string.IsNullOrEmpty(savedProvider) && AvailableProviders.Contains(savedProvider))
@@ -102,41 +104,13 @@ namespace TidyText.App.ViewModels
         private void UpdateAvailableModels(string provider)
         {
             AvailableModels.Clear();
-            switch (provider)
+            var p = _router.GetProvider(provider);
+            if (p != null)
             {
-                case "Gemini":
-                    AvailableModels.Add("gemini-3.5-flash");
-                    AvailableModels.Add("gemini-3.5-pro");
-                    AvailableModels.Add("gemini-3.1-pro");
-                    AvailableModels.Add("gemini-3.1-flash-lite");
-                    break;
-                case "OpenAI":
-                    AvailableModels.Add("gpt-5.5-instant");
-                    AvailableModels.Add("gpt-5.5-pro");
-                    AvailableModels.Add("gpt-5.4-mini");
-                    AvailableModels.Add("gpt-5.4-pro");
-                    AvailableModels.Add("gpt-5.4-nano");
-                    break;
-                case "Anthropic":
-                    AvailableModels.Add("claude-fable-5");
-                    AvailableModels.Add("claude-opus-4.8");
-                    AvailableModels.Add("claude-sonnet-4.6");
-                    AvailableModels.Add("claude-haiku-4.5");
-                    break;
-                case "DeepSeek":
-                    AvailableModels.Add("deepseek-v4-pro");
-                    AvailableModels.Add("deepseek-v4-flash");
-                    break;
-                case "Ollama":
-                    AvailableModels.Add("llama3");
-                    AvailableModels.Add("phi3");
-                    AvailableModels.Add("mistral");
-                    AvailableModels.Add("gemma2");
-                    break;
-                case "Local LM":
-                    AvailableModels.Add("local-model");
-                    AvailableModels.Add("lmstudio-default");
-                    break;
+                foreach (var model in p.AvailableModels)
+                {
+                    AvailableModels.Add(model);
+                }
             }
 
             var savedModel = _keyVault?.GetKey($"ActiveModel_{provider}");
@@ -170,7 +144,7 @@ namespace TidyText.App.ViewModels
         [RelayCommand]
         public async Task ExecuteTemplateAsync(IPromptTemplate template)
         {
-            if (template == null || string.IsNullOrWhiteSpace(_mainViewModel.MainText)) return;
+            if (template == null || string.IsNullOrWhiteSpace(_editor.CurrentText)) return;
 
             SelectedTemplate = template;
             IsProcessing = true;
@@ -183,7 +157,7 @@ namespace TidyText.App.ViewModels
             }
             _cancellationTokenSource = new CancellationTokenSource();
 
-            var prompt = template.GetPrompt(_mainViewModel.MainText);
+            var prompt = template.GetPrompt(_editor.CurrentText);
             var options = new AIOptions 
             { 
                 SystemPrompt = template.SystemPrompt,
@@ -204,7 +178,7 @@ namespace TidyText.App.ViewModels
                     StatusMessage = "Reviewing proposed changes...";
                     _proposedText = response.Text;
                     _currentPromptOrTemplate = template.Name;
-                    GenerateDiff(_mainViewModel.MainText, _proposedText);
+                    GenerateDiff(_editor.CurrentText, _proposedText);
                     IsReviewing = true;
                 }
             }
@@ -231,7 +205,7 @@ namespace TidyText.App.ViewModels
         [RelayCommand]
         public async Task ExecuteCustomPromptAsync()
         {
-            if (string.IsNullOrWhiteSpace(CustomPrompt) || string.IsNullOrWhiteSpace(_mainViewModel.MainText)) return;
+            if (string.IsNullOrWhiteSpace(CustomPrompt) || string.IsNullOrWhiteSpace(_editor.CurrentText)) return;
 
             IsProcessing = true;
             StatusMessage = "Processing custom prompt with " + ActiveProviderName + "...";
@@ -244,7 +218,7 @@ namespace TidyText.App.ViewModels
             _cancellationTokenSource = new CancellationTokenSource();
 
             // The template essentially just prepends the custom prompt to the text
-            var prompt = $"{CustomPrompt}\n\n<text>\n{_mainViewModel.MainText}\n</text>";
+            var prompt = $"{CustomPrompt}\n\n<text>\n{_editor.CurrentText}\n</text>";
             var options = new AIOptions 
             { 
                 Temperature = 0.5,
@@ -265,7 +239,7 @@ namespace TidyText.App.ViewModels
                     StatusMessage = "Reviewing proposed changes...";
                     _proposedText = response.Text;
                     _currentPromptOrTemplate = CustomPrompt;
-                    GenerateDiff(_mainViewModel.MainText, _proposedText);
+                    GenerateDiff(_editor.CurrentText, _proposedText);
                     IsReviewing = true;
                 }
             }
@@ -309,7 +283,7 @@ namespace TidyText.App.ViewModels
         [RelayCommand]
         public void AcceptChanges()
         {
-            _mainViewModel.MainText = _proposedText;
+            _editor.ReplaceText(_proposedText);
 
             History.Insert(0, new AIHistoryItem(RestoreHistoryItem, DeleteHistoryItem)
             {
@@ -382,7 +356,7 @@ namespace TidyText.App.ViewModels
 
         private void RestoreHistoryItem(string text)
         {
-            _mainViewModel.MainText = text;
+            _editor.ReplaceText(text);
         }
     }
 }

@@ -11,6 +11,10 @@ namespace TidyText.Infrastructure.AI.Providers
     public class GeminiProvider : IAIProvider
     {
         public string Name => "Gemini";
+        public System.Collections.Generic.IReadOnlyList<string> AvailableModels { get; } = new[]
+        {
+            "gemini-3.5-flash", "gemini-3.5-pro", "gemini-3.1-pro", "gemini-3.1-flash-lite"
+        };
         
         private readonly string _apiKey;
         private readonly HttpClient _httpClient;

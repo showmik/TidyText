@@ -15,6 +15,10 @@ namespace TidyText.Infrastructure.AI.Providers
     public class LocalLMProvider : IAIProvider
     {
         public string Name => "Local LM";
+        public System.Collections.Generic.IReadOnlyList<string> AvailableModels { get; } = new[]
+        {
+            "local-model", "lmstudio-default"
+        };
         
         private readonly HttpClient _httpClient;
         private readonly ISecureKeyVault _keyVault;
