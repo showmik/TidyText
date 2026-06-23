@@ -56,7 +56,9 @@ namespace TidyText.App
             var aiViewModel = new AIAssistantViewModel(aiRouter, mainViewModel, keyVault, historyRepository);
             var settingsViewModel = new SettingsViewModel(keyVault);
 
-            var mainWindow = new MainWindow
+            IThemeRepository themeRepository = new TidyText.Infrastructure.Persistence.FileThemeRepository(tidyTextDataPath);
+
+            var mainWindow = new MainWindow(themeRepository)
             {
                 DataContext = mainViewModel
             };

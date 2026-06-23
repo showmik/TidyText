@@ -1,35 +1,30 @@
 using System.Windows;
 using TidyText.App.ViewModels;
 using TidyText.Domain.Security;
+using TidyText.Domain.Services;
 
 namespace TidyText.App.Views
 {
     public partial class MainWindow : Window
     {
-        public MainWindow()
+        private readonly IThemeRepository _themeRepository;
+        private bool _isDarkTheme = true;
+
+        public MainWindow(IThemeRepository themeRepository)
         {
+            _themeRepository = themeRepository;
             InitializeComponent();
             LoadTheme();
         }
 
-        private string GetThemeFilePath() => System.IO.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData), "TidyText", "theme.txt");
-
         private void LoadTheme()
         {
-            try
+            var theme = _themeRepository.LoadTheme();
+            if (theme == "Light")
             {
-                var path = GetThemeFilePath();
-                if (System.IO.File.Exists(path))
-                {
-                    var theme = System.IO.File.ReadAllText(path).Trim();
-                    if (theme == "Light")
-                    {
-                        _isDarkTheme = false;
-                        ApplyTheme(save: false);
-                    }
-                }
+                _isDarkTheme = false;
+                ApplyTheme(save: false);
             }
-            catch { /* Ignore errors on load */ }
         }
 
         private void SettingsButton_Click(object sender, RoutedEventArgs e)
@@ -53,8 +48,6 @@ namespace TidyText.App.Views
         
         private void Close_Click(object sender, RoutedEventArgs e) => Close();
 
-        private bool _isDarkTheme = true;
-        
         private void ThemeToggle_Click(object sender, RoutedEventArgs e)
         {
             _isDarkTheme = !_isDarkTheme;
@@ -71,14 +64,7 @@ namespace TidyText.App.Views
 
             if (save)
             {
-                try
-                {
-                    var path = GetThemeFilePath();
-                    var dir = System.IO.Path.GetDirectoryName(path);
-                    if (!System.IO.Directory.Exists(dir)) System.IO.Directory.CreateDirectory(dir!);
-                    System.IO.File.WriteAllText(path, _isDarkTheme ? "Dark" : "Light");
-                }
-                catch { /* Ignore errors on save */ }
+                _themeRepository.SaveTheme(_isDarkTheme ? "Dark" : "Light");
             }
         }
 

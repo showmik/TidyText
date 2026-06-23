@@ -6,7 +6,7 @@ namespace TidyText.App.ViewModels
 {
     public partial class AIHistoryItem : ObservableObject
     {
-        private readonly MainViewModel _mainViewModel;
+        private readonly Action<string>? _restoreAction;
 
         [ObservableProperty]
         private string _prompt = string.Empty;
@@ -22,9 +22,9 @@ namespace TidyText.App.ViewModels
 
         private readonly Action<AIHistoryItem>? _deleteAction;
 
-        public AIHistoryItem(MainViewModel mainViewModel, Action<AIHistoryItem>? deleteAction = null)
+        public AIHistoryItem(Action<string>? restoreAction, Action<AIHistoryItem>? deleteAction = null)
         {
-            _mainViewModel = mainViewModel;
+            _restoreAction = restoreAction;
             _deleteAction = deleteAction;
         }
 
@@ -40,12 +40,11 @@ namespace TidyText.App.ViewModels
             IsExpanded = !IsExpanded;
         }
 
-        [RelayCommand]
         public void Restore()
         {
-            if (_mainViewModel != null && !string.IsNullOrEmpty(GeneratedText))
+            if (_restoreAction != null && !string.IsNullOrEmpty(GeneratedText))
             {
-                _mainViewModel.MainText = GeneratedText;
+                _restoreAction(GeneratedText);
             }
         }
     }

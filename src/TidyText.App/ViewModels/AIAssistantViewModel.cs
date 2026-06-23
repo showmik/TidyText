@@ -311,7 +311,7 @@ namespace TidyText.App.ViewModels
         {
             _mainViewModel.MainText = _proposedText;
 
-            History.Insert(0, new AIHistoryItem(_mainViewModel, DeleteHistoryItem)
+            History.Insert(0, new AIHistoryItem(RestoreHistoryItem, DeleteHistoryItem)
             {
                 Prompt = _currentPromptOrTemplate,
                 GeneratedText = _proposedText,
@@ -371,13 +371,18 @@ namespace TidyText.App.ViewModels
             History.Clear();
             foreach (var item in items)
             {
-                History.Add(new AIHistoryItem(_mainViewModel, DeleteHistoryItem)
+                History.Add(new AIHistoryItem(RestoreHistoryItem, DeleteHistoryItem)
                 {
                     Prompt = item.Prompt ?? "",
                     GeneratedText = item.GeneratedText ?? "",
                     Timestamp = item.Timestamp
                 });
             }
+        }
+
+        private void RestoreHistoryItem(string text)
+        {
+            _mainViewModel.MainText = text;
         }
     }
 }
