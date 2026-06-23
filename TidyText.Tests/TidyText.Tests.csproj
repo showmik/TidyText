@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<!-- Match your app’s framework; if TidyText is .NET Framework use net48 or net472 -->
-		<TargetFramework>net10.0-windows</TargetFramework>
+		<TargetFramework>net10.0</TargetFramework>
 		<IsPackable>false</IsPackable>
 		<Nullable>enable</Nullable>
 		<Platforms>AnyCPU;x64</Platforms>
@@ -21,6 +20,5 @@
 	<ItemGroup>
 		<ProjectReference Include="..\src\TidyText.Domain\TidyText.Domain.csproj" />
 		<ProjectReference Include="..\src\TidyText.Infrastructure\TidyText.Infrastructure.csproj" />
-		<ProjectReference Include="..\src\TidyText.App\TidyText.App.csproj" />
 	</ItemGroup>
 </Project>
