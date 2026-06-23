@@ -22,12 +22,12 @@ namespace TidyText.App.Helpers
         {
             if (d is PasswordBox box)
             {
-                box.PasswordChanged -= HandlePasswordChanged;
+                WeakEventManager<PasswordBox, RoutedEventArgs>.RemoveHandler(box, nameof(PasswordBox.PasswordChanged), HandlePasswordChanged);
                 if (!_isUpdating)
                 {
                     box.Password = (string)e.NewValue ?? string.Empty;
                 }
-                box.PasswordChanged += HandlePasswordChanged;
+                WeakEventManager<PasswordBox, RoutedEventArgs>.AddHandler(box, nameof(PasswordBox.PasswordChanged), HandlePasswordChanged);
             }
         }
 
@@ -38,12 +38,12 @@ namespace TidyText.App.Helpers
                 var wasBound = (bool)(e.OldValue);
                 var needToBind = (bool)(e.NewValue);
 
-                if (wasBound) box.PasswordChanged -= HandlePasswordChanged;
-                if (needToBind) box.PasswordChanged += HandlePasswordChanged;
+                if (wasBound) WeakEventManager<PasswordBox, RoutedEventArgs>.RemoveHandler(box, nameof(PasswordBox.PasswordChanged), HandlePasswordChanged);
+                if (needToBind) WeakEventManager<PasswordBox, RoutedEventArgs>.AddHandler(box, nameof(PasswordBox.PasswordChanged), HandlePasswordChanged);
             }
         }
 
-        private static void HandlePasswordChanged(object sender, RoutedEventArgs e)
+        private static void HandlePasswordChanged(object? sender, RoutedEventArgs e)
         {
             if (sender is PasswordBox box)
             {

@@ -1,12 +1,13 @@
 using System;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 
 namespace TidyText.App.ViewModels
 {
     public partial class AIHistoryItem : ObservableObject
     {
-        private readonly Action<string>? _restoreAction;
+        private readonly CommunityToolkit.Mvvm.Messaging.IMessenger _messenger;
 
         [ObservableProperty]
         private string _prompt = string.Empty;
@@ -20,18 +21,15 @@ namespace TidyText.App.ViewModels
         [ObservableProperty]
         private bool _isExpanded = false;
 
-        private readonly Action<AIHistoryItem>? _deleteAction;
-
-        public AIHistoryItem(Action<string>? restoreAction, Action<AIHistoryItem>? deleteAction = null)
+        public AIHistoryItem(CommunityToolkit.Mvvm.Messaging.IMessenger messenger)
         {
-            _restoreAction = restoreAction;
-            _deleteAction = deleteAction;
+            _messenger = messenger;
         }
 
         [RelayCommand]
         public void Delete()
         {
-            _deleteAction?.Invoke(this);
+            _messenger.Send(new TidyText.App.Messages.DeleteHistoryItemMessage(this));
         }
 
         [RelayCommand]
@@ -43,9 +41,9 @@ namespace TidyText.App.ViewModels
         [RelayCommand]
         public void Restore()
         {
-            if (_restoreAction != null && !string.IsNullOrEmpty(GeneratedText))
+            if (!string.IsNullOrEmpty(GeneratedText))
             {
-                _restoreAction(GeneratedText);
+                _messenger.Send(new TidyText.App.Messages.RestoreHistoryItemMessage(GeneratedText));
             }
         }
     }

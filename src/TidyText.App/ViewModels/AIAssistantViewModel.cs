@@ -112,6 +112,9 @@ namespace TidyText.App.ViewModels
             {
                 ActiveProviderName = "Gemini";
             }
+            
+            _messenger.Register<AIAssistantViewModel, DeleteHistoryItemMessage>(this, (r, m) => r.DeleteHistoryItem(m.Item));
+            _messenger.Register<AIAssistantViewModel, RestoreHistoryItemMessage>(this, (r, m) => r.RestoreHistoryItem(m.Text));
         }
 
         private void UpdateAvailableModels(string provider)
@@ -350,7 +353,7 @@ namespace TidyText.App.ViewModels
         {
             _messenger.Send(new TextReplacementRequestedMessage(_proposedText));
 
-            History.Insert(0, new AIHistoryItem(RestoreHistoryItem, DeleteHistoryItem)
+            History.Insert(0, new AIHistoryItem(_messenger)
             {
                 Prompt = _currentPromptOrTemplate,
                 GeneratedText = _proposedText,
@@ -410,7 +413,7 @@ namespace TidyText.App.ViewModels
             var newHistory = new System.Collections.Generic.List<AIHistoryItem>();
             foreach (var item in items)
             {
-                newHistory.Add(new AIHistoryItem(RestoreHistoryItem, DeleteHistoryItem)
+                newHistory.Add(new AIHistoryItem(_messenger)
                 {
                     Prompt = item.Prompt ?? "",
                     GeneratedText = item.GeneratedText ?? "",
