@@ -13,6 +13,7 @@ namespace TidyText.App.ViewModels
 {
     public partial class MainViewModel : ObservableObject
     {
+        public AIAssistantViewModel AIAssistantVM { get; }
         public string CurrentText => MainText;
         public void ReplaceText(string newText) => MainText = newText;
 
@@ -101,10 +102,11 @@ namespace TidyText.App.ViewModels
             set { if (value) SelectedCasingStyle = CasingStyle.DoNotChange; }
         }
 
-        public MainViewModel(IClipboardService clipboardService, IUndoRedoService undoRedoService, IMessenger messenger)
+        public MainViewModel(IClipboardService clipboardService, IUndoRedoService undoRedoService, IMessenger messenger, AIAssistantViewModel aiAssistantVM)
         {
             _clipboardService = clipboardService;
             _undoRedoService = undoRedoService;
+            AIAssistantVM = aiAssistantVM;
 
             messenger.Register<MainViewModel, TextReplacementRequestedMessage>(this, (r, m) => r.ReplaceText(m.NewText));
             messenger.Register<MainViewModel, CurrentTextRequestMessage>(this, (r, m) => m.Reply(r.CurrentText));

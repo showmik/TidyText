@@ -13,6 +13,28 @@
     <Color x:Key="HoverColor">#F1F5F9</Color>
     <Color x:Key="PressedColor">#E2E8F0</Color>
 
+    <!-- Semantic Colors -->
+    <Color x:Key="DangerColor">#E81123</Color>
+    <Color x:Key="DangerHoverColor">#F1707A</Color>
+    <Color x:Key="DangerTextColor">#D32F2F</Color>
+    <Color x:Key="DangerBgColor">#1AE81123</Color>
+    <Color x:Key="DangerPressedBgColor">#33E81123</Color>
+    <Color x:Key="DangerForegroundColor">#FFFFFF</Color>
+
+    <Color x:Key="SuccessColor">#10A37F</Color>
+    <Color x:Key="SuccessTextColor">#2EA043</Color>
+    <Color x:Key="SuccessBgColor">#1A2EA043</Color>
+
+    <Color x:Key="DiffDeletedTextColor">#D32F2F</Color>
+    <Color x:Key="DiffDeletedBgColor">#1AF85149</Color>
+
+    <!-- Brand Colors -->
+    <Color x:Key="GeminiBrandColor">#4285F4</Color>
+    <Color x:Key="OpenAIBrandColor">#10A37F</Color>
+    <Color x:Key="AnthropicBrandColor">#D97757</Color>
+    <Color x:Key="DeepSeekBrandColor">#4D6BFE</Color>
+    <Color x:Key="LocalLMBrandColor">#666666</Color>
+
     <RadialGradientBrush x:Key="BgBrush" Center="0.5,0" RadiusX="0.8" RadiusY="0.8" GradientOrigin="0.5,0">
         <GradientStop Color="#FFFFFF" Offset="0" />
         <GradientStop Color="#F8FAFC" Offset="1" />
@@ -31,6 +53,26 @@
     <SolidColorBrush x:Key="AccentHoverForegroundBrush" Color="{DynamicResource AccentHoverForegroundColor}"/>
     <SolidColorBrush x:Key="HoverBrush" Color="{DynamicResource HoverColor}"/>
     <SolidColorBrush x:Key="PressedBrush" Color="{DynamicResource PressedColor}"/>
+
+    <SolidColorBrush x:Key="DangerBrush" Color="{DynamicResource DangerColor}"/>
+    <SolidColorBrush x:Key="DangerHoverBrush" Color="{DynamicResource DangerHoverColor}"/>
+    <SolidColorBrush x:Key="DangerTextBrush" Color="{DynamicResource DangerTextColor}"/>
+    <SolidColorBrush x:Key="DangerBgBrush" Color="{DynamicResource DangerBgColor}"/>
+    <SolidColorBrush x:Key="DangerPressedBgBrush" Color="{DynamicResource DangerPressedBgColor}"/>
+    <SolidColorBrush x:Key="DangerForegroundBrush" Color="{DynamicResource DangerForegroundColor}"/>
+
+    <SolidColorBrush x:Key="SuccessBrush" Color="{DynamicResource SuccessColor}"/>
+    <SolidColorBrush x:Key="SuccessTextBrush" Color="{DynamicResource SuccessTextColor}"/>
+    <SolidColorBrush x:Key="SuccessBgBrush" Color="{DynamicResource SuccessBgColor}"/>
+
+    <SolidColorBrush x:Key="DiffDeletedTextBrush" Color="{DynamicResource DiffDeletedTextColor}"/>
+    <SolidColorBrush x:Key="DiffDeletedBgBrush" Color="{DynamicResource DiffDeletedBgColor}"/>
+    
+    <SolidColorBrush x:Key="GeminiBrandBrush" Color="{DynamicResource GeminiBrandColor}"/>
+    <SolidColorBrush x:Key="OpenAIBrandBrush" Color="{DynamicResource OpenAIBrandColor}"/>
+    <SolidColorBrush x:Key="AnthropicBrandBrush" Color="{DynamicResource AnthropicBrandColor}"/>
+    <SolidColorBrush x:Key="DeepSeekBrandBrush" Color="{DynamicResource DeepSeekBrandColor}"/>
+    <SolidColorBrush x:Key="LocalLMBrandBrush" Color="{DynamicResource LocalLMBrandColor}"/>
 
     <DropShadowEffect x:Key="SoftGlow" BlurRadius="16" ShadowDepth="4" Color="#94A3B8" Opacity="0.15" />
     <DropShadowEffect x:Key="AccentGlow" BlurRadius="12" ShadowDepth="4" Color="{DynamicResource AccentColor}" Opacity="0.3" />

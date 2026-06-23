@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Windows;
 using TidyText.App.ViewModels;
 using TidyText.Domain.Security;
@@ -56,11 +57,20 @@ namespace TidyText.App.Views
 
         private void ApplyTheme(bool save)
         {
+            var appResources = Application.Current.Resources.MergedDictionaries;
             var newTheme = new ResourceDictionary { Source = new System.Uri($"Themes/{(_isDarkTheme ? "DarkTheme" : "LightTheme")}.xaml", System.UriKind.Relative) };
             
-            var appResources = Application.Current.Resources.MergedDictionaries;
-            appResources.RemoveAt(0);
-            appResources.Insert(0, newTheme);
+            var oldTheme = appResources.FirstOrDefault(d => d.Source != null && d.Source.OriginalString.Contains("Theme.xaml"));
+            if (oldTheme != null)
+            {
+                int index = appResources.IndexOf(oldTheme);
+                appResources.RemoveAt(index);
+                appResources.Insert(index, newTheme);
+            }
+            else
+            {
+                appResources.Add(newTheme);
+            }
 
             if (save)
             {

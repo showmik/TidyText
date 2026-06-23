@@ -9,7 +9,7 @@
         mc:Ignorable="d"
         Title="TidyText" Height="800" Width="1200"
         WindowStartupLocation="CenterScreen"
-        FontFamily="Segoe UI, -apple-system, BlinkMacSystemFont, Roboto, sans-serif"
+        FontFamily="{DynamicResource BrandFontFamily}"
         Background="{DynamicResource BgBrush}"
         WindowStyle="SingleBorderWindow"
         ResizeMode="CanResize">
@@ -41,10 +41,10 @@
             
             <!-- Branding (Left) -->
             <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="16,0,0,0">
-                <Button Content="≡" Command="{Binding ToggleHistoryPanelCommand}" Style="{StaticResource IconButtonStyle}" FontSize="18" Padding="8,4" Margin="0,0,12,0" WindowChrome.IsHitTestVisibleInChrome="True" ToolTip="Toggle History Sidebar"/>
+                <Button Content="≡" Command="{Binding ToggleHistoryPanelCommand}" Style="{StaticResource IconButtonStyle}" FontSize="{DynamicResource FontSizeXl}" Padding="{DynamicResource PaddingButtonSmall}" Margin="0,0,12,0" WindowChrome.IsHitTestVisibleInChrome="True" ToolTip="Toggle History Sidebar"/>
                 <TextBlock Text="✨ TidyText"
-                           FontSize="16"
-                           FontWeight="Bold"
+                           FontSize="{DynamicResource FontSizeLg}"
+                           FontWeight="{DynamicResource FontWeightBold}"
                            Foreground="{DynamicResource AccentBrush}"
                            VerticalAlignment="Center"
                            IsHitTestVisible="False" />
@@ -128,21 +128,21 @@
                     </Grid.RowDefinitions>
                     
                     <Grid Grid.Row="0" Margin="0,0,0,12">
-                        <TextBlock Text="🕒 History" FontSize="14" FontWeight="Bold" Foreground="{DynamicResource TextBrush}" VerticalAlignment="Center"/>
+                        <TextBlock Text="🕒 History" FontSize="{DynamicResource FontSizeNormal}" FontWeight="{DynamicResource FontWeightBold}" Foreground="{DynamicResource TextBrush}" VerticalAlignment="Center"/>
                         <Button Command="{Binding AIAssistantVM.ClearHistoryCommand}" HorizontalAlignment="Right" VerticalAlignment="Center" Cursor="Hand" ToolTip="Clear All History">
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
-                                    <Border x:Name="Border" Background="Transparent" BorderThickness="1" BorderBrush="{DynamicResource BorderBrush}" CornerRadius="4" Padding="8,4">
-                                        <TextBlock x:Name="BtnText" Text="Clear All" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                    <Border x:Name="Border" Background="Transparent" BorderThickness="1" BorderBrush="{DynamicResource BorderBrush}" CornerRadius="{DynamicResource RadiusSm}" Padding="{DynamicResource PaddingButtonSmall}">
+                                        <TextBlock x:Name="BtnText" Text="Clear All" FontSize="{DynamicResource FontSizeSm}" FontWeight="{DynamicResource FontWeightSemiBold}" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                                     </Border>
                                     <ControlTemplate.Triggers>
                                         <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter TargetName="BtnText" Property="Foreground" Value="#FF4C4C"/>
-                                            <Setter TargetName="Border" Property="BorderBrush" Value="#FF4C4C"/>
-                                            <Setter TargetName="Border" Property="Background" Value="#1AFF4C4C"/>
+                                            <Setter TargetName="BtnText" Property="Foreground" Value="{DynamicResource DangerTextBrush}"/>
+                                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource DangerBrush}"/>
+                                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource DangerBgBrush}"/>
                                         </Trigger>
                                         <Trigger Property="IsPressed" Value="True">
-                                            <Setter TargetName="Border" Property="Background" Value="#33FF4C4C"/>
+                                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource DangerPressedBgBrush}"/>
                                         </Trigger>
                                     </ControlTemplate.Triggers>
                                 </ControlTemplate>
@@ -169,19 +169,19 @@
                                                 <RowDefinition Height="Auto"/>
                                             </Grid.RowDefinitions>
                                             
-                                            <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding Prompt}" FontWeight="SemiBold" FontSize="12" Foreground="{DynamicResource TextBrush}" TextTrimming="CharacterEllipsis" Margin="0,0,4,2"/>
-                                            <TextBlock Grid.Row="1" Grid.Column="0" Text="{Binding Timestamp, StringFormat='MMM dd, HH:mm'}" FontSize="10" Foreground="{DynamicResource TextMutedBrush}"/>
+                                            <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding Prompt}" FontWeight="{DynamicResource FontWeightSemiBold}" FontSize="{DynamicResource FontSizeMd}" Foreground="{DynamicResource TextBrush}" TextTrimming="CharacterEllipsis" Margin="0,0,4,2"/>
+                                            <TextBlock Grid.Row="1" Grid.Column="0" Text="{Binding Timestamp, StringFormat='MMM dd, HH:mm'}" FontSize="{DynamicResource FontSizeXs}" Foreground="{DynamicResource TextMutedBrush}"/>
                                             
                                             <StackPanel Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
                                                 <Button Command="{Binding DeleteCommand}" ToolTip="Delete" Margin="0,0,4,0">
                                                     <Button.Template>
                                                         <ControlTemplate TargetType="Button">
                                                             <Border Background="Transparent" Cursor="Hand" Padding="4">
-                                                                <TextBlock x:Name="IconText" Text="✕" FontSize="12" Foreground="{DynamicResource TextMutedBrush}" Opacity="0.5" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                                                <TextBlock x:Name="IconText" Text="✕" FontSize="{DynamicResource FontSizeMd}" Foreground="{DynamicResource TextMutedBrush}" Opacity="0.5" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                                                             </Border>
                                                             <ControlTemplate.Triggers>
                                                                 <Trigger Property="IsMouseOver" Value="True">
-                                                                    <Setter TargetName="IconText" Property="Foreground" Value="#FF4C4C"/>
+                                                                    <Setter TargetName="IconText" Property="Foreground" Value="{DynamicResource DangerTextBrush}"/>
                                                                     <Setter TargetName="IconText" Property="Opacity" Value="1.0"/>
                                                                 </Trigger>
                                                             </ControlTemplate.Triggers>
@@ -190,17 +190,17 @@
                                                 </Button>
                                                 <Button Content="↩️" Command="{Binding RestoreCommand}" ToolTip="Restore"
                                                         Background="Transparent" BorderThickness="0" Foreground="{DynamicResource AccentBrush}"
-                                                        Padding="4" Cursor="Hand" FontSize="14"/>
+                                                        Padding="4" Cursor="Hand" FontSize="{DynamicResource FontSizeNormal}"/>
                                             </StackPanel>
                                                     
                                             <!-- Expanded Content -->
                                             <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,8,0,0"
                                                         Visibility="{Binding IsExpanded, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                                <TextBlock Text="Prompt:" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextMutedBrush}"/>
-                                                <TextBlock Text="{Binding Prompt}" FontSize="11" Foreground="{DynamicResource TextBrush}" TextWrapping="Wrap" Margin="0,2,0,8"/>
+                                                <TextBlock Text="Prompt:" FontSize="{DynamicResource FontSizeXs}" FontWeight="{DynamicResource FontWeightSemiBold}" Foreground="{DynamicResource TextMutedBrush}"/>
+                                                <TextBlock Text="{Binding Prompt}" FontSize="{DynamicResource FontSizeSm}" Foreground="{DynamicResource TextBrush}" TextWrapping="Wrap" Margin="0,2,0,8"/>
                                                 
-                                                <TextBlock Text="Result:" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextMutedBrush}"/>
-                                                <TextBlock Text="{Binding GeneratedText}" FontSize="11" Foreground="{DynamicResource TextBrush}" TextWrapping="Wrap" Margin="0,2,0,4"/>
+                                                <TextBlock Text="Result:" FontSize="{DynamicResource FontSizeXs}" FontWeight="{DynamicResource FontWeightSemiBold}" Foreground="{DynamicResource TextMutedBrush}"/>
+                                                <TextBlock Text="{Binding GeneratedText}" FontSize="{DynamicResource FontSizeSm}" Foreground="{DynamicResource TextBrush}" TextWrapping="Wrap" Margin="0,2,0,4"/>
                                             </StackPanel>
                                         </Grid>
                                     </Border>
@@ -251,8 +251,8 @@
                              Padding="12"
                              Foreground="{DynamicResource TextBrush}"
                              CaretBrush="{DynamicResource TextBrush}"
-                             FontFamily="Consolas"
-                             FontSize="14"/>
+                             FontFamily="{DynamicResource CodeFontFamily}"
+                             FontSize="{DynamicResource FontSizeNormal}"/>
 
                     <!-- Integrated Status Bar -->
                     <Border Grid.Row="1" Background="{DynamicResource StatusBgBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,1,0,0" CornerRadius="0,0,8,8" Padding="16,8">
@@ -303,7 +303,7 @@
 
                     <!-- Whitespace Section -->
                     <StackPanel Grid.Column="0" Margin="0,0,16,0">
-                        <TextBlock Text="Whitespace" FontWeight="Bold" FontSize="14" Margin="0,0,0,12" Foreground="{DynamicResource AccentBrush}" />
+                        <TextBlock Text="Whitespace" FontWeight="{DynamicResource FontWeightBold}" FontSize="{DynamicResource FontSizeNormal}" Margin="0,0,0,12" Foreground="{DynamicResource AccentBrush}" />
                         <CheckBox Content="Trim Start" IsChecked="{Binding ShouldTrimStart}" Style="{StaticResource ToggleSwitchStyle}"/>
                         <CheckBox Content="Trim End" IsChecked="{Binding ShouldTrimEnd}" Style="{StaticResource ToggleSwitchStyle}"/>
                         <CheckBox Content="Remove Multiple Spaces" IsChecked="{Binding ShouldRemoveMultipleSpaces}" Style="{StaticResource ToggleSwitchStyle}"/>
@@ -313,7 +313,7 @@
 
                     <!-- Letter Case Section -->
                     <StackPanel Grid.Column="1" Margin="0,0,16,0">
-                        <TextBlock Text="Letter Case" FontWeight="Bold" FontSize="14" Margin="0,0,0,12" Foreground="{DynamicResource AccentBrush}" />
+                        <TextBlock Text="Letter Case" FontWeight="{DynamicResource FontWeightBold}" FontSize="{DynamicResource FontSizeNormal}" Margin="0,0,0,12" Foreground="{DynamicResource AccentBrush}" />
                         <WrapPanel Orientation="Horizontal" Margin="0,4,0,0">
                             <RadioButton Content="None" IsChecked="{Binding IsDoNotChange, Mode=TwoWay}" GroupName="Case" Style="{StaticResource SegmentedRadioButtonStyle}" Margin="0,0,8,8"/>
                             <RadioButton Content="Sentence" IsChecked="{Binding IsSentenceCase, Mode=TwoWay}" GroupName="Case" Style="{StaticResource SegmentedRadioButtonStyle}" Margin="0,0,8,8"/>
@@ -325,7 +325,7 @@
 
                     <!-- Formatting Section -->
                     <StackPanel Grid.Column="2">
-                        <TextBlock Text="Formatting" FontWeight="Bold" FontSize="14" Margin="0,0,0,12" Foreground="{DynamicResource AccentBrush}" />
+                        <TextBlock Text="Formatting" FontWeight="{DynamicResource FontWeightBold}" FontSize="{DynamicResource FontSizeNormal}" Margin="0,0,0,12" Foreground="{DynamicResource AccentBrush}" />
                         <CheckBox Content="Fix Punctuation Spacing" IsChecked="{Binding ShouldFixPunctuationSpace}" Style="{StaticResource ToggleSwitchStyle}"/>
                         <CheckBox Content="Remove HTML Tags" IsChecked="{Binding ShouldRemoveHtmlTags}" Style="{StaticResource ToggleSwitchStyle}"/>
                         <CheckBox Content="Convert Smart Quotes" IsChecked="{Binding ShouldConvertSmartQuotes}" Style="{StaticResource ToggleSwitchStyle}"/>

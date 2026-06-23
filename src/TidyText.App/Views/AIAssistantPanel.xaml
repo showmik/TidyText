@@ -36,7 +36,7 @@
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="0,0,0,16">
             <StackPanel>
                 
-                <TextBlock Text="Quick Actions" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,12" Foreground="{DynamicResource TextBrush}"/>
+                <TextBlock Text="Quick Actions" FontSize="{DynamicResource FontSizeNormal}" FontWeight="SemiBold" Margin="0,0,0,12" Foreground="{DynamicResource TextBrush}"/>
                 
                 <ItemsControl ItemsSource="{Binding Templates}">
                     <ItemsControl.ItemTemplate>
@@ -46,8 +46,8 @@
                                     Style="{StaticResource AIActionButtonStyle}"
                                     Effect="{DynamicResource SoftGlow}">
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                    <TextBlock Text="{Binding Icon}" Margin="0,0,12,0" VerticalAlignment="Center" FontSize="16"/>
-                                    <TextBlock Text="{Binding Name}" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="14" Foreground="{DynamicResource TextBrush}"/>
+                                    <TextBlock Text="{Binding Icon}" Margin="0,0,12,0" VerticalAlignment="Center" FontSize="{DynamicResource FontSizeMd}"/>
+                                    <TextBlock Text="{Binding Name}" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="{DynamicResource FontSizeNormal}" Foreground="{DynamicResource TextBrush}"/>
                                 </StackPanel>
                             </Button>
                         </DataTemplate>
@@ -66,7 +66,7 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
             
-            <TextBlock Grid.Row="0" Text="Custom Prompt" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,8" Foreground="{DynamicResource TextBrush}"/>
+            <TextBlock Grid.Row="0" Text="Custom Prompt" FontSize="{DynamicResource FontSizeNormal}" FontWeight="SemiBold" Margin="0,0,0,8" Foreground="{DynamicResource TextBrush}"/>
             
             <Grid Grid.Row="1">
                 <TextBox Text="{Binding CustomPrompt, UpdateSourceTrigger=PropertyChanged}" 
@@ -74,8 +74,8 @@
                          VerticalScrollBarVisibility="Auto"
                          Background="{DynamicResource BgBrush}" BorderThickness="1" BorderBrush="{DynamicResource BorderBrush}" Padding="12"
                          Foreground="{DynamicResource TextBrush}" CaretBrush="{DynamicResource TextBrush}"
-                         FontFamily="Consolas" FontSize="14" />
-                <TextBlock IsHitTestVisible="False" Text="Ask AI to modify text or write something..." TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Stretch" Margin="14,14,14,0" Foreground="{DynamicResource TextMutedBrush}" FontSize="14">
+                         FontFamily="{DynamicResource BrandFontFamily}" FontSize="{DynamicResource FontSizeNormal}" />
+                <TextBlock IsHitTestVisible="False" Text="Ask AI to modify text or write something..." TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Stretch" Margin="14,14,14,0" Foreground="{DynamicResource TextMutedBrush}" FontSize="{DynamicResource FontSizeNormal}">
                     <TextBlock.Style>
                         <Style TargetType="TextBlock">
                             <Setter Property="Visibility" Value="Collapsed"/>
@@ -97,7 +97,7 @@
                 
                 <StackPanel Grid.Column="0" VerticalAlignment="Center">
                     <ProgressBar IsIndeterminate="True" Height="4" Margin="0,0,8,4" Background="{DynamicResource BorderBrush}" Foreground="{DynamicResource AccentBrush}" Visibility="{Binding IsProcessing, Converter={StaticResource BoolToVis}}" />
-                    <TextBlock Text="{Binding StatusMessage}" Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap">
+                    <TextBlock Text="{Binding StatusMessage}" Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap" FontSize="{DynamicResource FontSizeNormal}">
                         <TextBlock.Style>
                             <Style TargetType="TextBlock">
                                 <Setter Property="Visibility" Value="Visible"/>
@@ -122,8 +122,8 @@
                                     <Setter Property="Content" Value="Stop"/>
                                     <Setter Property="Command" Value="{Binding CancelProcessingCommand}"/>
                                     <Setter Property="Background" Value="Transparent"/>
-                                    <Setter Property="Foreground" Value="#FF7B72"/>
-                                    <Setter Property="BorderBrush" Value="#FF7B72"/>
+                                    <Setter Property="Foreground" Value="{DynamicResource DangerTextBrush}"/>
+                                    <Setter Property="BorderBrush" Value="{DynamicResource DangerBrush}"/>
                                     <Setter Property="BorderThickness" Value="1"/>
                                     <Setter Property="Effect" Value="{x:Null}"/>
                                 </DataTrigger>
@@ -145,7 +145,7 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 
-                <TextBlock Grid.Row="0" Text="Review Proposed Changes" FontSize="16" FontWeight="Bold" Margin="0,0,0,12" Foreground="{DynamicResource TextBrush}"/>
+                <TextBlock Grid.Row="0" Text="Review Proposed Changes" FontSize="{DynamicResource FontSizeLarge}" FontWeight="Bold" Margin="0,0,0,12" Foreground="{DynamicResource TextBrush}"/>
                 
                 <Border Grid.Row="1" Background="{DynamicResource PanelBgBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="4" Padding="8">
                     <ScrollViewer VerticalScrollBarVisibility="Auto">
@@ -153,16 +153,16 @@
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <Border x:Name="chunkBorder" CornerRadius="2" Margin="0,0,0,2">
-                                        <TextBlock x:Name="chunkText" Text="{Binding Text}" FontFamily="Consolas" FontSize="13" TextWrapping="Wrap" Foreground="{DynamicResource TextBrush}"/>
+                                        <TextBlock x:Name="chunkText" Text="{Binding Text}" FontFamily="{DynamicResource CodeFontFamily}" FontSize="{DynamicResource FontSizeNormal}" TextWrapping="Wrap" Foreground="{DynamicResource TextBrush}"/>
                                     </Border>
                                     <DataTemplate.Triggers>
                                         <DataTrigger Binding="{Binding Type}" Value="{x:Static vm:DiffChunkType.Inserted}">
-                                            <Setter TargetName="chunkBorder" Property="Background" Value="#332EA043"/>
-                                            <Setter TargetName="chunkText" Property="Foreground" Value="#56D364"/>
+                                            <Setter TargetName="chunkBorder" Property="Background" Value="{DynamicResource SuccessBgBrush}"/>
+                                            <Setter TargetName="chunkText" Property="Foreground" Value="{DynamicResource SuccessTextBrush}"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Type}" Value="{x:Static vm:DiffChunkType.Deleted}">
-                                            <Setter TargetName="chunkBorder" Property="Background" Value="#33F85149"/>
-                                            <Setter TargetName="chunkText" Property="Foreground" Value="#FF7B72"/>
+                                            <Setter TargetName="chunkBorder" Property="Background" Value="{DynamicResource DiffDeletedBgBrush}"/>
+                                            <Setter TargetName="chunkText" Property="Foreground" Value="{DynamicResource DiffDeletedTextBrush}"/>
                                             <Setter TargetName="chunkText" Property="TextDecorations" Value="Strikethrough"/>
                                         </DataTrigger>
                                     </DataTemplate.Triggers>

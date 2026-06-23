@@ -55,9 +55,9 @@ namespace TidyText.App
             // ViewModels
             IMessenger messenger = WeakReferenceMessenger.Default;
             IUndoRedoService undoRedoService = new UndoRedoService();
-            var mainViewModel = new MainViewModel(clipboard, undoRedoService, messenger);
             var templateProviders = new[] { new TidyText.Domain.AI.Templates.BuiltInTemplateProvider() };
             var aiViewModel = new AIAssistantViewModel(aiRouter, messenger, keyVault, historyRepository, templateProviders);
+            var mainViewModel = new MainViewModel(clipboard, undoRedoService, messenger, aiViewModel);
             var settingsViewModel = new SettingsViewModel(keyVault);
 
             IThemeRepository themeRepository = new TidyText.Infrastructure.Persistence.FileThemeRepository(tidyTextDataPath);
