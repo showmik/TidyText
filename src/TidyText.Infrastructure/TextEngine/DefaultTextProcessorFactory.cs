@@ -1,4 +1,5 @@
 using TidyText.Domain.TextEngine;
+using TidyText.Domain.TextEngine.Casing;
 using TidyText.Domain.TextEngine.Processors;
 
 namespace TidyText.Infrastructure.TextEngine
@@ -24,8 +25,19 @@ namespace TidyText.Infrastructure.TextEngine
                 .AddProcessor(new PunctuationProcessor(new PunctuationProcessorOptions
                     { FixPunctuationSpacing = options.FixPunctuationSpacing,
                       TreatColonAsSentencePunct = true }))
-                .AddProcessor(new CasingProcessor(new CasingProcessorOptions
-                    { Style = options.CasingStyle }));
+                .AddProcessor(new CasingProcessor(GetCasingStrategy(options.CasingStyle)));
+        }
+
+        private ICasingStrategy GetCasingStrategy(CasingStyle style)
+        {
+            return style switch
+            {
+                CasingStyle.Uppercase => new UppercaseStrategy(),
+                CasingStyle.Lowercase => new LowercaseStrategy(),
+                CasingStyle.SentenceCase => new SentenceCaseStrategy(),
+                CasingStyle.TitleCase => new TitleCaseStrategy(),
+                _ => new DoNotChangeStrategy()
+            };
         }
     }
 }

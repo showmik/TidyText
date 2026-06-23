@@ -12,46 +12,25 @@ namespace TidyText.Domain.TextEngine.Processors
         TitleCase
     }
 
-    public class CasingProcessorOptions : ProcessorOptions
-    {
-        public CasingStyle Style { get; set; } = CasingStyle.DoNotChange;
-        public CultureInfo? Culture { get; set; }
-    }
-
     public class CasingProcessor : ITextProcessor
     {
         public string Name => "Casing Processor";
         public string Description => "Converts text to uppercase, lowercase, sentence case, or title case.";
 
-        private readonly CasingProcessorOptions _options;
+        private readonly ICasingStrategy _strategy;
+        private readonly CultureInfo _culture;
 
-        public CasingProcessor(CasingProcessorOptions? options = null)
+        public CasingProcessor(ICasingStrategy strategy, CultureInfo? culture = null)
         {
-            _options = options ?? new CasingProcessorOptions();
+            _strategy = strategy ?? new DoNotChangeStrategy();
+            _culture = culture ?? CultureInfo.CurrentCulture;
         }
 
         public string Process(string input)
         {
             if (string.IsNullOrEmpty(input)) return input;
 
-            if (_options.Style == CasingStyle.DoNotChange)
-                return input;
-
-            var culture = _options.Culture ?? CultureInfo.CurrentCulture;
-
-            switch (_options.Style)
-            {
-                case CasingStyle.Uppercase:
-                    return input.ToUpper(culture);
-                case CasingStyle.Lowercase:
-                    return input.ToLower(culture);
-                case CasingStyle.SentenceCase:
-                    return SentenceCaseConverter.Default.Convert(input, culture);
-                case CasingStyle.TitleCase:
-                    return TitleCaseConverter.Default.Convert(input, culture);
-                default:
-                    return input;
-            }
+            return _strategy.Convert(input, _culture);
         }
     }
 }
