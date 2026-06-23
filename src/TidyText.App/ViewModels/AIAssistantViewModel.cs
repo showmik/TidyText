@@ -1,6 +1,8 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -58,6 +60,15 @@ namespace TidyText.App.ViewModels
 
         private string _proposedText = string.Empty;
         private string _currentPromptOrTemplate = string.Empty;
+        private readonly StringBuilder _streamingBuffer = new();
+        private readonly Stopwatch _diffThrottle = new();
+
+        /// <summary>
+        /// Minimum interval between diff recomputations during streaming.
+        /// Prevents UI thread saturation when tokens arrive faster than
+        /// the diff can be rendered.
+        /// </summary>
+        private const int DiffThrottleMs = 150;
 
         [ObservableProperty]
         private bool _isProcessing = false;
@@ -170,19 +181,38 @@ namespace TidyText.App.ViewModels
 
             try
             {
-                var response = await _router.RouteAsync(ActiveProviderName, prompt, options, _cancellationTokenSource.Token);
+                StatusMessage = "Streaming proposed changes...";
+                _streamingBuffer.Clear();
+                _diffThrottle.Restart();
+                IsReviewing = true;
+                _currentPromptOrTemplate = template.Name;
 
-                if (response.IsError)
+                await foreach (var chunk in _router.StreamAsync(ActiveProviderName, prompt, options, _cancellationTokenSource.Token))
                 {
-                    StatusMessage = "Error occurred: " + response.ErrorMessage;
+                    if (chunk.StartsWith("[Error] "))
+                    {
+                        StatusMessage = "Error occurred: " + chunk.Substring(8);
+                        break;
+                    }
+                    
+                    _streamingBuffer.Append(chunk);
+
+                    // Throttle: only recompute diff at most once per DiffThrottleMs
+                    if (_diffThrottle.ElapsedMilliseconds >= DiffThrottleMs)
+                    {
+                        _proposedText = _streamingBuffer.ToString();
+                        await GenerateDiffAsync(currentText, _proposedText);
+                        _diffThrottle.Restart();
+                    }
                 }
-                else
+
+                // Final flush — always render the complete diff
+                _proposedText = _streamingBuffer.ToString();
+                await GenerateDiffAsync(currentText, _proposedText);
+
+                if (!StatusMessage.StartsWith("Error"))
                 {
                     StatusMessage = "Reviewing proposed changes...";
-                    _proposedText = response.Text;
-                    _currentPromptOrTemplate = template.Name;
-                    GenerateDiff(currentText, _proposedText);
-                    IsReviewing = true;
                 }
             }
             catch (OperationCanceledException)
@@ -232,19 +262,38 @@ namespace TidyText.App.ViewModels
 
             try
             {
-                var response = await _router.RouteAsync(ActiveProviderName, prompt, options, _cancellationTokenSource.Token);
+                StatusMessage = "Streaming proposed changes...";
+                _streamingBuffer.Clear();
+                _diffThrottle.Restart();
+                IsReviewing = true;
+                _currentPromptOrTemplate = CustomPrompt;
 
-                if (response.IsError)
+                await foreach (var chunk in _router.StreamAsync(ActiveProviderName, prompt, options, _cancellationTokenSource.Token))
                 {
-                    StatusMessage = "Error occurred: " + response.ErrorMessage;
+                    if (chunk.StartsWith("[Error] "))
+                    {
+                        StatusMessage = "Error occurred: " + chunk.Substring(8);
+                        break;
+                    }
+                    
+                    _streamingBuffer.Append(chunk);
+
+                    // Throttle: only recompute diff at most once per DiffThrottleMs
+                    if (_diffThrottle.ElapsedMilliseconds >= DiffThrottleMs)
+                    {
+                        _proposedText = _streamingBuffer.ToString();
+                        await GenerateDiffAsync(currentText, _proposedText);
+                        _diffThrottle.Restart();
+                    }
                 }
-                else
+
+                // Final flush — always render the complete diff
+                _proposedText = _streamingBuffer.ToString();
+                await GenerateDiffAsync(currentText, _proposedText);
+
+                if (!StatusMessage.StartsWith("Error"))
                 {
                     StatusMessage = "Reviewing proposed changes...";
-                    _proposedText = response.Text;
-                    _currentPromptOrTemplate = CustomPrompt;
-                    GenerateDiff(currentText, _proposedText);
-                    IsReviewing = true;
                 }
             }
             catch (OperationCanceledException)
@@ -261,28 +310,38 @@ namespace TidyText.App.ViewModels
             }
         }
 
-        private void GenerateDiff(string oldText, string newText)
+        /// <summary>
+        /// Computes the inline diff on a threadpool thread, then marshals the
+        /// result back to the UI thread via the captured SynchronizationContext
+        /// (the await resumes on the caller's context — the UI thread).
+        /// </summary>
+        private async Task GenerateDiffAsync(string oldText, string newText)
         {
-            var diffBuilder = new InlineDiffBuilder(new Differ());
-            var diff = diffBuilder.BuildDiffModel(oldText ?? string.Empty, newText ?? string.Empty);
-
-            var newChunks = new System.Collections.Generic.List<DiffChunk>();
-            foreach (var line in diff.Lines)
+            var newChunks = await Task.Run(() =>
             {
-                var chunkType = line.Type switch
-                {
-                    ChangeType.Inserted => DiffChunkType.Inserted,
-                    ChangeType.Deleted => DiffChunkType.Deleted,
-                    _ => DiffChunkType.Unchanged
-                };
+                var diffBuilder = new InlineDiffBuilder(new Differ());
+                var diff = diffBuilder.BuildDiffModel(oldText ?? string.Empty, newText ?? string.Empty);
 
-                newChunks.Add(new DiffChunk
+                var chunks = new System.Collections.Generic.List<DiffChunk>();
+                foreach (var line in diff.Lines)
                 {
-                    Text = line.Text + "\n",
-                    Type = chunkType
-                });
-            }
+                    var chunkType = line.Type switch
+                    {
+                        ChangeType.Inserted => DiffChunkType.Inserted,
+                        ChangeType.Deleted => DiffChunkType.Deleted,
+                        _ => DiffChunkType.Unchanged
+                    };
+
+                    chunks.Add(new DiffChunk
+                    {
+                        Text = line.Text + "\n",
+                        Type = chunkType
+                    });
+                }
+                return chunks;
+            }).ConfigureAwait(true); // Explicitly resume on UI thread for collection assignment
             
+            // This assignment fires PropertyChanged on the UI thread — safe.
             DiffChunks = new ObservableCollection<DiffChunk>(newChunks);
         }
 
