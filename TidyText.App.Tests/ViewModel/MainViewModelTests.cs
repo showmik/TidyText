@@ -6,8 +6,6 @@ using System.Windows; // WPF Application
 using TidyText.App.ViewModels;
 using TidyText.Domain.Services;
 using TidyText.Domain.TextEngine;
-using TidyText.Infrastructure.TextEngine;
-
 namespace TidyText.Tests.ViewModel
 {
     [TestFixture]
@@ -32,8 +30,8 @@ namespace TidyText.Tests.ViewModel
 
         private static MainViewModel NewVm() => new MainViewModel(
             new StubClipboardService(),
-            new DefaultTextProcessorFactory(),
-            new UndoRedoService())
+            new UndoRedoService(),
+            CommunityToolkit.Mvvm.Messaging.WeakReferenceMessenger.Default)
         {
             ShouldTrim = false,
             ShouldTrimStart = false,

@@ -6,19 +6,18 @@ using TidyText.Domain.Services;
 using TidyText.Domain.TextEngine;
 using TidyText.Domain.TextEngine.Processors;
 using TidyText.Domain.Statistics;
+using CommunityToolkit.Mvvm.Messaging;
+using TidyText.App.Messages;
 
 namespace TidyText.App.ViewModels
 {
-    public partial class MainViewModel : ObservableObject, ITextEditorMediator
+    public partial class MainViewModel : ObservableObject
     {
         public string CurrentText => MainText;
         public void ReplaceText(string newText) => MainText = newText;
 
         private readonly IClipboardService _clipboardService;
-        private readonly ITextProcessorFactory _processorFactory;
         private readonly IUndoRedoService _undoRedoService;
-        
-        public AIAssistantViewModel? AIAssistantVM { get; set; }
 
         
         // --- Input & Output ---
@@ -102,11 +101,13 @@ namespace TidyText.App.ViewModels
             set { if (value) SelectedCasingStyle = CasingStyle.DoNotChange; }
         }
 
-        public MainViewModel(IClipboardService clipboardService, ITextProcessorFactory processorFactory, IUndoRedoService undoRedoService)
+        public MainViewModel(IClipboardService clipboardService, IUndoRedoService undoRedoService, IMessenger messenger)
         {
             _clipboardService = clipboardService;
-            _processorFactory = processorFactory;
             _undoRedoService = undoRedoService;
+
+            messenger.Register<MainViewModel, TextReplacementRequestedMessage>(this, (r, m) => r.ReplaceText(m.NewText));
+            messenger.Register<MainViewModel, CurrentTextRequestMessage>(this, (r, m) => m.Reply(r.CurrentText));
         }
 
         partial void OnMainTextChanged(string value)
@@ -144,20 +145,15 @@ namespace TidyText.App.ViewModels
 
             _undoRedoService.Push(MainText);
 
-            var cleaningOptions = new CleaningOptions
-            {
-                TrimStart = ShouldTrim || ShouldTrimStart,
-                TrimEnd = ShouldTrim || ShouldTrimEnd,
-                RemoveMultipleSpaces = ShouldRemoveMultipleSpaces,
-                RemoveMultipleLines = ShouldRemoveMultipleLines,
-                RemoveAllLines = ShouldRemoveAllLines,
-                FixPunctuationSpacing = ShouldFixPunctuationSpace,
-                RemoveHtmlTags = ShouldRemoveHtmlTags,
-                ConvertSmartQuotes = ShouldConvertSmartQuotes,
-                CasingStyle = SelectedCasingStyle
-            };
+            var pipeline = new TextPipelineBuilder()
+                .AddMarkdownStripper() // Always add markdown stripping as per original design, or add flag
+                .If(ShouldRemoveHtmlTags, b => b.AddHtmlStripper())
+                .If(ShouldConvertSmartQuotes, b => b.AddSmartQuotes())
+                .AddWhitespaceCleaning(ShouldTrim || ShouldTrimStart, ShouldTrim || ShouldTrimEnd, ShouldRemoveMultipleSpaces, ShouldRemoveMultipleLines, ShouldRemoveAllLines)
+                .AddPunctuationCleaning(ShouldFixPunctuationSpace)
+                .AddCasing(SelectedCasingStyle)
+                .Build();
 
-            var pipeline = _processorFactory.BuildPipeline(cleaningOptions);
             MainText = pipeline.Process(MainText);
         }
 

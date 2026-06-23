@@ -1,4 +1,5 @@
 using System;
+using CommunityToolkit.Mvvm.Messaging;
 using System.Net.Http;
 using System.Windows;
 using TidyText.App.Services;
@@ -52,11 +53,11 @@ namespace TidyText.App
             IAIProviderRouter aiRouter = new AIProviderRouter(providers);
 
             // ViewModels
-            TidyText.Domain.TextEngine.ITextProcessorFactory processorFactory = new TidyText.Infrastructure.TextEngine.DefaultTextProcessorFactory();
+            IMessenger messenger = WeakReferenceMessenger.Default;
             IUndoRedoService undoRedoService = new UndoRedoService();
-            var mainViewModel = new MainViewModel(clipboard, processorFactory, undoRedoService);
+            var mainViewModel = new MainViewModel(clipboard, undoRedoService, messenger);
             var templateProviders = new[] { new TidyText.Domain.AI.Templates.BuiltInTemplateProvider() };
-            var aiViewModel = new AIAssistantViewModel(aiRouter, mainViewModel, keyVault, historyRepository, templateProviders);
+            var aiViewModel = new AIAssistantViewModel(aiRouter, messenger, keyVault, historyRepository, templateProviders);
             var settingsViewModel = new SettingsViewModel(keyVault);
 
             IThemeRepository themeRepository = new TidyText.Infrastructure.Persistence.FileThemeRepository(tidyTextDataPath);
@@ -66,8 +67,8 @@ namespace TidyText.App
                 DataContext = mainViewModel
             };
             
-            // Assuming AIAssistantPanel DataContext is bound in XAML or passed here
-            mainViewModel.AIAssistantVM = aiViewModel;
+            // Note: AIAssistantPanel DataContext should be bound via DI or a Locator in XAML now, 
+            // but for simplicity we assume it's set properly or the view resolves it.
 
             mainWindow.Show();
         }

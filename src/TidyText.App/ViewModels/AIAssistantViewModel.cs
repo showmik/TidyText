@@ -13,13 +13,15 @@ using TidyText.Domain.AI;
 using TidyText.Domain.AI.Templates;
 using TidyText.Domain.Security;
 using TidyText.Domain.Services;
+using CommunityToolkit.Mvvm.Messaging;
+using TidyText.App.Messages;
 
 namespace TidyText.App.ViewModels
 {
     public partial class AIAssistantViewModel : ObservableObject
     {
         private readonly IAIProviderRouter _router;
-        private readonly ITextEditorMediator _editor;
+        private readonly IMessenger _messenger;
         private readonly ISecureKeyVault _keyVault;
         private readonly IAIHistoryRepository _historyRepository;
         private CancellationTokenSource? _cancellationTokenSource;
@@ -65,13 +67,13 @@ namespace TidyText.App.ViewModels
 
         public AIAssistantViewModel(
             IAIProviderRouter router,
-            ITextEditorMediator editorMediator,
+            IMessenger messenger,
             ISecureKeyVault keyVault,
             IAIHistoryRepository historyRepository,
             System.Collections.Generic.IEnumerable<IPromptTemplateProvider> templateProviders)
         {
             _router = router;
-            _editor = editorMediator;
+            _messenger = messenger;
             _keyVault = keyVault;
             _historyRepository = historyRepository;
             
@@ -144,7 +146,8 @@ namespace TidyText.App.ViewModels
         [RelayCommand]
         public async Task ExecuteTemplateAsync(IPromptTemplate template)
         {
-            if (template == null || string.IsNullOrWhiteSpace(_editor.CurrentText)) return;
+            string currentText = _messenger.Send(new CurrentTextRequestMessage());
+            if (template == null || string.IsNullOrWhiteSpace(currentText)) return;
 
             SelectedTemplate = template;
             IsProcessing = true;
@@ -157,7 +160,7 @@ namespace TidyText.App.ViewModels
             }
             _cancellationTokenSource = new CancellationTokenSource();
 
-            var prompt = template.GetPrompt(_editor.CurrentText);
+            var prompt = template.GetPrompt(currentText);
             var options = new AIOptions 
             { 
                 SystemPrompt = template.SystemPrompt,
@@ -178,7 +181,7 @@ namespace TidyText.App.ViewModels
                     StatusMessage = "Reviewing proposed changes...";
                     _proposedText = response.Text;
                     _currentPromptOrTemplate = template.Name;
-                    GenerateDiff(_editor.CurrentText, _proposedText);
+                    GenerateDiff(currentText, _proposedText);
                     IsReviewing = true;
                 }
             }
@@ -205,7 +208,8 @@ namespace TidyText.App.ViewModels
         [RelayCommand]
         public async Task ExecuteCustomPromptAsync()
         {
-            if (string.IsNullOrWhiteSpace(CustomPrompt) || string.IsNullOrWhiteSpace(_editor.CurrentText)) return;
+            string currentText = _messenger.Send(new CurrentTextRequestMessage());
+            if (string.IsNullOrWhiteSpace(CustomPrompt) || string.IsNullOrWhiteSpace(currentText)) return;
 
             IsProcessing = true;
             StatusMessage = "Processing custom prompt with " + ActiveProviderName + "...";
@@ -218,7 +222,7 @@ namespace TidyText.App.ViewModels
             _cancellationTokenSource = new CancellationTokenSource();
 
             // The template essentially just prepends the custom prompt to the text
-            var prompt = $"{CustomPrompt}\n\n<text>\n{_editor.CurrentText}\n</text>";
+            var prompt = $"{CustomPrompt}\n\n<text>\n{currentText}\n</text>";
             var options = new AIOptions 
             { 
                 Temperature = 0.5,
@@ -239,7 +243,7 @@ namespace TidyText.App.ViewModels
                     StatusMessage = "Reviewing proposed changes...";
                     _proposedText = response.Text;
                     _currentPromptOrTemplate = CustomPrompt;
-                    GenerateDiff(_editor.CurrentText, _proposedText);
+                    GenerateDiff(currentText, _proposedText);
                     IsReviewing = true;
                 }
             }
@@ -283,7 +287,7 @@ namespace TidyText.App.ViewModels
         [RelayCommand]
         public void AcceptChanges()
         {
-            _editor.ReplaceText(_proposedText);
+            _messenger.Send(new TextReplacementRequestedMessage(_proposedText));
 
             History.Insert(0, new AIHistoryItem(RestoreHistoryItem, DeleteHistoryItem)
             {
@@ -356,7 +360,7 @@ namespace TidyText.App.ViewModels
 
         private void RestoreHistoryItem(string text)
         {
-            _editor.ReplaceText(text);
+            _messenger.Send(new TextReplacementRequestedMessage(text));
         }
     }
 }
