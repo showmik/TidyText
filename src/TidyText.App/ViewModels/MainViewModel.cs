@@ -11,37 +11,8 @@ using TidyText.App.Messages;
 
 namespace TidyText.App.ViewModels
 {
-    public partial class MainViewModel : ObservableObject
+    public partial class DocumentStatistics : ObservableObject
     {
-        public AIAssistantViewModel AIAssistantVM { get; }
-        public string CurrentText => MainText;
-        public void ReplaceText(string newText) => MainText = newText;
-
-        private readonly IClipboardService _clipboardService;
-        private readonly IUndoRedoService _undoRedoService;
-
-        
-        // --- Input & Output ---
-        [ObservableProperty]
-        private string _mainText = string.Empty;
-
-        // --- View State ---
-        [ObservableProperty]
-        private bool _isAIPanelOpen = false;
-        
-        [ObservableProperty]
-        private bool _isHistoryPanelOpen = false;
-
-        [RelayCommand]
-        private void ToggleHistoryPanel()
-        {
-            IsHistoryPanelOpen = !IsHistoryPanelOpen;
-        }
-
-        [ObservableProperty]
-        private bool _wrapLines = true;
-        
-        // --- Statistics ---
         [ObservableProperty] private int _wordCount;
         [ObservableProperty] private int _characterCount;
         [ObservableProperty] private int _sentenceCount;
@@ -49,8 +20,10 @@ namespace TidyText.App.ViewModels
         [ObservableProperty] private int _lineCount;
         [ObservableProperty] private int _readingTimeSeconds;
         [ObservableProperty] private string _readabilityScore = "N/A";
+    }
 
-        // --- Processing Options ---
+    public partial class TextCleaningOptions : ObservableObject
+    {
         [ObservableProperty] private bool _shouldTrim = false;
         [ObservableProperty] private bool _shouldTrimStart = true;
         [ObservableProperty] private bool _shouldTrimEnd = true;
@@ -60,47 +33,39 @@ namespace TidyText.App.ViewModels
         [ObservableProperty] private bool _shouldFixPunctuationSpace = true;
         [ObservableProperty] private bool _shouldRemoveHtmlTags = false;
         [ObservableProperty] private bool _shouldConvertSmartQuotes = false;
+        [ObservableProperty] private CasingStyle _casingStyle = CasingStyle.DoNotChange;
+    }
+
+    public partial class MainViewModel : ObservableObject
+    {
+        public AIAssistantViewModel AIAssistantVM { get; }
+        public string CurrentText => MainText;
+        public void ReplaceText(string newText) => MainText = newText;
+
+        private readonly IClipboardService _clipboardService;
+        private readonly IUndoRedoService _undoRedoService;
+
+        // --- Core State ---
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(CurrentText))]
+        private string _mainText = string.Empty;
+
+        // --- View State ---
+        [ObservableProperty]
+        private bool _isAIPanelOpen = false;
         
-        [ObservableProperty] private CasingStyle _selectedCasingStyle = CasingStyle.DoNotChange;
+        [ObservableProperty]
+        private bool _isHistoryPanelOpen = false;
 
-        partial void OnSelectedCasingStyleChanged(CasingStyle value)
-        {
-            OnPropertyChanged(nameof(IsUppercase));
-            OnPropertyChanged(nameof(IsLowercase));
-            OnPropertyChanged(nameof(IsSentenceCase));
-            OnPropertyChanged(nameof(IsTitleCase));
-            OnPropertyChanged(nameof(IsDoNotChange));
-        }
+        [ObservableProperty]
+        private bool _wrapLines = true;
 
-        public bool IsUppercase
-        {
-            get => SelectedCasingStyle == CasingStyle.Uppercase;
-            set { if (value) SelectedCasingStyle = CasingStyle.Uppercase; }
-        }
+        // --- Modular Sub-States ---
+        [ObservableProperty]
+        private DocumentStatistics _statistics = new();
 
-        public bool IsLowercase
-        {
-            get => SelectedCasingStyle == CasingStyle.Lowercase;
-            set { if (value) SelectedCasingStyle = CasingStyle.Lowercase; }
-        }
-
-        public bool IsSentenceCase
-        {
-            get => SelectedCasingStyle == CasingStyle.SentenceCase;
-            set { if (value) SelectedCasingStyle = CasingStyle.SentenceCase; }
-        }
-
-        public bool IsTitleCase
-        {
-            get => SelectedCasingStyle == CasingStyle.TitleCase;
-            set { if (value) SelectedCasingStyle = CasingStyle.TitleCase; }
-        }
-
-        public bool IsDoNotChange
-        {
-            get => SelectedCasingStyle == CasingStyle.DoNotChange;
-            set { if (value) SelectedCasingStyle = CasingStyle.DoNotChange; }
-        }
+        [ObservableProperty]
+        private TextCleaningOptions _options = new();
 
         public MainViewModel(IClipboardService clipboardService, IUndoRedoService undoRedoService, IMessenger messenger, AIAssistantViewModel aiAssistantVM)
         {
@@ -120,25 +85,26 @@ namespace TidyText.App.ViewModels
         private void UpdateStatistics(string text)
         {
             var stats = TextStatistics.Calculate(text);
-            WordCount = stats.WordCount;
-            CharacterCount = stats.CharacterCount;
-            SentenceCount = stats.SentenceCount;
-            ParagraphCount = stats.ParagraphCount;
-            LineCount = stats.LineCount;
-
-            // Average reading speed: 200 words per minute -> 3.3 words per second
-            ReadingTimeSeconds = (int)(WordCount / 3.3);
-
             var scores = ReadabilityScorer.Calculate(stats);
-            if (WordCount > 0)
+
+            // Instant UI update via single property assignment
+            Statistics = new DocumentStatistics
             {
-                ReadabilityScore = $"{scores.LixIndex:F1} ({scores.ReadingEaseDescription})";
-            }
-            else
-            {
-                ReadabilityScore = "N/A";
-            }
+                WordCount = stats.WordCount,
+                CharacterCount = stats.CharacterCount,
+                SentenceCount = stats.SentenceCount,
+                ParagraphCount = stats.ParagraphCount,
+                LineCount = stats.LineCount,
+                ReadingTimeSeconds = (int)(stats.WordCount / 3.3),
+                ReadabilityScore = stats.WordCount > 0 ? $"{scores.LixIndex:F1} ({scores.ReadingEaseDescription})" : "N/A"
+            };
         }
+
+        [RelayCommand]
+        private void ToggleHistoryPanel() => IsHistoryPanelOpen = !IsHistoryPanelOpen;
+
+        [RelayCommand]
+        public void ToggleAIPanel() => IsAIPanelOpen = !IsAIPanelOpen;
 
         [RelayCommand]
         public void CleanText()
@@ -148,52 +114,40 @@ namespace TidyText.App.ViewModels
             _undoRedoService.Push(MainText);
 
             var pipeline = new TextPipelineBuilder()
-                .AddMarkdownStripper() // Always add markdown stripping as per original design, or add flag
-                .If(ShouldRemoveHtmlTags, b => b.AddHtmlStripper())
-                .If(ShouldConvertSmartQuotes, b => b.AddSmartQuotes())
-                .AddWhitespaceCleaning(ShouldTrim || ShouldTrimStart, ShouldTrim || ShouldTrimEnd, ShouldRemoveMultipleSpaces, ShouldRemoveMultipleLines, ShouldRemoveAllLines)
-                .AddPunctuationCleaning(ShouldFixPunctuationSpace)
-                .AddCasing(SelectedCasingStyle)
+                .AddMarkdownStripper() 
+                .If(Options.ShouldRemoveHtmlTags, b => b.AddHtmlStripper())
+                .If(Options.ShouldConvertSmartQuotes, b => b.AddSmartQuotes())
+                .AddWhitespaceCleaning(Options.ShouldTrim || Options.ShouldTrimStart, Options.ShouldTrim || Options.ShouldTrimEnd, Options.ShouldRemoveMultipleSpaces, Options.ShouldRemoveMultipleLines, Options.ShouldRemoveAllLines)
+                .AddPunctuationCleaning(Options.ShouldFixPunctuationSpace)
+                .AddCasing(Options.CasingStyle)
                 .Build();
 
             MainText = pipeline.Process(MainText);
         }
 
         [RelayCommand]
-        public void Clean()
-        {
-            CleanText();
-        }
+        public void Clean() => CleanText();
 
         [RelayCommand]
         public void Undo()
         {
             var previous = _undoRedoService.Undo(MainText);
-            if (previous != null)
-                MainText = previous;
+            if (previous != null) MainText = previous;
         }
 
         [RelayCommand]
         public void Redo()
         {
             var next = _undoRedoService.Redo(MainText);
-            if (next != null)
-                MainText = next;
+            if (next != null) MainText = next;
         }
 
-        [RelayCommand]
-        public void ToggleAIPanel()
-        {
-            IsAIPanelOpen = !IsAIPanelOpen;
-        }
-        
         [RelayCommand]
         public void Copy()
         {
             if (!string.IsNullOrEmpty(MainText))
             {
                 _clipboardService.SetText(MainText);
-                // Trigger toast notification event here
             }
         }
     }

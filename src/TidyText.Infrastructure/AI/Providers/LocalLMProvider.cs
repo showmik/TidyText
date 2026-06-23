@@ -7,9 +7,8 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using TidyText.Domain.Security;
-
 using TidyText.Domain.AI;
-using TidyText.Domain.Security;
+
 namespace TidyText.Infrastructure.AI.Providers
 {
     public class LocalLMProvider : IAIProvider

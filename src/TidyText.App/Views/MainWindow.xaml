@@ -6,6 +6,8 @@
         xmlns:local="clr-namespace:TidyText.App"
         xmlns:viewmodels="clr-namespace:TidyText.App.ViewModels"
         xmlns:views="clr-namespace:TidyText.App.Views"
+        xmlns:converters="clr-namespace:TidyText.App.Converters"
+        xmlns:domain="clr-namespace:TidyText.Domain.TextEngine.Processors;assembly=TidyText.Domain"
         mc:Ignorable="d"
         Title="TidyText" Height="800" Width="1200"
         WindowStartupLocation="CenterScreen"
@@ -14,6 +16,9 @@
         WindowStyle="SingleBorderWindow"
         ResizeMode="CanResize">
         
+    <Window.Resources>
+        <converters:EnumToBooleanConverter x:Key="EnumToBoolConverter"/>
+    </Window.Resources>
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="48" CornerRadius="0" GlassFrameThickness="1" UseAeroCaptionButtons="False" />
     </WindowChrome.WindowChrome>
@@ -264,23 +269,23 @@
                             
                             <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
                                 <TextBlock Margin="0,0,12,0" VerticalAlignment="Center">
-                                    <Run Text="Words:" Foreground="{DynamicResource TextMutedBrush}"/> <Run Text="{Binding WordCount}" FontWeight="Bold" Foreground="{DynamicResource TextBrush}"/>
+                                    <Run Text="Words:" Foreground="{DynamicResource TextMutedBrush}"/> <Run Text="{Binding Statistics.WordCount}" FontWeight="Bold" Foreground="{DynamicResource TextBrush}"/>
                                 </TextBlock>
                                 <TextBlock Margin="0,0,12,0" VerticalAlignment="Center">
-                                    <Run Text="Chars:" Foreground="{DynamicResource TextMutedBrush}"/> <Run Text="{Binding CharacterCount}" FontWeight="Bold" Foreground="{DynamicResource TextBrush}"/>
+                                    <Run Text="Chars:" Foreground="{DynamicResource TextMutedBrush}"/> <Run Text="{Binding Statistics.CharacterCount}" FontWeight="Bold" Foreground="{DynamicResource TextBrush}"/>
                                 </TextBlock>
                                 <TextBlock Margin="0,0,12,0" VerticalAlignment="Center">
-                                    <Run Text="Sentences:" Foreground="{DynamicResource TextMutedBrush}"/> <Run Text="{Binding SentenceCount}" FontWeight="Bold" Foreground="{DynamicResource TextBrush}"/>
+                                    <Run Text="Sentences:" Foreground="{DynamicResource TextMutedBrush}"/> <Run Text="{Binding Statistics.SentenceCount}" FontWeight="Bold" Foreground="{DynamicResource TextBrush}"/>
                                 </TextBlock>
                                 <TextBlock Margin="0,0,12,0" VerticalAlignment="Center">
-                                    <Run Text="Paragraphs:" Foreground="{DynamicResource TextMutedBrush}"/> <Run Text="{Binding ParagraphCount}" FontWeight="Bold" Foreground="{DynamicResource TextBrush}"/>
+                                    <Run Text="Paragraphs:" Foreground="{DynamicResource TextMutedBrush}"/> <Run Text="{Binding Statistics.ParagraphCount}" FontWeight="Bold" Foreground="{DynamicResource TextBrush}"/>
                                 </TextBlock>
                                 <TextBlock Margin="0,0,16,0" VerticalAlignment="Center">
-                                    <Run Text="Lines:" Foreground="{DynamicResource TextMutedBrush}"/> <Run Text="{Binding LineCount}" FontWeight="Bold" Foreground="{DynamicResource TextBrush}"/>
+                                    <Run Text="Lines:" Foreground="{DynamicResource TextMutedBrush}"/> <Run Text="{Binding Statistics.LineCount}" FontWeight="Bold" Foreground="{DynamicResource TextBrush}"/>
                                 </TextBlock>
                                 <TextBlock Text="|" Foreground="{DynamicResource BorderBrush}" Margin="0,0,16,0" VerticalAlignment="Center"/>
-                                <TextBlock Text="{Binding ReadingTimeSeconds, StringFormat='⏱️ ~\{0\}s'}" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,16,0" VerticalAlignment="Center"/>
-                                <TextBlock Text="{Binding ReadabilityScore, StringFormat='📖 \{0\}'}" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center"/>
+                                <TextBlock Text="{Binding Statistics.ReadingTimeSeconds, StringFormat='⏱️ ~\{0\}s'}" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,16,0" VerticalAlignment="Center"/>
+                                <TextBlock Text="{Binding Statistics.ReadabilityScore, StringFormat='📖 \{0\}'}" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center"/>
                             </StackPanel>
                             
                             <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
@@ -304,31 +309,31 @@
                     <!-- Whitespace Section -->
                     <StackPanel Grid.Column="0" Margin="0,0,16,0">
                         <TextBlock Text="Whitespace" FontWeight="{DynamicResource FontWeightBold}" FontSize="{DynamicResource FontSizeNormal}" Margin="0,0,0,12" Foreground="{DynamicResource AccentBrush}" />
-                        <CheckBox Content="Trim Start" IsChecked="{Binding ShouldTrimStart}" Style="{StaticResource ToggleSwitchStyle}"/>
-                        <CheckBox Content="Trim End" IsChecked="{Binding ShouldTrimEnd}" Style="{StaticResource ToggleSwitchStyle}"/>
-                        <CheckBox Content="Remove Multiple Spaces" IsChecked="{Binding ShouldRemoveMultipleSpaces}" Style="{StaticResource ToggleSwitchStyle}"/>
-                        <CheckBox Content="Remove Multiple Lines" IsChecked="{Binding ShouldRemoveMultipleLines}" Style="{StaticResource ToggleSwitchStyle}"/>
-                        <CheckBox Content="Remove All Line Breaks" IsChecked="{Binding ShouldRemoveAllLines}" Style="{StaticResource ToggleSwitchStyle}"/>
+                        <CheckBox Content="Trim Start" IsChecked="{Binding Options.ShouldTrimStart}" Style="{StaticResource ToggleSwitchStyle}"/>
+                        <CheckBox Content="Trim End" IsChecked="{Binding Options.ShouldTrimEnd}" Style="{StaticResource ToggleSwitchStyle}"/>
+                        <CheckBox Content="Remove Multiple Spaces" IsChecked="{Binding Options.ShouldRemoveMultipleSpaces}" Style="{StaticResource ToggleSwitchStyle}"/>
+                        <CheckBox Content="Remove Multiple Lines" IsChecked="{Binding Options.ShouldRemoveMultipleLines}" Style="{StaticResource ToggleSwitchStyle}"/>
+                        <CheckBox Content="Remove All Line Breaks" IsChecked="{Binding Options.ShouldRemoveAllLines}" Style="{StaticResource ToggleSwitchStyle}"/>
                     </StackPanel>
 
                     <!-- Letter Case Section -->
                     <StackPanel Grid.Column="1" Margin="0,0,16,0">
                         <TextBlock Text="Letter Case" FontWeight="{DynamicResource FontWeightBold}" FontSize="{DynamicResource FontSizeNormal}" Margin="0,0,0,12" Foreground="{DynamicResource AccentBrush}" />
                         <WrapPanel Orientation="Horizontal" Margin="0,4,0,0">
-                            <RadioButton Content="None" IsChecked="{Binding IsDoNotChange, Mode=TwoWay}" GroupName="Case" Style="{StaticResource SegmentedRadioButtonStyle}" Margin="0,0,8,8"/>
-                            <RadioButton Content="Sentence" IsChecked="{Binding IsSentenceCase, Mode=TwoWay}" GroupName="Case" Style="{StaticResource SegmentedRadioButtonStyle}" Margin="0,0,8,8"/>
-                            <RadioButton Content="Title" IsChecked="{Binding IsTitleCase, Mode=TwoWay}" GroupName="Case" Style="{StaticResource SegmentedRadioButtonStyle}" Margin="0,0,8,8"/>
-                            <RadioButton Content="UPPER" IsChecked="{Binding IsUppercase, Mode=TwoWay}" GroupName="Case" Style="{StaticResource SegmentedRadioButtonStyle}" Margin="0,0,8,8"/>
-                            <RadioButton Content="lower" IsChecked="{Binding IsLowercase, Mode=TwoWay}" GroupName="Case" Style="{StaticResource SegmentedRadioButtonStyle}" Margin="0,0,8,8"/>
+                            <RadioButton Content="None" IsChecked="{Binding Options.CasingStyle, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static domain:CasingStyle.DoNotChange}}" GroupName="Case" Style="{StaticResource SegmentedRadioButtonStyle}" Margin="0,0,8,8"/>
+                            <RadioButton Content="Sentence" IsChecked="{Binding Options.CasingStyle, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static domain:CasingStyle.SentenceCase}}" GroupName="Case" Style="{StaticResource SegmentedRadioButtonStyle}" Margin="0,0,8,8"/>
+                            <RadioButton Content="Title" IsChecked="{Binding Options.CasingStyle, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static domain:CasingStyle.TitleCase}}" GroupName="Case" Style="{StaticResource SegmentedRadioButtonStyle}" Margin="0,0,8,8"/>
+                            <RadioButton Content="UPPER" IsChecked="{Binding Options.CasingStyle, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static domain:CasingStyle.Uppercase}}" GroupName="Case" Style="{StaticResource SegmentedRadioButtonStyle}" Margin="0,0,8,8"/>
+                            <RadioButton Content="lower" IsChecked="{Binding Options.CasingStyle, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static domain:CasingStyle.Lowercase}}" GroupName="Case" Style="{StaticResource SegmentedRadioButtonStyle}" Margin="0,0,8,8"/>
                         </WrapPanel>
                     </StackPanel>
 
                     <!-- Formatting Section -->
                     <StackPanel Grid.Column="2">
                         <TextBlock Text="Formatting" FontWeight="{DynamicResource FontWeightBold}" FontSize="{DynamicResource FontSizeNormal}" Margin="0,0,0,12" Foreground="{DynamicResource AccentBrush}" />
-                        <CheckBox Content="Fix Punctuation Spacing" IsChecked="{Binding ShouldFixPunctuationSpace}" Style="{StaticResource ToggleSwitchStyle}"/>
-                        <CheckBox Content="Remove HTML Tags" IsChecked="{Binding ShouldRemoveHtmlTags}" Style="{StaticResource ToggleSwitchStyle}"/>
-                        <CheckBox Content="Convert Smart Quotes" IsChecked="{Binding ShouldConvertSmartQuotes}" Style="{StaticResource ToggleSwitchStyle}"/>
+                        <CheckBox Content="Fix Punctuation Spacing" IsChecked="{Binding Options.ShouldFixPunctuationSpace}" Style="{StaticResource ToggleSwitchStyle}"/>
+                        <CheckBox Content="Remove HTML Tags" IsChecked="{Binding Options.ShouldRemoveHtmlTags}" Style="{StaticResource ToggleSwitchStyle}"/>
+                        <CheckBox Content="Convert Smart Quotes" IsChecked="{Binding Options.ShouldConvertSmartQuotes}" Style="{StaticResource ToggleSwitchStyle}"/>
                     </StackPanel>
                 </Grid>
             </Border>

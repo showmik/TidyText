@@ -6,6 +6,8 @@ using System.Windows; // WPF Application
 using TidyText.App.ViewModels;
 using TidyText.Domain.Services;
 using TidyText.Domain.TextEngine;
+using TidyText.Domain.TextEngine.Processors;
+
 namespace TidyText.Tests.ViewModel
 {
     [TestFixture]
@@ -19,44 +21,44 @@ namespace TidyText.Tests.ViewModel
                 new Application();
         }
 
-        /// <summary>
-        /// No-op clipboard stub for testing — no real WPF Clipboard needed.
-        /// </summary>
         private class StubClipboardService : IClipboardService
         {
             public string? LastText { get; private set; }
             public void SetText(string text) => LastText = text;
         }
 
-        private static MainViewModel NewVm() => new MainViewModel(
-            new StubClipboardService(),
-            new UndoRedoService(),
-            CommunityToolkit.Mvvm.Messaging.WeakReferenceMessenger.Default)
+        private static MainViewModel NewVm()
         {
-            ShouldTrim = false,
-            ShouldTrimStart = false,
-            ShouldTrimEnd = false,
-            ShouldRemoveMultipleSpaces = false,
-            ShouldRemoveMultipleLines = false,
-            ShouldRemoveAllLines = false,
-            ShouldFixPunctuationSpace = false,
-            IsUppercase = false,
-            IsLowercase = false,
-            IsSentenceCase = false,
-            IsTitleCase = false,
-            WrapLines = false
-        };
+            var vm = new MainViewModel(
+                new StubClipboardService(),
+                new UndoRedoService(),
+                CommunityToolkit.Mvvm.Messaging.WeakReferenceMessenger.Default,
+                null! // Mock AIAssistantVM
+            );
+
+            vm.Options.ShouldTrim = false;
+            vm.Options.ShouldTrimStart = false;
+            vm.Options.ShouldTrimEnd = false;
+            vm.Options.ShouldRemoveMultipleSpaces = false;
+            vm.Options.ShouldRemoveMultipleLines = false;
+            vm.Options.ShouldRemoveAllLines = false;
+            vm.Options.ShouldFixPunctuationSpace = false;
+            vm.Options.CasingStyle = CasingStyle.DoNotChange;
+            vm.WrapLines = false;
+
+            return vm;
+        }
 
         [Test]
         public void Counters_EmptyString()
         {
             var vm = NewVm();
             vm.MainText = "";
-            Assert.That(vm.WordCount, Is.EqualTo(0));
-            Assert.That(vm.SentenceCount, Is.EqualTo(0));
-            Assert.That(vm.ParagraphCount, Is.EqualTo(0));
-            Assert.That(vm.LineCount, Is.EqualTo(0));
-            Assert.That(vm.CharacterCount, Is.EqualTo(0));
+            Assert.That(vm.Statistics.WordCount, Is.EqualTo(0));
+            Assert.That(vm.Statistics.SentenceCount, Is.EqualTo(0));
+            Assert.That(vm.Statistics.ParagraphCount, Is.EqualTo(0));
+            Assert.That(vm.Statistics.LineCount, Is.EqualTo(0));
+            Assert.That(vm.Statistics.CharacterCount, Is.EqualTo(0));
         }
 
         [Test]
@@ -64,11 +66,11 @@ namespace TidyText.Tests.ViewModel
         {
             var vm = NewVm();
             vm.MainText = "   \n\t  ";
-            Assert.That(vm.WordCount, Is.EqualTo(0));
-            Assert.That(vm.SentenceCount, Is.EqualTo(0));
-            Assert.That(vm.ParagraphCount, Is.EqualTo(0));
-            Assert.That(vm.LineCount, Is.EqualTo(2)); // 1 line break = 2 lines
-            Assert.That(vm.CharacterCount, Is.EqualTo(7));
+            Assert.That(vm.Statistics.WordCount, Is.EqualTo(0));
+            Assert.That(vm.Statistics.SentenceCount, Is.EqualTo(0));
+            Assert.That(vm.Statistics.ParagraphCount, Is.EqualTo(0));
+            Assert.That(vm.Statistics.LineCount, Is.EqualTo(2));
+            Assert.That(vm.Statistics.CharacterCount, Is.EqualTo(7));
         }
 
         [Test]
@@ -76,11 +78,11 @@ namespace TidyText.Tests.ViewModel
         {
             var vm = NewVm();
             vm.MainText = "This is a test";
-            Assert.That(vm.WordCount, Is.EqualTo(4));
-            Assert.That(vm.SentenceCount, Is.EqualTo(1));
-            Assert.That(vm.ParagraphCount, Is.EqualTo(1));
-            Assert.That(vm.LineCount, Is.EqualTo(1));
-            Assert.That(vm.CharacterCount, Is.EqualTo(14));
+            Assert.That(vm.Statistics.WordCount, Is.EqualTo(4));
+            Assert.That(vm.Statistics.SentenceCount, Is.EqualTo(1));
+            Assert.That(vm.Statistics.ParagraphCount, Is.EqualTo(1));
+            Assert.That(vm.Statistics.LineCount, Is.EqualTo(1));
+            Assert.That(vm.Statistics.CharacterCount, Is.EqualTo(14));
         }
 
         [Test]
@@ -88,11 +90,11 @@ namespace TidyText.Tests.ViewModel
         {
             var vm = NewVm();
             vm.MainText = "Word";
-            Assert.That(vm.WordCount, Is.EqualTo(1));
-            Assert.That(vm.SentenceCount, Is.EqualTo(1));
-            Assert.That(vm.ParagraphCount, Is.EqualTo(1));
-            Assert.That(vm.LineCount, Is.EqualTo(1));
-            Assert.That(vm.CharacterCount, Is.EqualTo(4));
+            Assert.That(vm.Statistics.WordCount, Is.EqualTo(1));
+            Assert.That(vm.Statistics.SentenceCount, Is.EqualTo(1));
+            Assert.That(vm.Statistics.ParagraphCount, Is.EqualTo(1));
+            Assert.That(vm.Statistics.LineCount, Is.EqualTo(1));
+            Assert.That(vm.Statistics.CharacterCount, Is.EqualTo(4));
         }
 
         [Test]
@@ -101,24 +103,28 @@ namespace TidyText.Tests.ViewModel
             var vm = NewVm();
             var text = string.Join("\n\n", Enumerable.Repeat("word1 word2. word3!", 1000));
             vm.MainText = text;
-            Assert.That(vm.WordCount, Is.EqualTo(3000));
-            Assert.That(vm.SentenceCount, Is.GreaterThan(0));
-            Assert.That(vm.ParagraphCount, Is.EqualTo(1000));
-            Assert.That(vm.LineCount, Is.EqualTo(1999));
-            Assert.That(vm.CharacterCount, Is.EqualTo(text.Length));
+            Assert.That(vm.Statistics.WordCount, Is.EqualTo(3000));
+            Assert.That(vm.Statistics.SentenceCount, Is.GreaterThan(0));
+            Assert.That(vm.Statistics.ParagraphCount, Is.EqualTo(1000));
+            Assert.That(vm.Statistics.LineCount, Is.EqualTo(1999));
+            Assert.That(vm.Statistics.CharacterCount, Is.EqualTo(text.Length));
         }
 
         [Test]
         public void Constructor_Defaults_Are_Safe()
         {
-            var vm = NewVm();
-            Assert.That(vm.IsDoNotChange, Is.True);
+            var vm = new MainViewModel(
+                new StubClipboardService(),
+                new UndoRedoService(),
+                CommunityToolkit.Mvvm.Messaging.WeakReferenceMessenger.Default,
+                null!);
+            Assert.That(vm.Options.CasingStyle, Is.EqualTo(CasingStyle.DoNotChange));
             Assert.That(vm.MainText, Is.Null.Or.EqualTo(string.Empty));
-            Assert.That(vm.WordCount, Is.EqualTo(0));
-            Assert.That(vm.CharacterCount, Is.EqualTo(0));
-            Assert.That(vm.SentenceCount, Is.EqualTo(0));
-            Assert.That(vm.ParagraphCount, Is.EqualTo(0));
-            Assert.That(vm.LineCount, Is.EqualTo(0));
+            Assert.That(vm.Statistics.WordCount, Is.EqualTo(0));
+            Assert.That(vm.Statistics.CharacterCount, Is.EqualTo(0));
+            Assert.That(vm.Statistics.SentenceCount, Is.EqualTo(0));
+            Assert.That(vm.Statistics.ParagraphCount, Is.EqualTo(0));
+            Assert.That(vm.Statistics.LineCount, Is.EqualTo(0));
         }
 
         [Test]
@@ -126,11 +132,11 @@ namespace TidyText.Tests.ViewModel
         {
             var vm = NewVm();
             vm.MainText = "Hello world!\n\nNew para.";
-            Assert.That(vm.WordCount, Is.EqualTo(4));
-            Assert.That(vm.SentenceCount, Is.EqualTo(2));
-            Assert.That(vm.ParagraphCount, Is.EqualTo(2));
-            Assert.That(vm.LineCount, Is.EqualTo(3));
-            Assert.That(vm.CharacterCount, Is.EqualTo("Hello world!\n\nNew para.".Length));
+            Assert.That(vm.Statistics.WordCount, Is.EqualTo(4));
+            Assert.That(vm.Statistics.SentenceCount, Is.EqualTo(2));
+            Assert.That(vm.Statistics.ParagraphCount, Is.EqualTo(2));
+            Assert.That(vm.Statistics.LineCount, Is.EqualTo(3));
+            Assert.That(vm.Statistics.CharacterCount, Is.EqualTo("Hello world!\n\nNew para.".Length));
         }
 
         [Test]
@@ -138,7 +144,7 @@ namespace TidyText.Tests.ViewModel
         {
             var vm = NewVm();
             vm.MainText = "  a\n   b  \n c";
-            vm.ShouldTrimStart = true;
+            vm.Options.ShouldTrimStart = true;
             vm.Clean();
             Assert.That(vm.MainText, Is.EqualTo("a\nb  \nc"));
         }
@@ -148,7 +154,7 @@ namespace TidyText.Tests.ViewModel
         {
             var vm = NewVm();
             vm.MainText = "\n\n  a\n  b  ";
-            vm.ShouldTrimStart = true;
+            vm.Options.ShouldTrimStart = true;
             vm.Clean();
             Assert.That(vm.MainText, Is.EqualTo("a\nb  "));
         }
@@ -158,7 +164,7 @@ namespace TidyText.Tests.ViewModel
         {
             var vm = NewVm();
             vm.MainText = "a  \n b \n c   ";
-            vm.ShouldTrimEnd = true;
+            vm.Options.ShouldTrimEnd = true;
             vm.Clean();
             Assert.That(vm.MainText, Is.EqualTo("a\n b\n c"));
         }
@@ -168,7 +174,7 @@ namespace TidyText.Tests.ViewModel
         {
             var vm = NewVm();
             vm.MainText = "  a\n  b  \n\n";
-            vm.ShouldTrimEnd = true;
+            vm.Options.ShouldTrimEnd = true;
             vm.Clean();
             Assert.That(vm.MainText, Is.EqualTo("  a\n  b"));
         }
@@ -178,7 +184,7 @@ namespace TidyText.Tests.ViewModel
         {
             var vm = NewVm();
             vm.MainText = "a   b\t\tc\nx    y";
-            vm.ShouldRemoveMultipleSpaces = true;
+            vm.Options.ShouldRemoveMultipleSpaces = true;
             vm.Clean();
             Assert.That(vm.MainText, Is.EqualTo("a b c\nx y"));
         }
@@ -188,7 +194,7 @@ namespace TidyText.Tests.ViewModel
         {
             var vm = NewVm();
             vm.MainText = "a\n\n\n\nb";
-            vm.ShouldRemoveMultipleLines = true;
+            vm.Options.ShouldRemoveMultipleLines = true;
             vm.Clean();
             Assert.That(vm.MainText, Is.EqualTo("a\n\nb"));
         }
@@ -198,7 +204,7 @@ namespace TidyText.Tests.ViewModel
         {
             var vm = NewVm();
             vm.MainText = "a \n  b\t\n\nc";
-            vm.ShouldRemoveAllLines = true;
+            vm.Options.ShouldRemoveAllLines = true;
             vm.Clean();
             Assert.That(vm.MainText, Is.EqualTo("a b c"));
         }
@@ -208,8 +214,8 @@ namespace TidyText.Tests.ViewModel
         {
             var vm = NewVm();
             vm.MainText = "a \n   b\t\tc\n\n   d";
-            vm.ShouldRemoveAllLines = true;
-            vm.ShouldRemoveMultipleSpaces = true;
+            vm.Options.ShouldRemoveAllLines = true;
+            vm.Options.ShouldRemoveMultipleSpaces = true;
             vm.Clean();
             Assert.That(vm.MainText, Is.EqualTo("a b c d"));
         }
@@ -218,7 +224,7 @@ namespace TidyText.Tests.ViewModel
         public void Clean_PunctuationFix_Key_Edges()
         {
             var vm = NewVm();
-            vm.ShouldFixPunctuationSpace = true;
+            vm.Options.ShouldFixPunctuationSpace = true;
 
             vm.MainText = "Visit https://ex.com/a?x=1,2&y=3.Please";
             vm.Clean();
@@ -250,9 +256,9 @@ namespace TidyText.Tests.ViewModel
         {
             var vm = NewVm();
             vm.MainText = " a ,b  ";
-            vm.ShouldTrim = true;
-            vm.ShouldFixPunctuationSpace = true;
-            vm.IsUppercase = true;
+            vm.Options.ShouldTrim = true;
+            vm.Options.ShouldFixPunctuationSpace = true;
+            vm.Options.CasingStyle = CasingStyle.Uppercase;
             vm.Clean();
             Assert.That(vm.MainText, Is.EqualTo("A, B"));
         }
@@ -262,8 +268,8 @@ namespace TidyText.Tests.ViewModel
         {
             var vm = NewVm();
             vm.MainText = "  Hello WORLD!  ";
-            vm.ShouldTrim = true;
-            vm.IsLowercase = true;
+            vm.Options.ShouldTrim = true;
+            vm.Options.CasingStyle = CasingStyle.Lowercase;
             vm.Clean();
             Assert.That(vm.MainText, Is.EqualTo("hello world!"));
         }
@@ -290,7 +296,7 @@ namespace TidyText.Tests.ViewModel
         {
             var vm = NewVm();
             vm.MainText = input;
-            vm.IsSentenceCase = true; // only casing, no spacing/trim changes
+            vm.Options.CasingStyle = CasingStyle.SentenceCase;
             vm.Clean();
             Assert.That(vm.MainText, Is.EqualTo(expected));
         }
@@ -309,7 +315,7 @@ namespace TidyText.Tests.ViewModel
         {
             var vm = NewVm();
             vm.MainText = input;
-            vm.IsSentenceCase = true;   // no spacing/trim toggles
+            vm.Options.CasingStyle = CasingStyle.SentenceCase;
             vm.Clean();
             Assert.That(vm.MainText, Is.EqualTo(expected));
         }
@@ -319,7 +325,7 @@ namespace TidyText.Tests.ViewModel
         {
             var vm = NewVm();
             vm.MainText = "after that, tEsT again. ok.";
-            vm.IsSentenceCase = true;
+            vm.Options.CasingStyle = CasingStyle.SentenceCase;
             vm.Clean();
             Assert.That(vm.MainText, Is.EqualTo("After that, test again. Ok."));
         }
@@ -329,7 +335,7 @@ namespace TidyText.Tests.ViewModel
         {
             var vm = NewVm();
             vm.MainText = "tHis IS. a tEsT.\nnew line";
-            vm.IsSentenceCase = true;
+            vm.Options.CasingStyle = CasingStyle.SentenceCase;
             vm.Clean();
             Assert.That(vm.MainText, Is.EqualTo("This is. A test.\nNew line"));
         }
@@ -343,7 +349,7 @@ namespace TidyText.Tests.ViewModel
                 Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
                 var vm = NewVm();
                 vm.MainText = "hello from the world of text";
-                vm.IsTitleCase = true;
+                vm.Options.CasingStyle = CasingStyle.TitleCase;
                 vm.Clean();
                 Assert.That(vm.MainText, Is.EqualTo("Hello From the World of Text"));
             }
@@ -355,10 +361,10 @@ namespace TidyText.Tests.ViewModel
         {
             var vm = NewVm();
             vm.MainText = "a   b";
-            vm.ShouldRemoveMultipleSpaces = true;
-            vm.Clean();   // "a b"
+            vm.Options.ShouldRemoveMultipleSpaces = true;
+            vm.Clean();
             Assert.That(vm.MainText, Is.EqualTo("a b"));
-            vm.Undo();    // back
+            vm.Undo();
             Assert.That(vm.MainText, Is.EqualTo("a   b"));
         }
 
@@ -367,13 +373,13 @@ namespace TidyText.Tests.ViewModel
         {
             var vm = NewVm();
             vm.MainText = "  a   b  \n c";
-            vm.ShouldTrim = true;
-            vm.Clean(); // "a   b\nc"
-            vm.ShouldRemoveMultipleSpaces = true;
-            vm.Clean(); // "a b\nc"
-            vm.Undo();  // -> "a   b\nc"
+            vm.Options.ShouldTrim = true;
+            vm.Clean();
+            vm.Options.ShouldRemoveMultipleSpaces = true;
+            vm.Clean();
+            vm.Undo();
             Assert.That(vm.MainText, Is.EqualTo("a   b\nc"));
-            vm.Undo();  // -> original
+            vm.Undo();
             Assert.That(vm.MainText, Is.EqualTo("  a   b  \n c"));
         }
     }

@@ -263,10 +263,10 @@ namespace TidyText.App.ViewModels
 
         private void GenerateDiff(string oldText, string newText)
         {
-            DiffChunks.Clear();
             var diffBuilder = new InlineDiffBuilder(new Differ());
             var diff = diffBuilder.BuildDiffModel(oldText ?? string.Empty, newText ?? string.Empty);
 
+            var newChunks = new System.Collections.Generic.List<DiffChunk>();
             foreach (var line in diff.Lines)
             {
                 var chunkType = line.Type switch
@@ -276,12 +276,14 @@ namespace TidyText.App.ViewModels
                     _ => DiffChunkType.Unchanged
                 };
 
-                DiffChunks.Add(new DiffChunk
+                newChunks.Add(new DiffChunk
                 {
                     Text = line.Text + "\n",
                     Type = chunkType
                 });
             }
+            
+            DiffChunks = new ObservableCollection<DiffChunk>(newChunks);
         }
 
         [RelayCommand]
@@ -346,16 +348,17 @@ namespace TidyText.App.ViewModels
         private void LoadHistory()
         {
             var items = _historyRepository.Load();
-            History.Clear();
+            var newHistory = new System.Collections.Generic.List<AIHistoryItem>();
             foreach (var item in items)
             {
-                History.Add(new AIHistoryItem(RestoreHistoryItem, DeleteHistoryItem)
+                newHistory.Add(new AIHistoryItem(RestoreHistoryItem, DeleteHistoryItem)
                 {
                     Prompt = item.Prompt ?? "",
                     GeneratedText = item.GeneratedText ?? "",
                     Timestamp = item.Timestamp
                 });
             }
+            History = new ObservableCollection<AIHistoryItem>(newHistory);
         }
 
         private void RestoreHistoryItem(string text)

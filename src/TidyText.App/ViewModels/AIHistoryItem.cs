@@ -40,6 +40,7 @@ namespace TidyText.App.ViewModels
             IsExpanded = !IsExpanded;
         }
 
+        [RelayCommand]
         public void Restore()
         {
             if (_restoreAction != null && !string.IsNullOrEmpty(GeneratedText))
