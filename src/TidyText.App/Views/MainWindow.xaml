@@ -331,6 +331,7 @@
                     <!-- Formatting Section -->
                     <StackPanel Grid.Column="2">
                         <TextBlock Text="Formatting" FontWeight="{DynamicResource FontWeightBold}" FontSize="{DynamicResource FontSizeNormal}" Margin="0,0,0,12" Foreground="{DynamicResource AccentBrush}" />
+                        <CheckBox Content="Strip Markdown" IsChecked="{Binding Options.ShouldStripMarkdown}" Style="{StaticResource ToggleSwitchStyle}"/>
                         <CheckBox Content="Fix Punctuation Spacing" IsChecked="{Binding Options.ShouldFixPunctuationSpace}" Style="{StaticResource ToggleSwitchStyle}"/>
                         <CheckBox Content="Remove HTML Tags" IsChecked="{Binding Options.ShouldRemoveHtmlTags}" Style="{StaticResource ToggleSwitchStyle}"/>
                         <CheckBox Content="Convert Smart Quotes" IsChecked="{Binding Options.ShouldConvertSmartQuotes}" Style="{StaticResource ToggleSwitchStyle}"/>

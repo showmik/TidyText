@@ -15,6 +15,7 @@ namespace TidyText.Domain.TextEngine
         public bool FixPunctuationSpacing { get; init; }
         public bool RemoveHtmlTags { get; init; }
         public bool ConvertSmartQuotes { get; init; }
+        public bool StripMarkdown { get; init; }
         public CasingStyle CasingStyle { get; init; }
     }
 }

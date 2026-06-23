@@ -32,7 +32,7 @@ namespace TidyText.Domain.TextEngine
         // --- Fluent Convenience Methods ---
 
         public TextPipelineBuilder AddMarkdownStripper() => 
-            AddProcessor(new MarkdownProcessor());
+            AddProcessor(new MarkdownProcessor(new MarkdownProcessorOptions { StripMarkdown = true }));
 
         public TextPipelineBuilder AddHtmlStripper() => 
             AddProcessor(new HtmlStripProcessor(new HtmlStripProcessorOptions { RemoveHtmlTags = true }));

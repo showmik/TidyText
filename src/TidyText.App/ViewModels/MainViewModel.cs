@@ -33,6 +33,7 @@ namespace TidyText.App.ViewModels
         [ObservableProperty] private bool _shouldFixPunctuationSpace = true;
         [ObservableProperty] private bool _shouldRemoveHtmlTags = false;
         [ObservableProperty] private bool _shouldConvertSmartQuotes = false;
+        [ObservableProperty] private bool _shouldStripMarkdown = false;
         [ObservableProperty] private CasingStyle _casingStyle = CasingStyle.DoNotChange;
     }
 
@@ -114,7 +115,7 @@ namespace TidyText.App.ViewModels
             _undoRedoService.Push(MainText);
 
             var pipeline = new TextPipelineBuilder()
-                .AddMarkdownStripper() 
+                .If(Options.ShouldStripMarkdown, b => b.AddMarkdownStripper())
                 .If(Options.ShouldRemoveHtmlTags, b => b.AddHtmlStripper())
                 .If(Options.ShouldConvertSmartQuotes, b => b.AddSmartQuotes())
                 .AddWhitespaceCleaning(Options.ShouldTrim || Options.ShouldTrimStart, Options.ShouldTrim || Options.ShouldTrimEnd, Options.ShouldRemoveMultipleSpaces, Options.ShouldRemoveMultipleLines, Options.ShouldRemoveAllLines)
