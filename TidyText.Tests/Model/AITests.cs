@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using NUnit.Framework;
-using TidyText.Core.AI;
-using TidyText.Core.AI.Templates;
+using TidyText.Domain.AI;
+using TidyText.Domain.AI.Templates;
 
 namespace TidyText.Tests.Model
 {

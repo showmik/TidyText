@@ -6,6 +6,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
+using TidyText.Domain.AI;
 namespace TidyText.Core.AI.Providers
 {
     public class AnthropicProvider : IAIProvider

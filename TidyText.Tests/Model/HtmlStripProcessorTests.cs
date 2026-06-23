@@ -1,5 +1,5 @@
 using NUnit.Framework;
-using TidyText.Core.TextEngine.Processors;
+using TidyText.Domain.TextEngine.Processors;
 
 namespace TidyText.Tests.Model
 {

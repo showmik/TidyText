@@ -2,10 +2,10 @@ using System;
 using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using TidyText.Core.Services;
-using TidyText.Core.TextEngine;
-using TidyText.Core.TextEngine.Processors;
-using TidyText.Core.Statistics;
+using TidyText.Domain.Services;
+using TidyText.Domain.TextEngine;
+using TidyText.Domain.TextEngine.Processors;
+using TidyText.Domain.Statistics;
 
 namespace TidyText.App.ViewModels
 {

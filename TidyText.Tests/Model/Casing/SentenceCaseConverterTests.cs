@@ -1,6 +1,6 @@
 using System.Globalization;
 using NUnit.Framework;
-using TidyText.Core.TextEngine.Casing;
+using TidyText.Domain.TextEngine.Casing;
 
 namespace TidyText.Tests.Model.Casing
 {

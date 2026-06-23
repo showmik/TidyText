@@ -1,6 +1,6 @@
 using System.Windows;
 using TidyText.App.ViewModels;
-using TidyText.Core.Security;
+using TidyText.Domain.Security;
 
 namespace TidyText.App.Views
 {

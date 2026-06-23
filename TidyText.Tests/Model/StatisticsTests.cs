@@ -1,5 +1,5 @@
 using NUnit.Framework;
-using TidyText.Core.Statistics;
+using TidyText.Domain.Statistics;
 
 namespace TidyText.Tests.Model
 {

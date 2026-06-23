@@ -1,6 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using TidyText.Core.Security;
+using TidyText.Domain.Security;
 
 namespace TidyText.App.ViewModels
 {

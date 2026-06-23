@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.Json;
 using System.Collections.Generic;
 
+using TidyText.Domain.Security;
 namespace TidyText.Core.Security
 {
     public class SecureKeyVault : ISecureKeyVault

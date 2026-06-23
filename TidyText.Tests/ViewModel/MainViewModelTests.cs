@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Windows; // WPF Application
 using TidyText.App.ViewModels;
-using TidyText.Core.Services;
+using TidyText.Domain.Services;
 
 namespace TidyText.Tests.ViewModel
 {

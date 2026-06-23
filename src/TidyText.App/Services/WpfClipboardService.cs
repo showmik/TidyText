@@ -1,5 +1,5 @@
 using System.Windows;
-using TidyText.Core.Services;
+using TidyText.Domain.Services;
 
 namespace TidyText.App.Services
 {

@@ -9,9 +9,9 @@ using CommunityToolkit.Mvvm.Input;
 using DiffPlex;
 using DiffPlex.DiffBuilder;
 using DiffPlex.DiffBuilder.Model;
-using TidyText.Core.AI;
-using TidyText.Core.AI.Templates;
-using TidyText.Core.Security;
+using TidyText.Domain.AI;
+using TidyText.Domain.AI.Templates;
+using TidyText.Domain.Security;
 
 namespace TidyText.App.ViewModels
 {

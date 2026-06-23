@@ -4,10 +4,11 @@ using System.Windows;
 using TidyText.App.Services;
 using TidyText.App.ViewModels;
 using TidyText.App.Views;
-using TidyText.Core.AI;
+using TidyText.Domain.AI;
 using TidyText.Core.AI.Providers;
+using TidyText.Domain.Security;
 using TidyText.Core.Security;
-using TidyText.Core.Services;
+using TidyText.Domain.Services;
 
 namespace TidyText.App
 {

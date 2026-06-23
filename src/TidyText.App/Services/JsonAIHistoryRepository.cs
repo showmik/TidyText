@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
-using TidyText.Core.AI;
+using TidyText.Domain.AI;
 
 namespace TidyText.App.Services
 {

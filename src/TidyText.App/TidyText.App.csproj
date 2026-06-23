@@ -1,6 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <ProjectReference Include="..\TidyText.Domain\TidyText.Domain.csproj" />
     <ProjectReference Include="..\TidyText.Core\TidyText.Core.csproj" />
   </ItemGroup>
 

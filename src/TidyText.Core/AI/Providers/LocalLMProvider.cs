@@ -6,8 +6,10 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
-using TidyText.Core.Security;
+using TidyText.Domain.Security;
 
+using TidyText.Domain.AI;
+using TidyText.Domain.Security;
 namespace TidyText.Core.AI.Providers
 {
     public class LocalLMProvider : IAIProvider
