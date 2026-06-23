@@ -47,13 +47,13 @@ namespace TidyText.Infrastructure.AI.Providers
                 max_tokens = options.MaxTokens
             };
 
-            var request = new HttpRequestMessage(HttpMethod.Post, url)
+            using var request = new HttpRequestMessage(HttpMethod.Post, url)
             {
                 Content = JsonContent.Create(requestBody)
             };
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _apiKey);
 
-            var response = await _httpClient.SendAsync(request, ct);
+            using var response = await _httpClient.SendAsync(request, ct);
 
             if (!response.IsSuccessStatusCode)
             {

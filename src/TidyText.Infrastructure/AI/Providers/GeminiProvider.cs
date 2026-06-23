@@ -54,7 +54,7 @@ namespace TidyText.Infrastructure.AI.Providers
                 }
             };
 
-            var response = await _httpClient.PostAsJsonAsync(url, requestBody, ct);
+            using var response = await _httpClient.PostAsJsonAsync(url, requestBody, ct);
 
             if (!response.IsSuccessStatusCode)
             {

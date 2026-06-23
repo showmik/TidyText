@@ -47,7 +47,7 @@ namespace TidyText.Infrastructure.AI.Providers
 
             try
             {
-                var response = await _httpClient.PostAsJsonAsync(url, requestBody, ct);
+                using var response = await _httpClient.PostAsJsonAsync(url, requestBody, ct);
 
                 if (!response.IsSuccessStatusCode)
                 {

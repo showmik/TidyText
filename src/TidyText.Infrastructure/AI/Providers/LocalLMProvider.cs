@@ -63,7 +63,7 @@ namespace TidyText.Infrastructure.AI.Providers
                 max_tokens = options.MaxTokens
             };
 
-            var request = new HttpRequestMessage(HttpMethod.Post, url)
+            using var request = new HttpRequestMessage(HttpMethod.Post, url)
             {
                 Content = JsonContent.Create(requestBody)
             };
@@ -73,7 +73,7 @@ namespace TidyText.Infrastructure.AI.Providers
 
             try
             {
-                var response = await _httpClient.SendAsync(request, ct);
+                using var response = await _httpClient.SendAsync(request, ct);
 
                 if (!response.IsSuccessStatusCode)
                 {
@@ -140,7 +140,7 @@ namespace TidyText.Infrastructure.AI.Providers
                 stream = true
             };
 
-            var request = new HttpRequestMessage(HttpMethod.Post, url)
+            using var request = new HttpRequestMessage(HttpMethod.Post, url)
             {
                 Content = JsonContent.Create(requestBody)
             };
@@ -168,46 +168,50 @@ namespace TidyText.Infrastructure.AI.Providers
             {
                 string errorContent = await response.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
                 yield return $"[Error] Local LM API Error ({response.StatusCode}): {errorContent}";
+                response.Dispose();
                 yield break;
             }
 
-            using var stream = await response.Content.ReadAsStreamAsync(ct).ConfigureAwait(false);
-            using var reader = new System.IO.StreamReader(stream);
-
-            // ReadLineAsync returns null at end-of-stream (avoids CA2024 EndOfStream)
-            string? line;
-            while ((line = await reader.ReadLineAsync(ct).ConfigureAwait(false)) != null)
+            using (response)
             {
-                if (ct.IsCancellationRequested) break;
-                if (string.IsNullOrWhiteSpace(line)) continue;
-                if (!line.StartsWith("data: ")) continue;
+                using var stream = await response.Content.ReadAsStreamAsync(ct).ConfigureAwait(false);
+                using var reader = new System.IO.StreamReader(stream);
 
-                var data = line.Substring(6).Trim();
-                if (data == "[DONE]") break;
-
-                // Parse outside try-catch so we can yield the result
-                // (C# forbids yield inside try blocks that have catch clauses)
-                string? parsedChunk = null;
-                try
+                // ReadLineAsync returns null at end-of-stream (avoids CA2024 EndOfStream)
+                string? line;
+                while ((line = await reader.ReadLineAsync(ct).ConfigureAwait(false)) != null)
                 {
-                    var json = JsonSerializer.Deserialize<JsonElement>(data);
-                    if (json.TryGetProperty("choices", out var choices) && choices.GetArrayLength() > 0)
+                    if (ct.IsCancellationRequested) break;
+                    if (string.IsNullOrWhiteSpace(line)) continue;
+                    if (!line.StartsWith("data: ")) continue;
+
+                    var data = line.Substring(6).Trim();
+                    if (data == "[DONE]") break;
+
+                    // Parse outside try-catch so we can yield the result
+                    // (C# forbids yield inside try blocks that have catch clauses)
+                    string? parsedChunk = null;
+                    try
                     {
-                        var firstChoice = choices[0];
-                        if (firstChoice.TryGetProperty("delta", out var delta) && delta.TryGetProperty("content", out var content))
+                        var json = JsonSerializer.Deserialize<JsonElement>(data);
+                        if (json.TryGetProperty("choices", out var choices) && choices.GetArrayLength() > 0)
                         {
-                            parsedChunk = content.GetString();
+                            var firstChoice = choices[0];
+                            if (firstChoice.TryGetProperty("delta", out var delta) && delta.TryGetProperty("content", out var content))
+                            {
+                                parsedChunk = content.GetString();
+                            }
                         }
                     }
-                }
-                catch
-                {
-                    // Ignore parse errors for partial SSE chunks
-                }
+                    catch
+                    {
+                        // Ignore parse errors for partial SSE chunks
+                    }
 
-                if (!string.IsNullOrEmpty(parsedChunk))
-                {
-                    yield return parsedChunk;
+                    if (!string.IsNullOrEmpty(parsedChunk))
+                    {
+                        yield return parsedChunk;
+                    }
                 }
             }
         }
