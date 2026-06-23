@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using NUnit.Framework;
 using TidyText.Domain.Security;
-using TidyText.Core.Security;
+using TidyText.Infrastructure.Security;
 
 namespace TidyText.Tests.Model
 {

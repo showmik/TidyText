@@ -20,7 +20,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\src\TidyText.Domain\TidyText.Domain.csproj" />
-		<ProjectReference Include="..\src\TidyText.Core\TidyText.Core.csproj" />
+		<ProjectReference Include="..\src\TidyText.Infrastructure\TidyText.Infrastructure.csproj" />
 		<ProjectReference Include="..\src\TidyText.App\TidyText.App.csproj" />
 	</ItemGroup>
 </Project>

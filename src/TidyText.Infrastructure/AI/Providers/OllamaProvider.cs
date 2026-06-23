@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using TidyText.Domain.AI;
-namespace TidyText.Core.AI.Providers
+namespace TidyText.Infrastructure.AI.Providers
 {
     public class OllamaProvider : IAIProvider
     {

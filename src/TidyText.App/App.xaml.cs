@@ -5,9 +5,9 @@ using TidyText.App.Services;
 using TidyText.App.ViewModels;
 using TidyText.App.Views;
 using TidyText.Domain.AI;
-using TidyText.Core.AI.Providers;
+using TidyText.Infrastructure.AI.Providers;
 using TidyText.Domain.Security;
-using TidyText.Core.Security;
+using TidyText.Infrastructure.Security;
 using TidyText.Domain.Services;
 
 namespace TidyText.App

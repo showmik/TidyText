@@ -10,7 +10,7 @@ using TidyText.Domain.Security;
 
 using TidyText.Domain.AI;
 using TidyText.Domain.Security;
-namespace TidyText.Core.AI.Providers
+namespace TidyText.Infrastructure.AI.Providers
 {
     public class LocalLMProvider : IAIProvider
     {

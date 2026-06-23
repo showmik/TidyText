@@ -7,16 +7,16 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using TidyText.Domain.AI;
-namespace TidyText.Core.AI.Providers
+namespace TidyText.Infrastructure.AI.Providers
 {
-    public class DeepSeekProvider : IAIProvider
+    public class OpenAIProvider : IAIProvider
     {
-        public string Name => "DeepSeek";
+        public string Name => "OpenAI";
         
         private readonly string _apiKey;
         private readonly HttpClient _httpClient;
 
-        public DeepSeekProvider(string apiKey, HttpClient httpClient)
+        public OpenAIProvider(string apiKey, HttpClient httpClient)
         {
             _apiKey = apiKey;
             _httpClient = httpClient;
@@ -26,10 +26,10 @@ namespace TidyText.Core.AI.Providers
 
         public async Task<AIResponse> CompleteAsync(string prompt, AIOptions options, CancellationToken ct = default)
         {
-            if (!IsAvailable) return AIResponse.Error("DeepSeek API key is not configured.");
+            if (!IsAvailable) return AIResponse.Error("OpenAI API key is not configured.");
 
-            string model = string.IsNullOrEmpty(options.Model) ? "deepseek-chat" : options.Model;
-            string url = "https://api.deepseek.com/chat/completions";
+            string model = string.IsNullOrEmpty(options.Model) ? "gpt-4o-mini" : options.Model;
+            string url = "https://api.openai.com/v1/chat/completions";
 
             var requestBody = new
             {
@@ -54,7 +54,7 @@ namespace TidyText.Core.AI.Providers
             if (!response.IsSuccessStatusCode)
             {
                 string errorContent = await response.Content.ReadAsStringAsync(ct);
-                return AIResponse.Error($"DeepSeek API Error ({response.StatusCode}): {errorContent}");
+                return AIResponse.Error($"OpenAI API Error ({response.StatusCode}): {errorContent}");
             }
 
             var jsonResponse = await response.Content.ReadFromJsonAsync<JsonElement>(cancellationToken: ct);
@@ -71,7 +71,7 @@ namespace TidyText.Core.AI.Providers
             }
             catch (Exception ex)
             {
-                return AIResponse.Error($"Failed to parse DeepSeek response: {ex.Message}");
+                return AIResponse.Error($"Failed to parse OpenAI response: {ex.Message}");
             }
         }
     }
