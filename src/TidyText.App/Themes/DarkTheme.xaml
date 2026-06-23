@@ -43,6 +43,11 @@
     <Color x:Key="StatusBgColor">#14171D</Color>
     <SolidColorBrush x:Key="StatusBgBrush" Color="{DynamicResource StatusBgColor}"/>
     
+    <Color x:Key="BorderHoverColor">#3B4A5A</Color>
+    <SolidColorBrush x:Key="BorderHoverBrush" Color="{DynamicResource BorderHoverColor}"/>
+    <Color x:Key="FocusRingColor">#4D0EA5E9</Color>
+    <SolidColorBrush x:Key="FocusRingBrush" Color="{DynamicResource FocusRingColor}"/>
+    
     <SolidColorBrush x:Key="PanelBgBrush" Color="{DynamicResource PanelBgColor}"/>
     <SolidColorBrush x:Key="BorderBrush" Color="{DynamicResource BorderColor}"/>
     <SolidColorBrush x:Key="TextBrush" Color="{DynamicResource TextColor}"/>
