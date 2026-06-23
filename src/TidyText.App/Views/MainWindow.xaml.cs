@@ -1,5 +1,6 @@
 using System.Windows;
 using TidyText.App.ViewModels;
+using TidyText.Core.Security;
 
 namespace TidyText.App.Views
 {
@@ -33,10 +34,15 @@ namespace TidyText.App.Views
 
         private void SettingsButton_Click(object sender, RoutedEventArgs e)
         {
+            // Resolve the shared ISecureKeyVault from the App-level composition
+            // instead of creating a new concrete SecureKeyVault instance.
+            var app = (App)Application.Current;
+            var keyVault = app.KeyVault;
+
             var settingsWindow = new SettingsWindow
             {
                 Owner = this,
-                DataContext = new ViewModels.SettingsViewModel(new Core.Security.SecureKeyVault(System.IO.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData), "TidyText")))
+                DataContext = new ViewModels.SettingsViewModel(keyVault)
             };
             settingsWindow.ShowDialog();
         }

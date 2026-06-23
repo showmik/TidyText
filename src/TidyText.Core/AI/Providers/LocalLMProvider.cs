@@ -15,9 +15,9 @@ namespace TidyText.Core.AI.Providers
         public string Name => "Local LM";
         
         private readonly HttpClient _httpClient;
-        private readonly SecureKeyVault _keyVault;
+        private readonly ISecureKeyVault _keyVault;
 
-        public LocalLMProvider(HttpClient httpClient, SecureKeyVault keyVault)
+        public LocalLMProvider(HttpClient httpClient, ISecureKeyVault keyVault)
         {
             _httpClient = httpClient;
             _keyVault = keyVault;

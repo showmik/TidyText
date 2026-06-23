@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TidyText.Core.AI
 {
-    public class AIProviderRouter
+    public class AIProviderRouter : IAIProviderRouter
     {
         private readonly IEnumerable<IAIProvider> _providers;
 

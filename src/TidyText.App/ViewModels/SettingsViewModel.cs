@@ -6,7 +6,7 @@ namespace TidyText.App.ViewModels
 {
     public partial class SettingsViewModel : ObservableObject
     {
-        private readonly SecureKeyVault _keyVault;
+        private readonly ISecureKeyVault _keyVault;
 
         [ObservableProperty]
         private string _geminiApiKey = string.Empty;
@@ -26,7 +26,7 @@ namespace TidyText.App.ViewModels
         [ObservableProperty]
         private string _statusMessage = string.Empty;
 
-        public SettingsViewModel(SecureKeyVault keyVault)
+        public SettingsViewModel(ISecureKeyVault keyVault)
         {
             _keyVault = keyVault;
             LoadKeys();

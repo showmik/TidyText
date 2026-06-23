@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Windows; // WPF Application
 using TidyText.App.ViewModels;
+using TidyText.Core.Services;
 
 namespace TidyText.Tests.ViewModel
 {
@@ -18,7 +19,16 @@ namespace TidyText.Tests.ViewModel
                 new Application();
         }
 
-        private static MainViewModel NewVm() => new MainViewModel
+        /// <summary>
+        /// No-op clipboard stub for testing — no real WPF Clipboard needed.
+        /// </summary>
+        private class StubClipboardService : IClipboardService
+        {
+            public string? LastText { get; private set; }
+            public void SetText(string text) => LastText = text;
+        }
+
+        private static MainViewModel NewVm() => new MainViewModel(new StubClipboardService())
         {
             ShouldTrim = false,
             ShouldTrimStart = false,

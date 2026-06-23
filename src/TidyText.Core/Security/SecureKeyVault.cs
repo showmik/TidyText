@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace TidyText.Core.Security
 {
-    public class SecureKeyVault
+    public class SecureKeyVault : ISecureKeyVault
     {
         private readonly string _vaultPath;
         private Dictionary<string, string> _keys = new();

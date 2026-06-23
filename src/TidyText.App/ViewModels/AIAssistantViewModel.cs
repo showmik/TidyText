@@ -1,5 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -16,9 +17,10 @@ namespace TidyText.App.ViewModels
 {
     public partial class AIAssistantViewModel : ObservableObject
     {
-        private readonly AIProviderRouter _router;
+        private readonly IAIProviderRouter _router;
         private readonly MainViewModel _mainViewModel;
-        private readonly SecureKeyVault _keyVault;
+        private readonly ISecureKeyVault _keyVault;
+        private readonly IAIHistoryRepository _historyRepository;
         private CancellationTokenSource? _cancellationTokenSource;
 
         [ObservableProperty]
@@ -60,11 +62,16 @@ namespace TidyText.App.ViewModels
         [ObservableProperty]
         private string _statusMessage = "Ready";
 
-        public AIAssistantViewModel(AIProviderRouter router, MainViewModel mainViewModel, SecureKeyVault keyVault)
+        public AIAssistantViewModel(
+            IAIProviderRouter router,
+            MainViewModel mainViewModel,
+            ISecureKeyVault keyVault,
+            IAIHistoryRepository historyRepository)
         {
             _router = router;
             _mainViewModel = mainViewModel;
             _keyVault = keyVault;
+            _historyRepository = historyRepository;
             
             LoadHistory();
             
@@ -349,60 +356,28 @@ namespace TidyText.App.ViewModels
 
         private void SaveHistory()
         {
-            try
+            var dtos = History.Select(h => new AIHistoryDto
             {
-                var appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-                var dir = System.IO.Path.Combine(appData, "TidyText");
-                System.IO.Directory.CreateDirectory(dir);
-                var file = System.IO.Path.Combine(dir, "ai_history.json");
-                
-                var options = new System.Text.Json.JsonSerializerOptions { WriteIndented = true };
-                var historyData = System.Linq.Enumerable.ToList(System.Linq.Enumerable.Select(History, h => new AIHistoryDto 
-                { 
-                    Prompt = h.Prompt, 
-                    GeneratedText = h.GeneratedText, 
-                    Timestamp = h.Timestamp 
-                }));
-                
-                var json = System.Text.Json.JsonSerializer.Serialize(historyData, options);
-                System.IO.File.WriteAllText(file, json);
-            }
-            catch { }
+                Prompt = h.Prompt,
+                GeneratedText = h.GeneratedText,
+                Timestamp = h.Timestamp
+            });
+            _historyRepository.Save(dtos);
         }
 
         private void LoadHistory()
         {
-            try
+            var items = _historyRepository.Load();
+            History.Clear();
+            foreach (var item in items)
             {
-                var appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-                var file = System.IO.Path.Combine(appData, "TidyText", "ai_history.json");
-                if (System.IO.File.Exists(file))
+                History.Add(new AIHistoryItem(_mainViewModel, DeleteHistoryItem)
                 {
-                    var json = System.IO.File.ReadAllText(file);
-                    var items = System.Text.Json.JsonSerializer.Deserialize<System.Collections.Generic.List<AIHistoryDto>>(json);
-                    if (items != null)
-                    {
-                        History.Clear();
-                        foreach (var item in items)
-                        {
-                            History.Add(new AIHistoryItem(_mainViewModel, DeleteHistoryItem)
-                            {
-                                Prompt = item.Prompt ?? "",
-                                GeneratedText = item.GeneratedText ?? "",
-                                Timestamp = item.Timestamp
-                            });
-                        }
-                    }
-                }
+                    Prompt = item.Prompt ?? "",
+                    GeneratedText = item.GeneratedText ?? "",
+                    Timestamp = item.Timestamp
+                });
             }
-            catch { }
         }
-    }
-
-    public class AIHistoryDto
-    {
-        public string Prompt { get; set; } = string.Empty;
-        public string GeneratedText { get; set; } = string.Empty;
-        public DateTime Timestamp { get; set; }
     }
 }

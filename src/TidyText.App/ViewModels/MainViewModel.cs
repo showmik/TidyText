@@ -1,8 +1,8 @@
 using System;
 using System.ComponentModel;
-using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using TidyText.Core.Services;
 using TidyText.Core.TextEngine;
 using TidyText.Core.TextEngine.Processors;
 using TidyText.Core.Statistics;
@@ -12,6 +12,7 @@ namespace TidyText.App.ViewModels
     public partial class MainViewModel : ObservableObject
     {
         private readonly CleaningPipeline _pipeline;
+        private readonly IClipboardService _clipboardService;
         
         public AIAssistantViewModel? AIAssistantVM { get; set; }
 
@@ -101,8 +102,9 @@ namespace TidyText.App.ViewModels
             set { if (value) SelectedCasingStyle = CasingStyle.DoNotChange; }
         }
 
-        public MainViewModel()
+        public MainViewModel(IClipboardService clipboardService)
         {
+            _clipboardService = clipboardService;
             _pipeline = new CleaningPipeline()
                 .AddProcessor(new MarkdownProcessor()) // Strips markdown if enabled
                 .AddProcessor(new HtmlStripProcessor())
@@ -211,7 +213,7 @@ namespace TidyText.App.ViewModels
         {
             if (!string.IsNullOrEmpty(MainText))
             {
-                Clipboard.SetText(MainText);
+                _clipboardService.SetText(MainText);
                 // Trigger toast notification event here
             }
         }
