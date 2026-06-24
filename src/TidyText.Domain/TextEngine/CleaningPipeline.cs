@@ -30,12 +30,16 @@ namespace TidyText.Domain.TextEngine
         public string Process(string input)
         {
             if (string.IsNullOrEmpty(input))
-                return input;
+                return input ?? string.Empty;
 
             string result = input;
             foreach (var processor in _processors)
             {
-                result = processor.Process(result);
+                result = processor.Process(result) ?? string.Empty;
+                
+                // If the text is completely erased by a processor, short-circuit
+                if (string.IsNullOrEmpty(result)) 
+                    break;
             }
 
             return result;

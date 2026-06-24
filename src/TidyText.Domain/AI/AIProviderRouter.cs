@@ -77,32 +77,42 @@ namespace TidyText.Domain.AI
                 yield break;
             }
 
-            while (true)
+            try
             {
-                string? loopError = null;
-                string chunk;
-                try
+                while (true)
                 {
-                    if (!await enumerator.MoveNextAsync().ConfigureAwait(false))
+                    string? loopError = null;
+                    string chunk;
+                    try
+                    {
+                        if (!await enumerator.MoveNextAsync().ConfigureAwait(false))
+                            break;
+                        chunk = enumerator.Current;
+                    }
+                    catch (OperationCanceledException)
+                    {
                         break;
-                    chunk = enumerator.Current;
-                }
-                catch (OperationCanceledException)
-                {
-                    break;
-                }
-                catch (Exception ex)
-                {
-                    loopError = $"[Error] Stream interrupted: {ex.Message}";
-                    chunk = null!;
-                }
+                    }
+                    catch (Exception ex)
+                    {
+                        loopError = $"[Error] Stream interrupted: {ex.Message}";
+                        chunk = null!;
+                    }
 
-                if (loopError != null)
-                {
-                    yield return loopError;
-                    break;
+                    if (loopError != null)
+                    {
+                        yield return loopError;
+                        break;
+                    }
+                    yield return chunk;
                 }
-                yield return chunk;
+            }
+            finally
+            {
+                if (enumerator != null)
+                {
+                    await enumerator.DisposeAsync().ConfigureAwait(false);
+                }
             }
         }
 

@@ -186,8 +186,6 @@ namespace TidyText.App.ViewModels
             {
                 StatusMessage = "Streaming proposed changes...";
                 _streamingBuffer.Clear();
-                _diffThrottle.Restart();
-                IsReviewing = true;
                 _currentPromptOrTemplate = template.Name;
 
                 await foreach (var chunk in _router.StreamAsync(ActiveProviderName, prompt, options, _cancellationTokenSource.Token))
@@ -200,11 +198,10 @@ namespace TidyText.App.ViewModels
                     
                     _streamingBuffer.Append(chunk);
 
-                    // Throttle: only recompute diff at most once per DiffThrottleMs
+                    // Accumulate text without generating diffs to save CPU
                     if (_diffThrottle.ElapsedMilliseconds >= DiffThrottleMs)
                     {
                         _proposedText = _streamingBuffer.ToString();
-                        await GenerateDiffAsync(currentText, _proposedText);
                         _diffThrottle.Restart();
                     }
                 }
@@ -216,6 +213,7 @@ namespace TidyText.App.ViewModels
                 if (!StatusMessage.StartsWith("Error"))
                 {
                     StatusMessage = "Reviewing proposed changes...";
+                    IsReviewing = true;
                 }
             }
             catch (OperationCanceledException)
@@ -268,7 +266,6 @@ namespace TidyText.App.ViewModels
                 StatusMessage = "Streaming proposed changes...";
                 _streamingBuffer.Clear();
                 _diffThrottle.Restart();
-                IsReviewing = true;
                 _currentPromptOrTemplate = CustomPrompt;
 
                 await foreach (var chunk in _router.StreamAsync(ActiveProviderName, prompt, options, _cancellationTokenSource.Token))
@@ -281,11 +278,10 @@ namespace TidyText.App.ViewModels
                     
                     _streamingBuffer.Append(chunk);
 
-                    // Throttle: only recompute diff at most once per DiffThrottleMs
+                    // Accumulate text without generating diffs to save CPU
                     if (_diffThrottle.ElapsedMilliseconds >= DiffThrottleMs)
                     {
                         _proposedText = _streamingBuffer.ToString();
-                        await GenerateDiffAsync(currentText, _proposedText);
                         _diffThrottle.Restart();
                     }
                 }
@@ -297,6 +293,7 @@ namespace TidyText.App.ViewModels
                 if (!StatusMessage.StartsWith("Error"))
                 {
                     StatusMessage = "Reviewing proposed changes...";
+                    IsReviewing = true;
                 }
             }
             catch (OperationCanceledException)
