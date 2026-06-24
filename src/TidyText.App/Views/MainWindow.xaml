@@ -61,6 +61,7 @@
             <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,12,0" WindowChrome.IsHitTestVisibleInChrome="True">
                 <Button Content="🌗 Theme" Click="ThemeToggle_Click" Style="{StaticResource IconButtonStyle}" Margin="0,0,4,0" ToolTip="Toggle Light/Dark Mode"/>
                 <Button Content="⚙️ Settings" Click="SettingsButton_Click" Style="{StaticResource IconButtonStyle}" Margin="0,0,4,0" ToolTip="API Keys &amp; Settings"/>
+                <Button Content="ℹ️ About" Click="AboutButton_Click" Style="{StaticResource IconButtonStyle}" Margin="0,0,4,0" ToolTip="About TidyText"/>
                 <Button Content="↩️ Undo" Command="{Binding UndoCommand}" Style="{StaticResource IconButtonStyle}" Margin="0,0,4,0" ToolTip="Undo Last Clean (Ctrl+Z)"/>
                 <Button Content="↪️ Redo" Command="{Binding RedoCommand}" Style="{StaticResource IconButtonStyle}" Margin="0,0,4,0" ToolTip="Redo Last Clean (Ctrl+Y)"/>
                 <Button Content="📋 Copy" Command="{Binding CopyCommand}" Style="{StaticResource IconButtonStyle}" Margin="0,0,12,0" ToolTip="Copy Text"/>

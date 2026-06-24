@@ -43,6 +43,15 @@ namespace TidyText.App.Views
             settingsWindow.ShowDialog();
         }
 
+        private void AboutButton_Click(object sender, RoutedEventArgs e)
+        {
+            var aboutWindow = new AboutWindow
+            {
+                Owner = this
+            };
+            aboutWindow.ShowDialog();
+        }
+
         private void Minimize_Click(object sender, RoutedEventArgs e) => WindowState = WindowState.Minimized;
         
         private void Maximize_Click(object sender, RoutedEventArgs e) => WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
