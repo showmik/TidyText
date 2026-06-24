@@ -41,7 +41,14 @@ namespace TidyText.App.ViewModels
     {
         public AIAssistantViewModel AIAssistantVM { get; }
         public string CurrentText => MainText;
-        public void ReplaceText(string newText) => MainText = newText;
+        public void ReplaceText(string newText)
+        {
+            if (MainText != newText)
+            {
+                _undoRedoService.Push(MainText);
+                MainText = newText;
+            }
+        }
 
         private readonly IClipboardService _clipboardService;
         private readonly IUndoRedoService _undoRedoService;
@@ -112,8 +119,6 @@ namespace TidyText.App.ViewModels
         {
             if (string.IsNullOrEmpty(MainText)) return;
 
-            _undoRedoService.Push(MainText);
-
             var pipeline = new TextPipelineBuilder()
                 .If(Options.ShouldStripMarkdown, b => b.AddMarkdownStripper())
                 .If(Options.ShouldRemoveHtmlTags, b => b.AddHtmlStripper())
@@ -123,7 +128,12 @@ namespace TidyText.App.ViewModels
                 .AddCasing(Options.CasingStyle)
                 .Build();
 
-            MainText = pipeline.Process(MainText);
+            var cleaned = pipeline.Process(MainText);
+            if (cleaned != MainText)
+            {
+                _undoRedoService.Push(MainText);
+                MainText = cleaned;
+            }
         }
 
         [RelayCommand]

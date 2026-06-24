@@ -49,9 +49,15 @@ namespace TidyText.App.Services
 
                 var options = new JsonSerializerOptions { WriteIndented = true };
                 var json = JsonSerializer.Serialize(items.ToList(), options);
-                File.WriteAllText(_filePath, json);
+                
+                var tempPath = _filePath + ".tmp";
+                File.WriteAllText(tempPath, json);
+                File.Move(tempPath, _filePath, overwrite: true);
             }
-            catch { }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Failed to save AI history: {ex.Message}");
+            }
         }
     }
 }

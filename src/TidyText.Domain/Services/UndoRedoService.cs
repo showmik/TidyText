@@ -8,6 +8,7 @@ namespace TidyText.Domain.Services
 
         public void Push(string state)
         {
+            if (_history.Count > 0 && _history[^1] == state) return;
             _history.Add(state);
             _redoHistory.Clear();
             if (_history.Count > MaxHistorySize)
