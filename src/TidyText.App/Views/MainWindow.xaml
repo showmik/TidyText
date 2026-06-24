@@ -29,7 +29,7 @@
     </Window.InputBindings>
     
     <!-- Outer Grid to hold Custom Title Bar + Rest of Window -->
-    <Grid>
+    <Grid x:Name="RootGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="48" />
             <RowDefinition Height="*" />

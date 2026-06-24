@@ -18,6 +18,20 @@ namespace TidyText.App.Views
             LoadTheme();
         }
 
+        protected override void OnStateChanged(System.EventArgs e)
+        {
+            base.OnStateChanged(e);
+            if (WindowState == WindowState.Maximized)
+            {
+                // Prevent clipping when maximized with WindowChrome
+                RootGrid.Margin = new Thickness(SystemParameters.WindowResizeBorderThickness.Left + 2);
+            }
+            else
+            {
+                RootGrid.Margin = new Thickness(0);
+            }
+        }
+
         private void LoadTheme()
         {
             var theme = _themeRepository.LoadTheme();
