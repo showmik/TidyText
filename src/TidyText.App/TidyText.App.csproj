@@ -1,6 +1,21 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <Content Include="logo.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\TidyText_Logo_128x128.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\TidyText.Domain\TidyText.Domain.csproj" />
     <ProjectReference Include="..\TidyText.Infrastructure\TidyText.Infrastructure.csproj" />
   </ItemGroup>
@@ -16,6 +31,18 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <Authors>Intisar Bin Naim</Authors>
+    <Company>Intisar Bin Naim</Company>
+    <Product>TidyText</Product>
+    <Description>A smart, local-first text cleaning and formatting tool powered
+by Al.</Description>
+    <Copyright>Copyright © 2026 Intisar Bin Naim</Copyright>
+    <PackageIcon>TidyText_Logo_128x128.png</PackageIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/showmik/TidyText</RepositoryUrl>
+    <Title>TidyText</Title>
+    <Version>2.0.0</Version>
+    <ApplicationIcon>logo.ico</ApplicationIcon>
   </PropertyGroup>
 
 </Project>
