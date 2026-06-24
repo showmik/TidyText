@@ -31,7 +31,7 @@ namespace TidyText.Infrastructure.AI.Providers
         {
             if (!IsAvailable) return AIResponse.Error("Gemini API key is not configured.");
 
-            string model = string.IsNullOrEmpty(options.Model) ? "gemini-1.5-flash" : options.Model;
+            string model = string.IsNullOrEmpty(options.Model) ? "gemini-3.5-flash" : options.Model;
             string url = $"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={_apiKey}";
 
             var requestBody = new
