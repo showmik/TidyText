@@ -72,7 +72,7 @@
                                     <TextBlock Text="Google Gemini" FontWeight="{DynamicResource FontWeightSemiBold}" FontSize="{DynamicResource FontSizeNormal}" Foreground="{DynamicResource TextBrush}"/>
                                     <TextBlock Text="Get your API key from Google AI Studio." Foreground="{DynamicResource TextMutedBrush}" FontSize="{DynamicResource FontSizeMd}" Margin="0,2,0,8"/>
                                     <Grid>
-                                        <PasswordBox helpers:PasswordBoxHelper.BindPassword="True" helpers:PasswordBoxHelper.BoundPassword="{Binding GeminiApiKey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontFamily="{DynamicResource CodeFontFamily}" Background="{DynamicResource BgBrush}" Foreground="{DynamicResource TextBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="8,10,40,10">
+                                        <PasswordBox helpers:PasswordBoxHelper.BindPassword="True" helpers:PasswordBoxHelper.BoundPassword="{Binding GeminiApiKey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontFamily="{DynamicResource CodeFontFamily}" Background="{DynamicResource BgBrush}" Foreground="{DynamicResource TextBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" MinHeight="42" VerticalContentAlignment="Center" Padding="12,0,40,0">
                                             <PasswordBox.Style>
                                                 <Style TargetType="PasswordBox">
                                                     <Setter Property="Visibility" Value="Visible"/>
@@ -84,7 +84,7 @@
                                                 </Style>
                                             </PasswordBox.Style>
                                         </PasswordBox>
-                                        <TextBox Text="{Binding GeminiApiKey, UpdateSourceTrigger=PropertyChanged}" FontFamily="{DynamicResource CodeFontFamily}" Background="{DynamicResource BgBrush}" Foreground="{DynamicResource TextBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="8,10,40,10">
+                                        <TextBox Text="{Binding GeminiApiKey, UpdateSourceTrigger=PropertyChanged}" FontFamily="{DynamicResource CodeFontFamily}" Background="{DynamicResource BgBrush}" Foreground="{DynamicResource TextBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" MinHeight="42" VerticalContentAlignment="Center" Padding="12,0,40,0">
                                             <TextBox.Style>
                                                 <Style TargetType="TextBox">
                                                     <Setter Property="Visibility" Value="Collapsed"/>
@@ -132,7 +132,7 @@
                                     <TextBlock Text="OpenAI" FontWeight="{DynamicResource FontWeightSemiBold}" FontSize="{DynamicResource FontSizeNormal}" Foreground="{DynamicResource TextBrush}"/>
                                     <TextBlock Text="Requires a funded OpenAI platform account." Foreground="{DynamicResource TextMutedBrush}" FontSize="{DynamicResource FontSizeMd}" Margin="0,2,0,8"/>
                                     <Grid>
-                                        <PasswordBox helpers:PasswordBoxHelper.BindPassword="True" helpers:PasswordBoxHelper.BoundPassword="{Binding OpenAIApiKey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontFamily="{DynamicResource CodeFontFamily}" Background="{DynamicResource BgBrush}" Foreground="{DynamicResource TextBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="8,10,40,10">
+                                        <PasswordBox helpers:PasswordBoxHelper.BindPassword="True" helpers:PasswordBoxHelper.BoundPassword="{Binding OpenAIApiKey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontFamily="{DynamicResource CodeFontFamily}" Background="{DynamicResource BgBrush}" Foreground="{DynamicResource TextBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" MinHeight="42" VerticalContentAlignment="Center" Padding="12,0,40,0">
                                             <PasswordBox.Style>
                                                 <Style TargetType="PasswordBox">
                                                     <Setter Property="Visibility" Value="Visible"/>
@@ -144,7 +144,7 @@
                                                 </Style>
                                             </PasswordBox.Style>
                                         </PasswordBox>
-                                        <TextBox Text="{Binding OpenAIApiKey, UpdateSourceTrigger=PropertyChanged}" FontFamily="{DynamicResource CodeFontFamily}" Background="{DynamicResource BgBrush}" Foreground="{DynamicResource TextBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="8,10,40,10">
+                                        <TextBox Text="{Binding OpenAIApiKey, UpdateSourceTrigger=PropertyChanged}" FontFamily="{DynamicResource CodeFontFamily}" Background="{DynamicResource BgBrush}" Foreground="{DynamicResource TextBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" MinHeight="42" VerticalContentAlignment="Center" Padding="12,0,40,0">
                                             <TextBox.Style>
                                                 <Style TargetType="TextBox">
                                                     <Setter Property="Visibility" Value="Collapsed"/>
@@ -192,7 +192,7 @@
                                     <TextBlock Text="Anthropic Claude" FontWeight="{DynamicResource FontWeightSemiBold}" FontSize="{DynamicResource FontSizeNormal}" Foreground="{DynamicResource TextBrush}"/>
                                     <TextBlock Text="Get your API key from the Anthropic Console." Foreground="{DynamicResource TextMutedBrush}" FontSize="{DynamicResource FontSizeMd}" Margin="0,2,0,8"/>
                                     <Grid>
-                                        <PasswordBox helpers:PasswordBoxHelper.BindPassword="True" helpers:PasswordBoxHelper.BoundPassword="{Binding AnthropicApiKey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontFamily="{DynamicResource CodeFontFamily}" Background="{DynamicResource BgBrush}" Foreground="{DynamicResource TextBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="8,10,40,10">
+                                        <PasswordBox helpers:PasswordBoxHelper.BindPassword="True" helpers:PasswordBoxHelper.BoundPassword="{Binding AnthropicApiKey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontFamily="{DynamicResource CodeFontFamily}" Background="{DynamicResource BgBrush}" Foreground="{DynamicResource TextBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" MinHeight="42" VerticalContentAlignment="Center" Padding="12,0,40,0">
                                             <PasswordBox.Style>
                                                 <Style TargetType="PasswordBox">
                                                     <Setter Property="Visibility" Value="Visible"/>
@@ -204,7 +204,7 @@
                                                 </Style>
                                             </PasswordBox.Style>
                                         </PasswordBox>
-                                        <TextBox Text="{Binding AnthropicApiKey, UpdateSourceTrigger=PropertyChanged}" FontFamily="{DynamicResource CodeFontFamily}" Background="{DynamicResource BgBrush}" Foreground="{DynamicResource TextBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="8,10,40,10">
+                                        <TextBox Text="{Binding AnthropicApiKey, UpdateSourceTrigger=PropertyChanged}" FontFamily="{DynamicResource CodeFontFamily}" Background="{DynamicResource BgBrush}" Foreground="{DynamicResource TextBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" MinHeight="42" VerticalContentAlignment="Center" Padding="12,0,40,0">
                                             <TextBox.Style>
                                                 <Style TargetType="TextBox">
                                                     <Setter Property="Visibility" Value="Collapsed"/>
@@ -252,7 +252,7 @@
                                     <TextBlock Text="DeepSeek" FontWeight="{DynamicResource FontWeightSemiBold}" FontSize="{DynamicResource FontSizeNormal}" Foreground="{DynamicResource TextBrush}"/>
                                     <TextBlock Text="Cost-effective and highly capable open weights models." Foreground="{DynamicResource TextMutedBrush}" FontSize="{DynamicResource FontSizeMd}" Margin="0,2,0,8"/>
                                     <Grid>
-                                        <PasswordBox helpers:PasswordBoxHelper.BindPassword="True" helpers:PasswordBoxHelper.BoundPassword="{Binding DeepSeekApiKey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontFamily="{DynamicResource CodeFontFamily}" Background="{DynamicResource BgBrush}" Foreground="{DynamicResource TextBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="8,10,40,10">
+                                        <PasswordBox helpers:PasswordBoxHelper.BindPassword="True" helpers:PasswordBoxHelper.BoundPassword="{Binding DeepSeekApiKey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontFamily="{DynamicResource CodeFontFamily}" Background="{DynamicResource BgBrush}" Foreground="{DynamicResource TextBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" MinHeight="42" VerticalContentAlignment="Center" Padding="12,0,40,0">
                                             <PasswordBox.Style>
                                                 <Style TargetType="PasswordBox">
                                                     <Setter Property="Visibility" Value="Visible"/>
@@ -264,7 +264,7 @@
                                                 </Style>
                                             </PasswordBox.Style>
                                         </PasswordBox>
-                                        <TextBox Text="{Binding DeepSeekApiKey, UpdateSourceTrigger=PropertyChanged}" FontFamily="{DynamicResource CodeFontFamily}" Background="{DynamicResource BgBrush}" Foreground="{DynamicResource TextBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="8,10,40,10">
+                                        <TextBox Text="{Binding DeepSeekApiKey, UpdateSourceTrigger=PropertyChanged}" FontFamily="{DynamicResource CodeFontFamily}" Background="{DynamicResource BgBrush}" Foreground="{DynamicResource TextBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" MinHeight="42" VerticalContentAlignment="Center" Padding="12,0,40,0">
                                             <TextBox.Style>
                                                 <Style TargetType="TextBox">
                                                     <Setter Property="Visibility" Value="Collapsed"/>
@@ -312,7 +312,7 @@
                                     <TextBlock Text="Local LM Base URL" FontWeight="{DynamicResource FontWeightSemiBold}" FontSize="{DynamicResource FontSizeNormal}" Foreground="{DynamicResource TextBrush}"/>
                                     <TextBlock Text="Leave empty for default: http://localhost:1234/v1" Foreground="{DynamicResource TextMutedBrush}" FontSize="{DynamicResource FontSizeMd}" Margin="0,2,0,8"/>
                                     <Grid>
-                                        <TextBox Text="{Binding LocalLMUrl, UpdateSourceTrigger=PropertyChanged}" FontFamily="{DynamicResource CodeFontFamily}" Background="{DynamicResource BgBrush}" Foreground="{DynamicResource TextBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="8,10,40,10" />
+                                        <TextBox Text="{Binding LocalLMUrl, UpdateSourceTrigger=PropertyChanged}" FontFamily="{DynamicResource CodeFontFamily}" Background="{DynamicResource BgBrush}" Foreground="{DynamicResource TextBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" MinHeight="42" VerticalContentAlignment="Center" Padding="12,0,40,0" />
                                     </Grid>
                                 </StackPanel>
                             </Grid>
