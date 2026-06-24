@@ -1,7 +1,7 @@
 <Window x:Class="TidyText.App.Views.AboutWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="About TidyText" Height="550" Width="450"
+        Title="About TidyText" Height="300" Width="400"
         WindowStartupLocation="CenterOwner" ResizeMode="NoResize"
         FontFamily="{DynamicResource BrandFontFamily}"
         Background="Transparent"
@@ -39,57 +39,15 @@
             <Border Grid.Row="0" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1" VerticalAlignment="Bottom"/>
 
             <!-- Content Area -->
-            <Grid Grid.Row="1">
-                <!-- Decorative background elements -->
-                <Ellipse Width="150" Height="150" Fill="{DynamicResource AccentBrush}" Opacity="0.05" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,-50,-50,0" IsHitTestVisible="False"/>
-                <Ellipse Width="200" Height="200" Fill="{DynamicResource AccentBrush}" Opacity="0.03" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="-100,0,0,-100" IsHitTestVisible="False"/>
-
-                <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0">
-                    <StackPanel Margin="32" VerticalAlignment="Center">
-                        
-                        <!-- Logo / App Name -->
-                        <Border Background="{DynamicResource PanelBgBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="12" Padding="24" Margin="0,0,0,24" HorizontalAlignment="Stretch">
-                            <StackPanel>
-                                <Border Background="{DynamicResource AccentBrush}" Width="64" Height="64" CornerRadius="16" HorizontalAlignment="Center" Margin="0,0,0,16">
-                                    <TextBlock Text="✨" FontSize="32" Foreground="{DynamicResource AccentForegroundBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Border>
-                                <TextBlock Text="TidyText" FontSize="28" FontWeight="Bold" Foreground="{DynamicResource TextBrush}" HorizontalAlignment="Center" Margin="0,0,0,4"/>
-                                <TextBlock Text="v1.0.0" FontFamily="{DynamicResource CodeFontFamily}" FontSize="{DynamicResource FontSizeMd}" Foreground="{DynamicResource TextMutedBrush}" HorizontalAlignment="Center"/>
-                            </StackPanel>
-                        </Border>
-                        
-                        <!-- Description -->
-                        <TextBlock Text="A smart, local-first text cleaning and formatting tool powered by AI. Designed to help you refine your writing effortlessly." 
-                                   TextWrapping="Wrap" TextAlignment="Center" FontSize="{DynamicResource FontSizeNormal}" Foreground="{DynamicResource TextBrush}" LineHeight="22" Margin="0,0,0,32"/>
-                        
-                        <!-- Details / Links Grid -->
-                        <Grid Margin="0,0,0,32">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="16" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            
-                            <Border Grid.Column="0" Background="{DynamicResource PanelBgBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8" Padding="16">
-                                <StackPanel>
-                                    <TextBlock Text="DEVELOPER" FontSize="{DynamicResource FontSizeXs}" FontWeight="Bold" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,8"/>
-                                    <TextBlock Text="Showmik" FontSize="{DynamicResource FontSizeNormal}" Foreground="{DynamicResource TextBrush}"/>
-                                </StackPanel>
-                            </Border>
-
-                            <Border Grid.Column="2" Background="{DynamicResource PanelBgBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8" Padding="16">
-                                <StackPanel>
-                                    <TextBlock Text="LICENSE" FontSize="{DynamicResource FontSizeXs}" FontWeight="Bold" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,8"/>
-                                    <TextBlock Text="MIT License" FontSize="{DynamicResource FontSizeNormal}" Foreground="{DynamicResource TextBrush}"/>
-                                </StackPanel>
-                            </Border>
-                        </Grid>
-                        
-                        <!-- Footer -->
-                        <TextBlock Text="© 2026 TidyText Contributors. All rights reserved." FontSize="{DynamicResource FontSizeSm}" Foreground="{DynamicResource TextMutedBrush}" HorizontalAlignment="Center" Margin="0,0,0,8"/>
-                        
-                    </StackPanel>
-                </ScrollViewer>
+            <Grid Grid.Row="1" Margin="24">
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <TextBlock Text="✨ TidyText" FontSize="32" FontWeight="Bold" Foreground="{DynamicResource AccentBrush}" HorizontalAlignment="Center" Margin="0,0,0,8"/>
+                    <TextBlock Text="Version 2.0.0" FontSize="{DynamicResource FontSizeNormal}" Foreground="{DynamicResource TextMutedBrush}" HorizontalAlignment="Center" Margin="0,0,0,24"/>
+                    
+                    <TextBlock Text="A smart text cleaning and formatting tool powered by AI." TextWrapping="Wrap" TextAlignment="Center" FontSize="{DynamicResource FontSizeNormal}" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,24"/>
+                    
+                    <TextBlock Text="© 2026 TidyText Contributors" FontSize="{DynamicResource FontSizeSm}" Foreground="{DynamicResource TextMutedBrush}" HorizontalAlignment="Center"/>
+                </StackPanel>
             </Grid>
         </Grid>
     </Border>
