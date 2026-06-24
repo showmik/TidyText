@@ -367,3 +367,4 @@ FodyWeavers.xsd
 /.gemini
 /.agents
 /GEMINI.md
+*.iss
